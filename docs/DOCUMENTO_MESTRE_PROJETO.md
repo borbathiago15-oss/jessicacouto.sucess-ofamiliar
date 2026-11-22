@@ -523,6 +523,207 @@ No MVP:
 
 ---
 
+# 9.6 CRM como centro de inteligência da JC
+
+O CRM não deve ser apenas uma agenda de contatos. É o ambiente privado de gestão da operação, inteligência metodológica e relacionamento comercial de Jéssica e sua equipe.
+
+## 9.6.1 Perguntas que o CRM deve responder
+
+- Quantas empresas e pessoas chegaram à JC?
+- Quantos fundadores, sucessores e representantes de empresas responderam cada diagnóstico?
+- Quais dimensões apresentam mais pontos de atenção nas respostas?
+- Quais participantes solicitaram contato?
+- Quais contatos têm uma próxima ação pendente?
+- Quais empresas possuem mais de um participante cadastrado?
+- Quais questionários, versões, guias e propostas estão publicados, em teste ou em elaboração?
+- Quais oportunidades comerciais estão em cada etapa?
+- Quais materiais foram enviados e quais conversas foram registradas?
+
+## 9.6.2 Módulos do ambiente administrativo
+
+### A. Dashboard executivo
+Indicadores filtráveis por período, campanha, instrumento e origem:
+- Empresas cadastradas.
+- Participantes únicos.
+- Diagnósticos iniciados e concluídos.
+- Taxa de conclusão por instrumento.
+- Distribuição por perfil: fundador, sucessor, herdeiro, gestor e outros.
+- Principais dimensões com pontos de atenção, sem expor respostas individuais indevidamente.
+- Guias solicitados e baixados.
+- Contatos que solicitaram conversa.
+- Oportunidades por etapa.
+- Atividades vencidas e próximas ações.
+
+Cada indicador deve permitir abrir a lista de registros que compõe o número. Não apresentar metas ou taxas fictícias.
+
+### B. Empresas e famílias empresárias
+Ficha de empresa com:
+- Nome fantasia e razão social, se voluntariamente fornecidas.
+- Segmento, região e porte em faixas.
+- Tempo de existência em faixas.
+- Geração atualmente envolvida.
+- Situação de governança autodeclarada.
+- Participantes relacionados e seus papéis.
+- Diagnósticos realizados e respectivas versões.
+- Histórico de interações.
+- Oportunidades e propostas associadas.
+- Notas internas com acesso restrito.
+
+O CRM deve permitir que uma empresa tenha vários participantes, sem misturar respostas ou presumir consenso familiar.
+
+### C. Pessoas e relacionamentos
+Ficha individual com:
+- Dados de contato e empresa associada.
+- Papel declarado: fundador, sucessor, herdeiro, gestor, consultor ou outro.
+- Origem e campanha de entrada.
+- Instrumentos respondidos.
+- Guias solicitados.
+- Consentimentos e preferências de contato.
+- Histórico de atividades.
+- Próxima ação e responsável interno.
+
+### D. Diagnósticos e histórico de testes
+Uma central para:
+- Consultar sessões concluídas, incompletas e abandonadas.
+- Ver respostas conforme permissão.
+- Abrir relatório PDF.
+- Comparar versões do mesmo instrumento para a mesma pessoa somente quando apropriado e autorizado.
+- Registrar revisão humana e observações técnicas.
+- Duplicar um instrumento para criar uma nova versão.
+- Manter versões antigas imutáveis.
+- Identificar claramente teste interno, piloto e diagnóstico publicado.
+- Exportar dados apenas por usuários autorizados e para finalidades definidas.
+
+Não alterar respostas ou resultados históricos ao editar um questionário.
+
+### E. Laboratório JC: criação e validação metodológica
+Este módulo é essencial para a evolução da metodologia própria.
+
+Permitir criar e organizar:
+- Novos questionários e instrumentos.
+- Testes conceituais e hipóteses de avaliação.
+- Dimensões e perguntas experimentais.
+- Critérios de pontuação em rascunho.
+- Regras de interpretação.
+- Recomendações preliminares.
+- Modelos de relatório.
+- Roteiros de entrevistas e exercícios.
+- Novas propostas de serviços e jornadas de consultoria.
+
+Cada experimento deve ter:
+- Nome e objetivo.
+- Problema que pretende investigar.
+- Público-alvo.
+- Responsável.
+- Versão.
+- Status: ideia, em elaboração, revisão técnica, piloto interno, piloto externo, aprovado, publicado ou arquivado.
+- Hipótese e evidências.
+- Critérios de validação.
+- Registro de alterações.
+- Aprovação explícita de Jéssica antes de publicação.
+
+Dados de pilotos devem ser identificados como experimentais e não misturados com indicadores oficiais sem validação. Testes com pessoas reais exigem transparência, finalidade definida e base legal adequada.
+
+### F. Biblioteca de conhecimento
+Repositório organizado para:
+- Guias e e-books.
+- Artigos e referências.
+- Apresentações.
+- Modelos de reunião.
+- Roteiros de entrevistas.
+- Materiais de workshops.
+- Estudos de caso autorizados ou explicitamente hipotéticos.
+- Modelos de relatórios e propostas.
+
+Metadados: título, categoria, versão, autor, status, público, data de revisão, fonte e direitos de uso.
+
+### G. Propostas e serviços
+Jéssica precisa estruturar e acompanhar propostas de trabalho sem transformar o diagnóstico gratuito em promessa de contratação.
+
+Cadastro de:
+- Serviços e soluções.
+- Escopo e entregáveis.
+- Perfil de cliente.
+- Problema que a proposta busca resolver.
+- Etapas e cronograma.
+- Responsáveis.
+- Documentos e versões da proposta.
+- Status: rascunho, revisão, apresentada, em negociação, aceita, recusada ou expirada.
+- Próximo contato e histórico de negociação.
+
+O CRM deve permitir criar modelos reutilizáveis de proposta, mas cada proposta enviada deve preservar sua versão original.
+
+### H. Oportunidades e relacionamento
+Pipeline configurável, com etapas iniciais:
+- Novo contato.
+- Diagnóstico iniciado.
+- Diagnóstico concluído.
+- Material entregue.
+- Conversa solicitada.
+- Conversa agendada.
+- Necessidade identificada.
+- Proposta em elaboração.
+- Proposta apresentada.
+- Em negociação.
+- Convertida.
+- Não avançou.
+- Acompanhamento futuro.
+
+Cada oportunidade deve ter responsável, próxima ação, data, origem, empresa, participantes associados e histórico. Não inferir interesse comercial apenas por ter respondido a um diagnóstico ou baixado um guia.
+
+### I. Atividades e comunicação
+- Registro manual de ligações, reuniões, e-mails e mensagens.
+- Lembretes e tarefas.
+- Links para abrir WhatsApp e e-mail.
+- Modelos de mensagem para uso individual.
+- Registro de quem fez o contato, quando e com qual finalidade.
+- Respeito às preferências e oposições de contato.
+- Integrações automáticas somente em fase futura, após revisão de consentimento, regras de envio e segurança.
+
+### J. Administração e governança
+- Usuários individuais.
+- Papéis e permissões por módulo e ação.
+- Histórico de alterações.
+- Registro de exportações e acessos relevantes.
+- Gestão de templates, instrumentos e campanhas.
+- Configurações de retenção e privacidade.
+
+## 9.6.3 Papéis de usuário sugeridos
+
+- **Administradora (Jéssica):** acesso completo, aprovação e publicação de metodologia, questionários, relatórios e propostas.
+- **Equipe de relacionamento:** empresas, contatos, atividades e oportunidades conforme permissões.
+- **Analista metodológico:** criação e revisão de instrumentos e relatórios em ambiente de rascunho, sem publicar sem aprovação.
+- **Leitura executiva:** acesso somente a indicadores e registros explicitamente autorizados.
+
+As permissões finais devem ser configuráveis e aplicadas no backend por RLS, não apenas escondidas na interface.
+
+## 9.6.4 Fluxo de trabalho recomendado
+
+1. Pessoa acessa o site e escolhe um diagnóstico ou guia.
+2. O sistema registra origem, campanha e aviso de privacidade apresentado.
+3. Pessoa conclui o instrumento ou solicita o guia.
+4. O CRM cria ou atualiza o participante e relaciona a empresa, evitando duplicidades indevidas.
+5. O sistema gera o PDF correspondente e registra a entrega.
+6. O dashboard atualiza indicadores.
+7. Se a pessoa solicitar contato, uma atividade aparece para a equipe.
+8. A equipe registra conversa, necessidade e próxima ação.
+9. Se houver aderência, cria oportunidade e proposta.
+10. Jéssica acompanha a evolução e decide os próximos passos.
+
+## 9.6.5 Indicadores de gestão
+
+Separar indicadores em quatro grupos:
+
+**Aquisição e engajamento:** visitantes convertidos, cadastros, origem, campanha, downloads e conclusão dos formulários.
+
+**Conhecimento sobre o público:** distribuição por perfil, segmento, geração, dimensão avaliada e principais temas declarados. Sempre apresentar agregados quando houver risco de identificação.
+
+**Relacionamento:** contatos solicitados, conversas realizadas, tarefas pendentes, tempo de resposta e histórico de interação.
+
+**Desenvolvimento do negócio:** oportunidades abertas, propostas em elaboração, propostas apresentadas, conversões e motivos de não avanço.
+
+Não confundir volume de leads com qualidade de relacionamento. Permitir que Jéssica avalie qualidade por critérios explícitos e revisáveis.
+
 # 10. Construtor de questionários e campanhas
 
 O sistema deve permitir criar, duplicar, editar, versionar, publicar, pausar e arquivar questionários.
@@ -790,4 +991,4 @@ Não trate perguntas, pontuações, faixas ou recomendações propostas neste do
 - GO NEXT. Referência pública de governança e sucessão familiar. https://gonext.com.br/
 - BRASIL. Lei nº 13.709, de 14 de agosto de 2018. Lei Geral de Proteção de Dados Pessoais. https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm
 
-**Documento mestre — JC | Sucessão de Sucesso — versão 0.3.**
+**Documento mestre — JC | Sucessão de Sucesso — versão 0.4.**
