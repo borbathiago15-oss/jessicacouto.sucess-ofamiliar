@@ -37,6 +37,8 @@ Seeds e testes usam **somente dados fictícios**. Proteção de segredos em trê
 ## Requisitos
 
 - Node.js 24 (ver `.nvmrc`) e npm.
+- Docker é **opcional**: os testes de banco rodam oficialmente no CI (ADR 0007). Com Docker,
+  `npx supabase start` e `npx supabase test db` reproduzem o job localmente.
 
 ## Primeiros passos
 
