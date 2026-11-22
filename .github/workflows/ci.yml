@@ -56,6 +56,36 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
+  database:
+    name: Banco de dados (Supabase local efêmero)
+    # ADR 0007: o CI é o ambiente oficial dos testes de banco. Nenhum projeto
+    # remoto é usado; o Supabase sobe em containers descartados ao fim do job.
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: supabase/setup-cli@689adcfb80d947100a1eab127289b97d1fb07b13 # v3.2.0
+        with:
+          version: 3.2.0
+      - name: Subir Supabase local
+        run: supabase start -x studio,imgproxy,vector,logflare,edge-runtime,supavisor
+      - name: Verificar serviços
+        run: supabase status -o env | grep -E '^(API_URL|DB_URL)=' | sed -E 's#(://[^:]+:)[^@]+@#\1***@#'
+      - name: Reaplicar banco do zero (migrations e seeds)
+        run: supabase db reset
+      - name: Lint do schema
+        run: supabase db lint --level warning --fail-on error
+      - name: Testes de banco (pgTAP)
+        run: |
+          if [ -d supabase/tests ] && find supabase/tests -name "*.sql" | grep -q .; then
+            supabase test db
+          else
+            echo "Nenhum teste de banco ainda (M1 adicionará os testes pgTAP)."
+          fi
+      - name: Encerrar
+        if: always()
+        run: supabase stop --no-backup
+
   secrets:
     name: Varredura de segredos (Gitleaks)
     runs-on: ubuntu-latest
