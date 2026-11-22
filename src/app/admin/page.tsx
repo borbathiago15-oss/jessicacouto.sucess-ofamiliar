@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function AdminPage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-3xl flex-col justify-center gap-4 px-6 py-24">
-      <h1 className="font-display text-3xl text-burgundy">Ambiente administrativo</h1>
+      <h1 className="font-display text-burgundy text-3xl">Ambiente administrativo</h1>
       <p>Acesso restrito. Disponível após a implementação da autenticação.</p>
     </main>
   );
