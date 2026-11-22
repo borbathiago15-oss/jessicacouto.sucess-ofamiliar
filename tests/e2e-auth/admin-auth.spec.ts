@@ -61,7 +61,7 @@ test("senha errada é recusada com mensagem genérica", async ({ page }) => {
   await page.getByLabel("E-mail").fill(email);
   await page.getByLabel("Senha").fill(`${password}x`);
   await page.getByRole("button", { name: "Entrar" }).click();
-  await expect(page.getByRole("alert")).toHaveText("E-mail ou senha inválidos.");
+  await expect(page.getByTestId("form-message")).toHaveText("E-mail ou senha inválidos.");
 });
 
 test("primeiro acesso: senha correta exige cadastrar o autenticador", async ({ page }) => {
@@ -96,7 +96,7 @@ test("novo login exige o código do autenticador; código errado é recusado", a
 
   await page.getByLabel("Código").fill(totp(secret, Date.now(), 100));
   await page.getByRole("button", { name: "Verificar" }).click();
-  await expect(page.getByRole("alert")).toHaveText("Código inválido ou expirado.");
+  await expect(page.getByTestId("form-message")).toHaveText("Código inválido ou expirado.");
 
   await page.getByLabel("Código").fill(await freshCode());
   await page.getByRole("button", { name: "Verificar" }).click();
