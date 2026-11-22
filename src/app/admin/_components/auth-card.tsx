@@ -25,6 +25,7 @@ export function FormMessage({ tone, children }: { tone: "error" | "info"; childr
   return (
     <p
       role={tone === "error" ? "alert" : "status"}
+      data-testid="form-message"
       className={
         tone === "error"
           ? "border-burgundy/40 text-burgundy rounded border bg-white px-3 py-2 text-sm"
