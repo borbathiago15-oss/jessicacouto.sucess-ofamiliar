@@ -1,3 +1,20 @@
+# 0. Registro de decisões operacionais — atualização
+
+**Decisões confirmadas pelo proprietário do repositório:**
+
+- Repositório permanecerá público por enquanto.
+- Nome desejado: `jc-sucessao-de-sucesso`.
+- O CRM será acessado inicialmente em `/admin`, sem subdomínio separado.
+- O CMS deverá permitir que Jéssica edite conteúdos institucionais pelo ambiente administrativo, com rascunho, revisão e publicação controlada.
+- O pipeline comercial deverá ser único e configurável, evitando fluxos duplicados.
+- M0 e M1 somente devem avançar em branch própria; nada será integrado à `main` ou produção sem revisão e aprovação.
+
+**Estado verificado do GitHub nesta atualização:** repositório `borbathiago15-oss/jessicacouto.sucess-ofamiliar`, branch padrão `main`, visibilidade pública. O nome ainda não foi alterado.
+
+**Atenção à visibilidade pública:** não armazenar segredos, tokens, chaves, credenciais, dados pessoais de participantes, respostas de diagnósticos, PDFs privados ou informações confidenciais no repositório. Arquivos de exemplo devem conter dados fictícios. Segredos devem ficar em variáveis de ambiente e secret managers. A documentação pública deve ser revisada antes de cada commit.
+
+**Ação manual do proprietário:** alterar o nome em GitHub > Settings > General > Repository name para `jc-sucessao-de-sucesso`. A integração disponível nesta sessão permite consultar e editar arquivos, mas não oferece uma ação de renomeação do repositório. Após renomear, atualizar URLs de clone, links e configurações de integração se necessário.
+
 # JC | SUCESSÃO DE SUCESSO
 ## Documento Mestre do Projeto e Especificação para Claude
 
@@ -991,4 +1008,4 @@ Não trate perguntas, pontuações, faixas ou recomendações propostas neste do
 - GO NEXT. Referência pública de governança e sucessão familiar. https://gonext.com.br/
 - BRASIL. Lei nº 13.709, de 14 de agosto de 2018. Lei Geral de Proteção de Dados Pessoais. https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm
 
-**Documento mestre — JC | Sucessão de Sucesso — versão 0.4.**
+**Documento mestre — JC | Sucessão de Sucesso — versão 0.5.**
