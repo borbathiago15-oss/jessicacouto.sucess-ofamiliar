@@ -52,13 +52,47 @@ A plataforma terá quatro camadas articuladas:
 
 ## 2.1 Marca pessoal: Jéssica Couto
 
-É a camada de autoridade e relacionamento. Deve apresentar:
+É a camada de autoridade e relacionamento. O posicionamento deve unir experiência executiva, conhecimento de gestão e vivência em uma empresa familiar.
+
+### Biografia profissional fornecida por Jéssica
+
+Jéssica Couto é diretora e possui mais de 12 anos de experiência no Grupo Trino, empresa de soluções integradas para o setor de logística, terceirização de serviços na área de Facilities e serviços por produção.
+
+Atualmente, lidera a gestão financeira e administrativa do Grupo Trino, com responsabilidade pelas áreas de contabilidade, compras, vendas, operação de Facilities e comercial. Possui MBA Executivo em Economia e Gestão Empresarial.
+
+Em sua atuação, desenvolve estratégias para otimizar processos, reduzir custos, aumentar a rentabilidade e assegurar o cumprimento de normas e regulamentações do setor. Também contribui para o crescimento e a expansão do Grupo Trino, apoiando a captação de novos clientes, negociação de contratos, gestão de projetos e implementação de soluções inovadoras.
+
+Seu objetivo profissional é continuar aprimorando competências e conhecimentos em gestão empresarial e contribuir para a missão do Grupo Trino de gerar valor e sustentabilidade para seus stakeholders.
+
+### Como transformar essa trajetória em posicionamento
+
+A comunicação deve demonstrar que Jéssica não aborda empresas familiares apenas pelo ponto de vista conceitual. Sua experiência executiva permite conversar sobre gestão, finanças, processos, custos, rentabilidade, comercial, operação, expansão e governança. Sua vivência na segunda geração acrescenta a perspectiva das relações entre família, propriedade e gestão.
+
+A proposta de valor deve combinar essas duas dimensões: **a experiência de quem participa da gestão real de uma empresa e conhece os desafios de continuidade de uma família empresária**.
+
+### Conteúdos que a página deve apresentar
+
 - História e trajetória de Jéssica.
-- Sua entrada no Grupo Trino aos 17 anos, após confirmação e aprovação do texto biográfico.
-- Vivência na segunda geração de uma empresa familiar.
-- Experiências e aprendizados dentro e fora da empresa.
-- Sua visão sobre legado, autonomia, governança, liderança e continuidade.
+- Mais de 12 anos de experiência no Grupo Trino.
+- Responsabilidades atuais na gestão financeira e administrativa.
+- Experiência com contabilidade, compras, vendas, operação de Facilities e comercial.
+- Formação: MBA Executivo em Economia e Gestão Empresarial.
+- Atuação em otimização de processos, redução de custos, rentabilidade, conformidade, expansão, captação de clientes, negociação de contratos, projetos e inovação.
+- Vivência na segunda geração de uma empresa familiar, contextualizada com fatos e imagens autorizadas.
+- Visão sobre legado, autonomia, governança, liderança e continuidade.
 - Conteúdos, artigos, entrevistas, palestras e participações, sempre com evidências e autorização.
+
+### Texto-base institucional em primeira pessoa
+
+“Sou Jéssica Couto, diretora e há mais de 12 anos atuo no Grupo Trino, uma empresa de soluções integradas para logística, terceirização de serviços de Facilities e serviços por produção.
+
+Atualmente, lidero a gestão financeira e administrativa, com responsabilidade por áreas como contabilidade, compras, vendas, operação de Facilities e comercial. Minha trajetória reúne experiência prática em gestão empresarial, otimização de processos, redução de custos, rentabilidade, expansão de negócios, negociação de contratos e implementação de soluções.
+
+Também conheço de perto os desafios de fazer parte de uma empresa familiar e da geração que participa da continuidade de uma história construída pela família. É dessa combinação entre experiência executiva e vivência que nasce meu interesse em contribuir com outras famílias empresárias.
+
+Com a JC | Sucessão de Sucesso, quero compartilhar aprendizados, provocar conversas necessárias e ajudar fundadores e sucessores a enxergar com mais clareza os desafios de preparar o futuro de suas empresas.”
+
+Este texto é uma versão editorial inicial baseada nas informações fornecidas por Jéssica. Ela deverá revisar e aprovar o texto final, especialmente a descrição da vivência familiar e a forma como deseja apresentar sua atuação.
 
 A autoridade deve ser baseada em fatos comprováveis. Não inventar certificações, títulos, clientes de consultoria, resultados ou experiência profissional.
 
@@ -756,4 +790,4 @@ Não trate perguntas, pontuações, faixas ou recomendações propostas neste do
 - GO NEXT. Referência pública de governança e sucessão familiar. https://gonext.com.br/
 - BRASIL. Lei nº 13.709, de 14 de agosto de 2018. Lei Geral de Proteção de Dados Pessoais. https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm
 
-**Documento mestre — JC | Sucessão de Sucesso — versão 0.2.**
+**Documento mestre — JC | Sucessão de Sucesso — versão 0.3.**
