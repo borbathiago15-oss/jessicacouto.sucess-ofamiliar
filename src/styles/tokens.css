@@ -1,0 +1,16 @@
+/*
+ * Tokens de marca JC | Sucessão de Sucesso — PROVISÓRIOS.
+ * Paleta de referência do Documento Mestre §3.2, pendente de validação final.
+ * Tipografia definitiva pendente de aprovação: por ora, pilhas de fontes do sistema.
+ */
+@theme {
+  --color-burgundy: #4b0f1f;
+  --color-gold: #c9a86a;
+  --color-cream: #f5ede3;
+  --color-charcoal: #2e2e2e;
+  --color-deep-green: #17372f; /* complementar — validar com Jéssica */
+  --color-white: #ffffff;
+
+  --font-display: ui-serif, Georgia, "Times New Roman", serif;
+  --font-sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, Arial, sans-serif;
+}
