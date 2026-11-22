@@ -1,0 +1,50 @@
+# dependencies
+/node_modules
+
+# next.js / build
+/.next/
+/out/
+/build
+*.tsbuildinfo
+next-env.d.ts
+
+# testing
+/coverage
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# environment — NUNCA versionar valores reais
+.env
+.env.*
+!.env.example
+
+# supabase local state
+/supabase/.temp/
+/supabase/.branches/
+/supabase/.env
+
+# secrets / keys / private material
+*.pem
+*.key
+*.p12
+*.pfx
+service-account*.json
+credentials*.json
+
+# private documents — nunca no repositório público
+*.pdf
+/private/
+/exports/
+
+# vercel
+.vercel
+
+# os / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+npm-debug.log*
