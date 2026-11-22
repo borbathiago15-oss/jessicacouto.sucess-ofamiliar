@@ -1,0 +1,22 @@
+# Gitleaks — 2ª camada de proteção de segredos (executado no CI em todo PR/push).
+title = "JC | Sucessão de Sucesso"
+
+[extend]
+useDefault = true
+
+# Regra adicional: JWTs (formato das chaves Supabase anon/service_role).
+[[rules]]
+id = "supabase-jwt"
+description = "Possível chave Supabase (JWT)"
+regex = '''eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}'''
+keywords = ["eyj"]
+
+[[rules]]
+id = "supabase-secret-key"
+description = "Chave secreta Supabase (novo formato)"
+regex = '''sb_secret_[A-Za-z0-9_-]{20,}'''
+keywords = ["sb_secret_"]
+
+[allowlist]
+description = "Arquivos sem valores reais"
+paths = ['''package-lock\.json''']
