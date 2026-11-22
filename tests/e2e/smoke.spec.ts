@@ -7,9 +7,15 @@ test("página inicial responde e não é indexável", async ({ page }) => {
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
 });
 
-test("/admin responde com placeholder restrito e noindex", async ({ page }) => {
+test("/admin sem sessão redireciona ao login e é noindex", async ({ page }) => {
   const response = await page.goto("/admin");
   expect(response?.status()).toBe(200);
-  await expect(page.getByRole("heading", { name: "Ambiente administrativo" })).toBeVisible();
+  await expect(page).toHaveURL(/\/admin\/login$/);
+  await expect(page.getByRole("heading", { name: "Entrar" })).toBeVisible();
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+});
+
+test("rotas internas do /admin também exigem login", async ({ page }) => {
+  await page.goto("/admin/mfa/cadastrar");
+  await expect(page).toHaveURL(/\/admin\/login$/);
 });
