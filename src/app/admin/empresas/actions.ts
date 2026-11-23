@@ -7,6 +7,7 @@ import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { arquivoOfflineSchema, periodoSchema, periodosDoArquivo } from "@/modules/raiox/calculo";
 import { CATEGORIAS_COFRE, LIMITE_COFRE, TIPOS_COFRE } from "@/modules/cofre/tipos";
+import { novoPedidoSchema } from "@/modules/cofre/pedidos";
 
 export type Aviso = { ok: boolean; mensagem: string } | null;
 
@@ -251,4 +252,59 @@ export async function excluirDocumento(
 
   revalidatePath(`/admin/empresas/${empresaId}/cofre`);
   return { ok: true, mensagem: "Documento excluído definitivamente. O comprovante está na lista." };
+}
+
+// ---------------------------------------------------------------------------
+// Pedidos de documentos ao cliente
+// ---------------------------------------------------------------------------
+export async function criarPedido(empresaId: string, _: Aviso, form: FormData): Promise<Aviso> {
+  if (!uuid.safeParse(empresaId).success) return { ok: false, mensagem: "Empresa inválida." };
+  const dados = novoPedidoSchema.safeParse({
+    title: form.get("title"),
+    category: form.get("category"),
+    note: form.get("note") ?? "",
+    due_on: form.get("due_on") ?? "",
+    assignee: form.get("assignee") ?? "",
+  });
+  if (!dados.success) return { ok: false, mensagem: dados.error.issues[0]!.message };
+  const supabase = await cliente();
+  const { error } = await supabase.rpc("doc_request_create", {
+    p_org: empresaId,
+    p_title: dados.data.title,
+    p_category: dados.data.category,
+    p_note: dados.data.note,
+    p_due_on: dados.data.due_on,
+    p_assignee: dados.data.assignee,
+  });
+  if (error)
+    return { ok: false, mensagem: mensagemDoBanco(error, "Não foi possível criar o pedido.") };
+  revalidatePath(`/admin/empresas/${empresaId}/cofre`);
+  return { ok: true, mensagem: "Pedido criado. A família já vê no portal." };
+}
+
+export async function revisarPedido(
+  empresaId: string,
+  pedidoId: string,
+  status: "accepted" | "needs_changes" | "cancelled",
+  nota: string,
+): Promise<Aviso> {
+  if (!uuid.safeParse(empresaId).success || !uuid.safeParse(pedidoId).success)
+    return { ok: false, mensagem: "Inválido." };
+  if (!["accepted", "needs_changes", "cancelled"].includes(status))
+    return { ok: false, mensagem: "Situação inválida." };
+  const supabase = await cliente();
+  const { error } = await supabase.rpc("doc_request_review", {
+    p_id: pedidoId,
+    p_status: status,
+    p_note: nota.slice(0, 500),
+  });
+  if (error)
+    return { ok: false, mensagem: mensagemDoBanco(error, "Não foi possível atualizar o pedido.") };
+  revalidatePath(`/admin/empresas/${empresaId}/cofre`);
+  const texto = {
+    accepted: "Pedido marcado como recebido.",
+    needs_changes: "Ajuste pedido. A família vê o seu comentário no portal.",
+    cancelled: "Pedido cancelado.",
+  }[status];
+  return { ok: true, mensagem: texto };
 }
