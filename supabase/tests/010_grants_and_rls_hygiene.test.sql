@@ -61,7 +61,7 @@ select is_empty(
 select is_empty(
   $$ select p.proname from pg_proc p join pg_namespace n on n.oid = p.pronamespace
      where n.nspname = 'public' and has_function_privilege('anon', p.oid, 'execute')
-       and p.proname not in ('cms_get_published_page', 'registrar_solicitacao_titular') $$,
+       and p.proname not in ('cms_get_published_page', 'cms_list_published_articles', 'registrar_solicitacao_titular') $$,
   'anon executa apenas: leitura de conteúdo publicado e registro de pedido do titular'
 );
 

@@ -6,6 +6,7 @@ const ROTAS_PUBLICAS = [
   "/conheca-jessica",
   "/metodologia",
   "/diagnosticos",
+  "/servicos",
   "/guias",
   "/contato",
   "/privacidade",
@@ -13,7 +14,13 @@ const ROTAS_PUBLICAS = [
 ];
 
 // Acessibilidade automática (WCAG 2.1 A e AA), com e sem o banner de cookies.
-for (const rota of [...ROTAS_PUBLICAS, "/design", "/admin/login", "/admin/recuperar-senha"]) {
+for (const rota of [
+  ...ROTAS_PUBLICAS,
+  "/artigos",
+  "/design",
+  "/admin/login",
+  "/admin/recuperar-senha",
+]) {
   test(`sem violações de acessibilidade em ${rota}`, async ({ page }) => {
     await page.goto(rota);
     const { violations } = await new AxeBuilder({ page })
@@ -26,7 +33,7 @@ for (const rota of [...ROTAS_PUBLICAS, "/design", "/admin/login", "/admin/recupe
 test("sem Supabase, as páginas públicas mostram aviso neutro, nunca texto inventado", async ({
   page,
 }) => {
-  for (const rota of ROTAS_PUBLICAS.slice(0, 7)) {
+  for (const rota of ROTAS_PUBLICAS.slice(0, 8)) {
     await page.goto(rota);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Conteúdo em preparação");
   }

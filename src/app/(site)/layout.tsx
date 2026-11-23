@@ -5,7 +5,17 @@ import { Monograma } from "@/components/ui";
 import { PAGINAS_SITE } from "@/modules/cms/schema";
 
 export default function SiteLayout({ children }: { children: ReactNode }) {
-  const menu = PAGINAS_SITE.filter((p) => p.menu);
+  // Artigos entram no menu antes de "Vamos conversar".
+  const paginas = PAGINAS_SITE.filter((p) => p.menu).map((p) => ({
+    chave: p.slug,
+    rota: p.rota,
+    nome: p.nome,
+  }));
+  const menu = [
+    ...paginas.filter((p) => p.chave !== "contato"),
+    { chave: "artigos", rota: "/artigos", nome: "Artigos" },
+    ...paginas.filter((p) => p.chave === "contato"),
+  ];
   return (
     <>
       <a
@@ -26,7 +36,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
           <nav aria-label="Principal" className="-mx-2 overflow-x-auto">
             <ul className="m-0 flex list-none gap-1 p-0">
               {menu.map((p) => (
-                <li key={p.slug}>
+                <li key={p.chave}>
                   <Link
                     href={p.rota}
                     className="text-cacau hover:bg-blush hover:text-terra-texto block rounded-full px-3 py-1.5 text-sm whitespace-nowrap no-underline"
