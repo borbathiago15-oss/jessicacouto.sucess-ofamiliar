@@ -168,7 +168,14 @@ export const registroSchema = z.object({
   occurred_on: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Informe a data."),
 });
 
-export type ItemLinha = { quando: string; tipo: string; texto: string; id: string };
+export type ItemLinha = {
+  quando: string;
+  tipo: string;
+  texto: string;
+  id: string;
+  /** Registro manual que pode ser compartilhado com o cliente. */
+  registro?: { id: string; compartilhado: boolean };
+};
 
 /** Junta registros manuais e eventos automáticos, do mais recente ao mais antigo. */
 export function montarLinhaDoTempo(...fontes: ItemLinha[][]): ItemLinha[] {

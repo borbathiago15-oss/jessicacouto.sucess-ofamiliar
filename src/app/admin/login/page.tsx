@@ -26,7 +26,7 @@ export default async function LoginPage({
   const configured = Boolean(getSupabasePublicConfig());
 
   return (
-    <AuthCard title="Entrar" description="Acesso restrito à equipe autorizada.">
+    <AuthCard title="Entrar" description="Acesso da equipe JC e de clientes convidados.">
       {!configured ? (
         <FormMessage tone="error">{errors.configuracao}</FormMessage>
       ) : (

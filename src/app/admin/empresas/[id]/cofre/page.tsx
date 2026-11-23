@@ -3,6 +3,7 @@ import { Cartao, Chamada, Selo, Titulo } from "@/components/ui";
 import { ROTULO_CATEGORIA, tamanhoLegivel, type CategoriaCofre } from "@/modules/cofre/tipos";
 import { carregarEmpresa } from "../carregar";
 import { EnviarDocumento, ExcluirDocumento } from "./cofre";
+import { Compartilhar } from "../portal/controles";
 
 export const metadata = { title: "Cofre de documentos" };
 
@@ -25,7 +26,7 @@ export default async function CofrePage({ params }: { params: Promise<{ id: stri
   const { data } = await supabase
     .from("vault_documents")
     .select(
-      "id, file_name, size_bytes, category, description, status, uploaded_at, deleted_at, deletion_reason, purged_at, vault_access_log(at)",
+      "id, file_name, size_bytes, category, description, status, shared_with_client, uploaded_at, deleted_at, deletion_reason, purged_at, vault_access_log(at)",
     )
     .eq("organization_id", id)
     .in("status", ["active", "deleted"])
@@ -89,6 +90,15 @@ export default async function CofrePage({ params }: { params: Promise<{ id: stri
                       >
                         Baixar<span className="sr-only"> {d.file_name}</span>
                       </a>
+                    ) : null}
+                    {acesso.pode("portal.manage") ? (
+                      <Compartilhar
+                        empresaId={id}
+                        tipo="documento"
+                        id={d.id}
+                        inicial={d.shared_with_client}
+                        rotulo={d.file_name}
+                      />
                     ) : null}
                     {acesso.pode("vault.delete") ? (
                       <ExcluirDocumento empresaId={id} documentoId={d.id} nome={d.file_name} />
