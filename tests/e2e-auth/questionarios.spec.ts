@@ -54,7 +54,9 @@ test.afterAll(async () => {
 
 test("cria questionário e abre a versão 1 em rascunho", async () => {
   await page.goto("/admin/questionarios");
-  await page.getByLabel("Instrumento").selectOption({ label: "Instrumento de exemplo" });
+  await page
+    .getByLabel("Instrumento", { exact: true })
+    .selectOption({ label: "Instrumento de exemplo" });
   await page.getByLabel("Título do questionário").fill(titulo);
   await page.getByRole("button", { name: "Criar questionário" }).click();
   await expect(page).toHaveURL(/\/admin\/questionarios\/[0-9a-f-]{36}\/v\/1$/);
