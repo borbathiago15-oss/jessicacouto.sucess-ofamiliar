@@ -4,6 +4,7 @@ import { calcular, valoresSchema } from "@/modules/raiox/calculo";
 import {
   FamiliaECaixa,
   GraficoHistorico,
+  IndicadoresExplicados,
   Kpis,
   PontosDeAtencao,
   TabelaIndicadores,
@@ -68,7 +69,18 @@ export default async function RelatorioPage({ params }: { params: Promise<{ id: 
           <section className={secao}>
             <h2 className={h2}>Resumo · {ultimo.rotulo}</h2>
             <Kpis r={ultimo.r} />
+          </section>
+          <section className={secao}>
+            <h2 className={h2}>Quanto da geração de caixa vai para a família</h2>
             <FamiliaECaixa r={ultimo.r} />
+          </section>
+          <section className="grid gap-3">
+            <h2 className={h2}>Os indicadores, um a um</h2>
+            <p className="text-mudo m-0 text-sm">
+              Cada número vem com o que ele mede, a mesma informação em reais e onde a empresa está
+              na régua.
+            </p>
+            <IndicadoresExplicados r={ultimo.r} />
           </section>
           <section className={secao}>
             <h2 className={h2}>Pontos de atenção</h2>
@@ -77,11 +89,18 @@ export default async function RelatorioPage({ params }: { params: Promise<{ id: 
           {periodos.length > 1 ? (
             <section className={secao}>
               <h2 className={h2}>Evolução</h2>
+              <p className="text-mudo m-0 text-sm">
+                As três barras de cada período lado a lado: quanto entrou, quanto a operação gerou e
+                quanto saiu para a família.
+              </p>
               <GraficoHistorico periodos={periodos} />
             </section>
           ) : null}
           <section className="grid gap-3">
-            <h2 className={h2}>Indicadores</h2>
+            <h2 className={h2}>Tabela completa</h2>
+            <p className="text-mudo m-0 text-sm">
+              Todos os números do Raio-X, período a período, para consulta.
+            </p>
             <TabelaIndicadores periodos={periodos} />
           </section>
           {periodos

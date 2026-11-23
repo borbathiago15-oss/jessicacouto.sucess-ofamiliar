@@ -28,6 +28,7 @@ insert into expected (role_key, perm) values
   ('relationship', 'activities.read'), ('relationship', 'activities.create'), ('relationship', 'activities.update'),
   ('relationship', 'internal_notes.read'), ('relationship', 'internal_notes.create'),
   ('relationship', 'diagnostics.read'), ('relationship', 'reports.read'),
+  ('relationship', 'proposals.read'), ('relationship', 'proposals.manage'),
 
   ('methodology_analyst', 'questionnaires.read'), ('methodology_analyst', 'questionnaires.create'),
   ('methodology_analyst', 'questionnaires.update'),

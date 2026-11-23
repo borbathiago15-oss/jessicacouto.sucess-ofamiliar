@@ -18,6 +18,7 @@ for (const rota of [
   ...ROTAS_PUBLICAS,
   "/artigos",
   "/design",
+  "/design/relatorio",
   "/admin/login",
   "/admin/recuperar-senha",
 ]) {

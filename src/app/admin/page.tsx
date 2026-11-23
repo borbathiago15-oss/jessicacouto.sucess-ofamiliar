@@ -97,6 +97,12 @@ export default async function AdminHomePage({
         <Link href="/admin/agenda" className="text-terra-texto underline">
           Agenda
         </Link>
+        <Link href="/admin/propostas" className="text-terra-texto underline">
+          Propostas comerciais
+        </Link>
+        <Link href="/admin/relatorios/configuracao" className="text-terra-texto underline">
+          Configuração dos relatórios
+        </Link>
         <Link href="/admin/questionarios" className="text-terra-texto underline">
           Questionários
         </Link>
