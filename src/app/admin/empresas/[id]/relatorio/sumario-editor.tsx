@@ -6,7 +6,11 @@ import { limparSumario, salvarSumario, type Aviso } from "./actions";
 
 const completar = (l: string[]) => [...l, ...Array(5).fill("")].slice(0, 5);
 
-/** Revisão das mensagens-chave e decisões antes de enviar o relatório (não aparece na impressão). */
+/**
+ * O editor guarda o próprio estado (sem key ligada aos dados do servidor): assim a
+ * confirmação não some quando a página se atualiza depois de salvar.
+ *
+ * Revisão das mensagens-chave e decisões antes de enviar o relatório (não aparece na impressão). */
 export function SumarioEditor({
   empresaId,
   mensagens,
@@ -94,7 +98,16 @@ export function SumarioEditor({
                 type="button"
                 variante="secundario"
                 disabled={pendente}
-                onClick={() => iniciar(async () => setAviso(await limparSumario(empresaId)))}
+                onClick={() =>
+                  iniciar(async () => {
+                    const r = await limparSumario(empresaId);
+                    setAviso(r);
+                    if (r?.ok) {
+                      setM(completar(sugestoes));
+                      setD(completar([]));
+                    }
+                  })
+                }
               >
                 Voltar ao automático
               </Botao>

@@ -131,7 +131,6 @@ export default async function RelatorioExecutivoPage({
         ) : null}
         {acesso.pode("analyses.manage") ? (
           <SumarioEditor
-            key={mensagens.join("|") + decisoes.join("|")}
             empresaId={id}
             mensagens={mensagens}
             decisoes={decisoes}
