@@ -91,6 +91,12 @@ export default async function AdminHomePage({
         <Link href="/admin/empresas" className="text-terra-texto underline">
           Empresas
         </Link>
+        <Link href="/admin/funil" className="text-terra-texto underline">
+          Funil comercial
+        </Link>
+        <Link href="/admin/agenda" className="text-terra-texto underline">
+          Agenda
+        </Link>
         <Link href="/admin/questionarios" className="text-terra-texto underline">
           Questionários
         </Link>
