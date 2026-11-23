@@ -1,6 +1,6 @@
 "use server";
 
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -45,17 +45,15 @@ export async function criarEmpresa(_: Aviso, form: FormData): Promise<Aviso> {
   if (!dados.success) return { ok: false, mensagem: dados.error.issues[0]!.message };
   const supabase = await cliente();
   const { data: usuario } = await supabase.auth.getUser();
-  const { data, error } = await supabase
+  // Id gerado aqui: pedir a linha de volta no mesmo INSERT esbarra na política de
+  // leitura, que ainda não enxerga a empresa recém-criada.
+  const id = randomUUID();
+  const { error } = await supabase
     .from("organizations")
-    .insert({ ...dados.data, owner_id: usuario.user?.id })
-    .select("id")
-    .single();
-  if (error || !data)
-    return {
-      ok: false,
-      mensagem: mensagemDoBanco(error ?? {}, "Não foi possível criar a empresa."),
-    };
-  redirect(`/admin/empresas/${data.id}`);
+    .insert({ id, ...dados.data, owner_id: usuario.user?.id });
+  if (error)
+    return { ok: false, mensagem: mensagemDoBanco(error, "Não foi possível criar a empresa.") };
+  redirect(`/admin/empresas/${id}`);
 }
 
 // ---------------------------------------------------------------------------

@@ -67,14 +67,15 @@ security invoker
 set search_path = ''
 as $$
 declare
-  v_id uuid;
+  -- Id gerado antes: um INSERT ... RETURNING exigiria ler a linha no mesmo comando,
+  -- e a política de leitura (função STABLE) ainda não a enxerga.
+  v_id uuid := gen_random_uuid();
 begin
-  insert into public.participants (full_name, email, phone, declared_role)
-  values (btrim(p_person ->> 'full_name'),
+  insert into public.participants (id, full_name, email, phone, declared_role)
+  values (v_id, btrim(p_person ->> 'full_name'),
           nullif(lower(btrim(coalesce(p_person ->> 'email', ''))), ''),
           nullif(btrim(coalesce(p_person ->> 'phone', '')), ''),
-          coalesce(p_person ->> 'declared_role', 'other'))
-  returning id into v_id;
+          coalesce(p_person ->> 'declared_role', 'other'));
 
   insert into public.organization_participants
     (organization_id, participant_id, role_in_org, is_family, kinship, generation, ownership_pct,

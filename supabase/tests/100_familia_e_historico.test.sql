@@ -22,6 +22,10 @@ insert into public.organizations (id, trade_name, owner_id) values
 
 -- Cria pessoa e vínculo de uma vez.
 select tests.authenticate_as((select id from u where k = 'relA'));
+select lives_ok($$ insert into public.organizations (id, trade_name) values (gen_random_uuid(), 'Empresa Fictícia C') $$,
+                'relacionamento cria empresa (id definido por quem cria)');
+select is((select count(*)::int from public.organizations where trade_name = 'Empresa Fictícia C'), 1,
+          'e passa a enxergá-la como dona');
 select lives_ok(format($$ insert into r values ('fundador', public.org_add_person(%L,
     '{"full_name": "Fundador Fictício", "email": "Fundador@Exemplo.Test", "declared_role": "founder"}',
     '{"is_family": true, "generation": 1, "ownership_pct": 60, "works_in_company": true, "area": "Diretoria"}')) $$,
