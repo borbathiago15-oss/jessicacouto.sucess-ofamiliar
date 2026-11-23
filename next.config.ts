@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   // Envio de imagens do CMS (até 5 MB) por Server Action.
-  experimental: { serverActions: { bodySizeLimit: "6mb" } },
+  experimental: { serverActions: { bodySizeLimit: "27mb" } },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },

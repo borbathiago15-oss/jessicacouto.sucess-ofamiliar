@@ -39,6 +39,8 @@ Fonte da verdade: tabelas `public.roles`, `public.permissions` e `public.role_pe
 | questionnaires.read / create / update                |  ✅   |       —        |          ✅           |         —         |
 | questionnaires.delete (rascunhos)                    |  ✅   |       —        |           —           |         —         |
 | questionnaires.publish (aprovar piloto e publicação) |  ✅   |       —        |           —           |         —         |
+| analyses.read / manage (Raio-X Financeiro)           |  ✅   |       —        |           —           |         —         |
+| vault.read / upload / download / delete (cofre)      |  ✅   |       —        |           —           |         —         |
 | diagnostics.read (sessões e resultados da carteira)  |  ✅   |       ✅       |           —           |         —         |
 | diagnostics.read_answers (respostas individuais)     |  ✅   |       —        |           —           |         —         |
 | diagnostics.manage                                   |  ✅   |       —        |           —           |         —         |
