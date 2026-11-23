@@ -44,17 +44,21 @@ export function EditorRaioX({
   empresaId,
   iniciais,
   podeEditar,
+  aviso,
+  setAviso,
 }: {
   empresaId: string;
   iniciais: PeriodoTela[];
   podeEditar: boolean;
+  /** Fica fora do editor: a mensagem sobrevive quando o editor é recriado com dados novos. */
+  aviso: Aviso;
+  setAviso: (a: Aviso) => void;
 }) {
   const router = useRouter();
   const [periodos, setPeriodos] = useState<PeriodoTela[]>(iniciais);
   const [atual, setAtual] = useState(Math.max(0, iniciais.length - 1));
   const [textos, setTextos] = useState(() => iniciais.map((p) => textoInicial(p.values)));
   const [alterado, setAlterado] = useState(false);
-  const [aviso, setAviso] = useState<Aviso>(null);
   const [novoRotulo, setNovoRotulo] = useState("");
   const [pendente, iniciar] = useTransition();
 
