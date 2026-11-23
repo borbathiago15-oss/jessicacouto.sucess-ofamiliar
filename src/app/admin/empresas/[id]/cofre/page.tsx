@@ -4,6 +4,12 @@ import { ROTULO_CATEGORIA, tamanhoLegivel, type CategoriaCofre } from "@/modules
 import { carregarEmpresa } from "../carregar";
 import { EnviarDocumento, ExcluirDocumento } from "./cofre";
 import { Compartilhar } from "../portal/controles";
+import { NovoPedido, RevisarPedido } from "./pedidos";
+import {
+  ROTULO_STATUS_PEDIDO,
+  TOM_STATUS_PEDIDO,
+  type StatusPedido,
+} from "@/modules/cofre/pedidos";
 
 export const metadata = { title: "Cofre de documentos" };
 
@@ -26,11 +32,30 @@ export default async function CofrePage({ params }: { params: Promise<{ id: stri
   const { data } = await supabase
     .from("vault_documents")
     .select(
-      "id, file_name, size_bytes, category, description, status, shared_with_client, uploaded_at, deleted_at, deletion_reason, purged_at, vault_access_log(at)",
+      "id, file_name, size_bytes, category, description, status, shared_with_client, uploaded_at, deleted_at, deletion_reason, purged_at, request_id, uploaded_via_portal, vault_access_log(at)",
     )
     .eq("organization_id", id)
     .in("status", ["active", "deleted"])
     .order("uploaded_at", { ascending: false });
+
+  const { data: pedidosDados } = await supabase
+    .from("document_requests")
+    .select("id, title, category, note, due_on, status, review_note, assignee_user_id, created_at")
+    .eq("organization_id", id)
+    .neq("status", "cancelled")
+    .order("created_at", { ascending: false });
+  const pedidos = pedidosDados ?? [];
+  const pessoas = acesso.pode("portal.manage")
+    ? (
+        ((await supabase.rpc("portal_list_members", { p_org: id })).data ?? []) as {
+          user_id: string;
+          email: string;
+          revoked_at: string | null;
+        }[]
+      ).filter((p) => !p.revoked_at)
+    : [];
+  const emailDe = (u: string | null) => pessoas.find((p) => p.user_id === u)?.email ?? null;
+  const tituloPedido = (pid: string | null) => pedidos.find((q) => q.id === pid)?.title ?? null;
 
   const ativos = (data ?? []).filter((d) => d.status === "active");
   const excluidos = (data ?? []).filter((d) => d.status === "deleted");
@@ -49,6 +74,70 @@ export default async function CofrePage({ params }: { params: Promise<{ id: stri
           arquivo de verdade, deixando só o comprovante.
         </p>
       </header>
+
+      <section aria-labelledby="pedidos" className="grid gap-3">
+        <h2 id="pedidos" className="font-display text-xl">
+          Documentos pedidos à família
+        </h2>
+        <p className="text-mudo m-0 max-w-[64ch] text-sm">
+          A família vê estes pedidos no portal e envia os arquivos direto aqui no cofre. Cada
+          arquivo enviado só é visto por quem enviou e pela equipe JC.
+        </p>
+        {pedidos.length === 0 ? (
+          <p className="text-mudo">Nenhum pedido em aberto.</p>
+        ) : (
+          <ul className="border-linho m-0 grid list-none border-t p-0" data-testid="pedidos-lista">
+            {pedidos.map((q) => {
+              const arquivos = ativos.filter((d) => d.request_id === q.id);
+              return (
+                <li key={q.id} className="border-linho grid gap-2 border-b py-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="grid">
+                      <span className="font-semibold">{q.title}</span>
+                      <span className="text-mudo text-[13px]">
+                        {ROTULO_CATEGORIA[q.category as CategoriaCofre]}
+                        {q.due_on ? ` · prazo ${q.due_on.split("-").reverse().join("/")}` : ""}
+                        {" · "}
+                        {q.assignee_user_id
+                          ? `para ${emailDe(q.assignee_user_id) ?? "uma pessoa da família"}`
+                          : "para a família"}
+                        {` · ${arquivos.length} arquivo(s)`}
+                      </span>
+                      {q.note ? <span className="text-mudo text-[13px]">{q.note}</span> : null}
+                      {q.status === "needs_changes" && q.review_note ? (
+                        <span className="text-[13px]">Ajuste pedido: {q.review_note}</span>
+                      ) : null}
+                    </div>
+                    <Selo tom={TOM_STATUS_PEDIDO[q.status as StatusPedido]}>
+                      {ROTULO_STATUS_PEDIDO[q.status as StatusPedido]}
+                    </Selo>
+                  </div>
+                  {acesso.pode("vault.upload") ? (
+                    <RevisarPedido
+                      empresaId={id}
+                      pedidoId={q.id}
+                      titulo={q.title}
+                      temArquivo={arquivos.length > 0 && q.status !== "accepted"}
+                    />
+                  ) : null}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+        {acesso.pode("vault.upload") ? (
+          <Cartao className="grid gap-4">
+            <h3 className="font-display text-lg">Pedir um documento</h3>
+            <NovoPedido empresaId={id} pessoas={pessoas} />
+            {pessoas.length === 0 ? (
+              <p className="text-mudo m-0 text-sm">
+                Ninguém da família tem acesso ao portal ainda. Dê acesso na página do portal para
+                que vejam os pedidos.
+              </p>
+            ) : null}
+          </Cartao>
+        ) : null}
+      </section>
 
       <section aria-labelledby="guardados" className="grid gap-3">
         <h2 id="guardados" className="font-display text-xl">
@@ -74,6 +163,14 @@ export default async function CofrePage({ params }: { params: Promise<{ id: stri
                         {tamanhoLegivel(d.size_bytes)} · guardado em {dataHora(d.uploaded_at)}
                         {d.description ? ` · ${d.description}` : ""}
                       </span>
+                      {d.uploaded_via_portal ? (
+                        <span className="text-terra-texto text-[13px] font-semibold">
+                          Enviado pela família no portal
+                          {tituloPedido(d.request_id)
+                            ? ` · pedido: ${tituloPedido(d.request_id)}`
+                            : ""}
+                        </span>
+                      ) : null}
                       <span className="text-mudo text-[13px]">
                         {acessos.length
                           ? `Aberto ${acessos.length} vez(es); última em ${dataHora(ultimo)}`

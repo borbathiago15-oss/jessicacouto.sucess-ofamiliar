@@ -22,5 +22,6 @@
 | [0018](0018-relatorio-executivo.md)                 | Relatório Executivo JC                                          | Aceita |
 | [0019](0019-artigos-e-servicos-no-site.md)          | Artigos e página de serviços no site                            | Aceita |
 | [0020](0020-portal-do-cliente.md)                   | Portal do cliente com isolamento no banco                       | Aceita |
+| [0021](0021-pedidos-de-documentos-no-cofre.md)      | Pedidos de documentos e envio pelo cliente no cofre             | Aceita |
 
 Modelo: Contexto → Decisão → Consequências.
