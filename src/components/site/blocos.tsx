@@ -148,6 +148,39 @@ function BlocoUnico({
           </div>
         </section>
       );
+    case "servicos":
+      return (
+        <section className="grid gap-5">
+          <Titulo nivel={2}>{b.titulo}</Titulo>
+          {b.texto ? <p className="text-mudo max-w-[62ch]">{b.texto}</p> : null}
+          <ul className="m-0 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3">
+            {b.itens.map((it, i) => (
+              <li
+                key={i}
+                className="border-linho bg-papel grid content-start gap-3 rounded-[var(--radius-cartao)] border p-5"
+              >
+                <h3 className="font-display text-[1.45rem] leading-tight font-semibold">
+                  {it.nome}
+                </h3>
+                <p className="m-0 text-[15px]">
+                  <b className="text-terra-texto block text-[12.5px]">Para quem</b>
+                  {it.paraQuem}
+                </p>
+                <p className="m-0 text-[15px]">
+                  <b className="text-terra-texto block text-[12.5px]">O que entrega</b>
+                  {it.entrega}
+                </p>
+                {it.formato ? <p className="text-mudo m-0 text-[13px]">{it.formato}</p> : null}
+                {it.href ? (
+                  <Link href={it.href} className="text-terra-texto font-semibold underline">
+                    Saiba mais <span className="sr-only">: {it.nome}</span>
+                  </Link>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </section>
+      );
     case "destaque":
       return (
         <Cartao

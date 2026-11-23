@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useTransition, type ReactNode } from "react";
-import { Blocos } from "@/components/site/blocos";
+import { Blocos, urlMidia } from "@/components/site/blocos";
+import { ROTULO_TEMA, TEMAS, type ArtigoMeta, type Tema } from "@/modules/cms/artigos";
 import { Botao, Cartao, Selo, campoClasses } from "@/components/ui";
 import {
   ROTULO_BLOCO,
@@ -27,6 +28,20 @@ type Props = {
   versaoInicial: number | null;
   podeEditar: boolean;
   podePublicar: boolean;
+  /** Ações do CMS; por padrão, as das páginas do site. Artigos passam as próprias. */
+  acoes?: AcoesCms;
+  /** Quando presente, o editor também edita resumo, tema e capa do artigo. */
+  artigo?: ArtigoMeta;
+};
+
+export type AcoesCms = {
+  salvar: (slug: string, json: string) => Promise<Resultado>;
+  revisar: (slug: string) => Promise<Resultado>;
+  publicar: (slug: string) => Promise<Resultado>;
+  enviarImagem: (
+    slug: string,
+    fd: FormData,
+  ) => Promise<{ ok: true; path: string } | { ok: false; mensagem: string }>;
 };
 
 const rotuloCampo = "grid gap-1 text-[13px] font-semibold";
@@ -79,8 +94,15 @@ export function Editor({
   versaoInicial,
   podeEditar,
   podePublicar,
+  acoes = { salvar: salvarRascunho, revisar: enviarParaRevisao, publicar, enviarImagem },
+  artigo,
 }: Props) {
   const [blocos, setBlocos] = useState<Bloco[]>(inicial.blocos);
+  const [meta, setMeta] = useState<ArtigoMeta | undefined>(artigo);
+  const mudarMeta = (m: Partial<ArtigoMeta>) => {
+    setMeta((x) => (x ? { ...x, ...m } : x));
+    setAlterado(true);
+  };
   const [status, setStatus] = useState(statusInicial);
   const [versao, setVersao] = useState(versaoInicial);
   const [alterado, setAlterado] = useState(false);
@@ -116,15 +138,19 @@ export function Editor({
   }
 
   const salvar = () =>
-    iniciar(async () => aplicar(await salvarRascunho(slug, JSON.stringify({ blocos }))));
-  const revisar = () => iniciar(async () => aplicar(await enviarParaRevisao(slug)));
-  const publicarAgora = () => iniciar(async () => aplicar(await publicar(slug)));
+    iniciar(async () =>
+      aplicar(
+        await acoes.salvar(slug, JSON.stringify(meta ? { blocos, artigo: meta } : { blocos })),
+      ),
+    );
+  const revisar = () => iniciar(async () => aplicar(await acoes.revisar(slug)));
+  const publicarAgora = () => iniciar(async () => aplicar(await acoes.publicar(slug)));
 
   async function subirImagem(arquivo: File | undefined, aoEnviar: (path: string) => void) {
     if (!arquivo) return;
     const fd = new FormData();
     fd.set("arquivo", arquivo);
-    const r = await enviarImagem(slug, fd);
+    const r = await acoes.enviarImagem(slug, fd);
     if (r.ok) aoEnviar(r.path);
     else setAviso({ ok: false, texto: r.mensagem });
   }
@@ -200,6 +226,83 @@ export function Editor({
             <p className="text-mudo text-sm">Você pode ver, mas não editar este conteúdo.</p>
           ) : null}
         </Cartao>
+
+        {meta ? (
+          <Cartao className="grid gap-3" aria-label="Dados do artigo">
+            <b className="font-display text-lg">Dados do artigo</b>
+            <label htmlFor="art-resumo" className={rotuloCampo}>
+              Resumo (aparece na lista de artigos e no Google; até 300 caracteres)
+              <textarea
+                id="art-resumo"
+                rows={3}
+                maxLength={300}
+                className={campoClasses}
+                value={meta.resumo}
+                onChange={(e) => mudarMeta({ resumo: e.target.value })}
+              />
+            </label>
+            <label htmlFor="art-tema" className={rotuloCampo}>
+              Tema
+              <select
+                id="art-tema"
+                className={campoClasses}
+                value={meta.tema}
+                onChange={(e) => mudarMeta({ tema: e.target.value as Tema })}
+              >
+                {TEMAS.map((t) => (
+                  <option key={t} value={t}>
+                    {ROTULO_TEMA[t]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label htmlFor="art-capa" className={rotuloCampo}>
+              Imagem de capa (opcional; JPG, PNG ou WebP até 5 MB)
+              <input
+                id="art-capa"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="text-sm font-normal"
+                onChange={(e) =>
+                  subirImagem(e.target.files?.[0], (path) =>
+                    mudarMeta({
+                      capa: {
+                        path,
+                        alt: (meta.capa?.alt ?? meta.resumo.slice(0, 200)) || "Capa do artigo",
+                      },
+                    }),
+                  )
+                }
+              />
+            </label>
+            {meta.capa ? (
+              <div className="grid gap-2">
+                <label htmlFor="art-capa-alt" className={rotuloCampo}>
+                  Descrição da imagem (para leitores de tela)
+                  <input
+                    id="art-capa-alt"
+                    maxLength={200}
+                    className={campoClasses}
+                    value={meta.capa.alt}
+                    onChange={(e) =>
+                      mudarMeta({ capa: { path: meta.capa!.path, alt: e.target.value } })
+                    }
+                  />
+                </label>
+                <div>
+                  <Botao
+                    type="button"
+                    tamanho="pequeno"
+                    variante="secundario"
+                    onClick={() => mudarMeta({ capa: undefined })}
+                  >
+                    Remover capa
+                  </Botao>
+                </div>
+              </div>
+            ) : null}
+          </Cartao>
+        ) : null}
 
         {blocos.map((b, i) => (
           <Cartao
@@ -286,7 +389,23 @@ export function Editor({
         className="border-linho bg-porcelana grid gap-3 rounded-[var(--radius-cartao)] border p-5"
       >
         <span className="text-mudo text-[13px] font-semibold">Prévia (não publicada)</span>
-        <div className="bg-papel rounded-2xl p-5">
+        <div className="bg-papel grid gap-6 rounded-2xl p-5">
+          {meta ? (
+            <div className="grid gap-3">
+              <span className="text-terra-texto text-[12.5px] font-semibold">
+                {ROTULO_TEMA[meta.tema]}
+              </span>
+              <p className="text-mudo m-0 text-lg">{meta.resumo}</p>
+              {meta.capa ? (
+                // eslint-disable-next-line @next/next/no-img-element -- prévia de mídia privada
+                <img
+                  src={urlMidia(meta.capa.path, "/admin/midia")}
+                  alt={meta.capa.alt}
+                  className="max-h-64 w-full rounded-2xl object-cover"
+                />
+              ) : null}
+            </div>
+          ) : null}
           <Blocos blocos={blocos} midiaBase="/admin/midia" />
         </div>
       </section>
@@ -568,6 +687,101 @@ function CamposBloco({
               disabled={b.itens.length >= 4}
             >
               Adicionar caminho
+            </Botao>
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              variante="secundario"
+              onClick={() => onChange({ ...b, itens: b.itens.slice(0, -1) })}
+              disabled={b.itens.length <= 1}
+            >
+              Remover último
+            </Botao>
+          </div>
+        </div>
+      );
+    case "servicos":
+      return (
+        <div className="grid gap-3">
+          <Texto
+            id={`${id}-titulo`}
+            rotulo="Título"
+            valor={b.titulo}
+            onChange={(v) => onChange({ ...b, titulo: v })}
+          />
+          <Texto
+            id={`${id}-texto`}
+            rotulo="Texto (opcional)"
+            valor={b.texto ?? ""}
+            longo
+            onChange={(v) => onChange({ ...b, texto: opcional(v) })}
+          />
+          {b.itens.map((it, k) => {
+            const mudar = (parcial: Partial<typeof it>) =>
+              onChange({
+                ...b,
+                itens: b.itens.map((x, j) => (j === k ? { ...x, ...parcial } : x)),
+              });
+            return (
+              <fieldset
+                key={k}
+                className="border-linho grid min-w-0 gap-2 rounded-[var(--radius-campo)] border p-3"
+              >
+                <legend className="px-1 text-[13px] font-semibold">Serviço {k + 1}</legend>
+                <Texto
+                  id={`${id}-s${k}-nome`}
+                  rotulo="Nome"
+                  valor={it.nome}
+                  onChange={(v) => mudar({ nome: v })}
+                />
+                <Texto
+                  id={`${id}-s${k}-para`}
+                  rotulo="Para quem é"
+                  valor={it.paraQuem}
+                  longo
+                  onChange={(v) => mudar({ paraQuem: v })}
+                />
+                <Texto
+                  id={`${id}-s${k}-entrega`}
+                  rotulo="O que entrega"
+                  valor={it.entrega}
+                  longo
+                  onChange={(v) => mudar({ entrega: v })}
+                />
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <Texto
+                    id={`${id}-s${k}-formato`}
+                    rotulo="Formato e duração (opcional)"
+                    valor={it.formato ?? ""}
+                    onChange={(v) => mudar({ formato: opcional(v) })}
+                  />
+                  <Texto
+                    id={`${id}-s${k}-link`}
+                    rotulo="Link (opcional)"
+                    valor={it.href ?? ""}
+                    onChange={(v) => mudar({ href: opcional(v) })}
+                  />
+                </div>
+              </fieldset>
+            );
+          })}
+          <div className="flex gap-2">
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              variante="secundario"
+              onClick={() =>
+                onChange({
+                  ...b,
+                  itens: [
+                    ...b.itens,
+                    { nome: "Serviço", paraQuem: "Para quem é", entrega: "O que entrega" },
+                  ],
+                })
+              }
+              disabled={b.itens.length >= 16}
+            >
+              Adicionar serviço
             </Botao>
             <Botao
               type="button"

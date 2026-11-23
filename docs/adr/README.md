@@ -20,5 +20,6 @@
 | [0016](0016-matriz-de-prioridades-e-pdca.md)        | Matriz de Prioridades e PDCA                                    | Aceita |
 | [0017](0017-propostas-comerciais.md)                | Propostas comerciais                                            | Aceita |
 | [0018](0018-relatorio-executivo.md)                 | Relatório Executivo JC                                          | Aceita |
+| [0019](0019-artigos-e-servicos-no-site.md)          | Artigos e página de serviços no site                            | Aceita |
 
 Modelo: Contexto → Decisão → Consequências.
