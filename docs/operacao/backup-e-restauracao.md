@@ -6,7 +6,7 @@ O script `scripts/db/backup-restore-drill.sh` roda a cada PR contra o Supabase *
 
 1. Recria o banco com as migrations e o seed.
 2. Gera a **impressão digital** do banco: contagem e hash do conteúdo de cada tabela de `public`, mais `auth.users` e `auth.mfa_factors`.
-3. Faz o backup lógico: `roles.sql`, `schema.sql` e `data.sql` (`supabase db dump`).
+3. Faz o backup lógico: `roles.sql`, `schema.sql` e `data.sql` (`supabase db dump`; dados dos schemas `public` e `auth`).
 4. Recria o banco vazio (`db reset --no-seed`).
 5. Restaura os dados numa **transação única**, com gatilhos suspensos durante a carga (`session_replication_role = replica`).
 6. Compara as impressões digitais. **Qualquer diferença reprova o CI.**

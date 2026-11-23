@@ -27,7 +27,8 @@ test "$(wc -l < "$WORK/before.txt")" -gt 20
 echo "==> 2. Backup lógico (esquema de papéis, estrutura e dados)"
 supabase db dump --role-only -f "$WORK/roles.sql"
 supabase db dump -f "$WORK/schema.sql"
-supabase db dump --data-only --use-copy -f "$WORK/data.sql"
+# Somente os dados da aplicação (public) e das contas (auth). O Storage tem backup próprio (M7).
+supabase db dump --data-only --use-copy --schema public,auth -f "$WORK/data.sql"
 ls -l "$WORK"
 
 echo "==> 3. Banco recriado do zero, sem dados"
