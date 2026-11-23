@@ -40,6 +40,7 @@ select tests.as_postgres();
 create temp table antes on commit drop as
   select (e ->> 'published_at') d from jsonb_array_elements(public.cms_list_published_articles()) e
    where e ->> 'slug' = 'artigo-ficticio-um';
+grant select on antes to anon, authenticated;
 select tests.authenticate_as((select id from u where k = 'admin'));
 insert into public.cms_page_versions (page_id, version_number, content)
 values ((select id from r where k = 'a1'), 2, '{"blocos": [], "artigo": {"resumo": "Resumo revisado", "tema": "riscos"}}');
