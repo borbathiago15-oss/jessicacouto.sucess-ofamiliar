@@ -15,11 +15,13 @@ import {
 import {
   FamiliaECaixa,
   GraficoHistorico,
+  IndicadoresExplicados,
   Kpis,
   PontosDeAtencao,
   TabelaIndicadores,
 } from "@/modules/raiox/visao";
 import { excluirPeriodo, importarArquivoOffline, salvarPeriodo, type Aviso } from "../../actions";
+import { levarAlertaParaMatriz } from "../prioridades/actions";
 
 export type PeriodoTela = {
   id: string | null;
@@ -43,17 +45,21 @@ export function EditorRaioX({
   empresaId,
   iniciais,
   podeEditar,
+  aviso,
+  setAviso,
 }: {
   empresaId: string;
   iniciais: PeriodoTela[];
   podeEditar: boolean;
+  /** Fica fora do editor: a mensagem sobrevive quando o editor é recriado com dados novos. */
+  aviso: Aviso;
+  setAviso: (a: Aviso) => void;
 }) {
   const router = useRouter();
   const [periodos, setPeriodos] = useState<PeriodoTela[]>(iniciais);
   const [atual, setAtual] = useState(Math.max(0, iniciais.length - 1));
   const [textos, setTextos] = useState(() => iniciais.map((p) => textoInicial(p.values)));
   const [alterado, setAlterado] = useState(false);
-  const [aviso, setAviso] = useState<Aviso>(null);
   const [novoRotulo, setNovoRotulo] = useState("");
   const [pendente, iniciar] = useTransition();
 
@@ -304,7 +310,7 @@ export function EditorRaioX({
             ) : null}
           </Cartao>
 
-          <div className="grid gap-4 lg:sticky lg:top-3">
+          <div className="grid gap-4 lg:sticky lg:top-3 lg:max-h-[calc(100dvh-1.5rem)] lg:overflow-y-auto">
             <Cartao className="grid gap-3">
               <h2 className="font-display text-xl">Indicadores · {p.label || "Sem nome"}</h2>
               <Kpis r={calculados[atual]!.r} />
@@ -315,7 +321,26 @@ export function EditorRaioX({
             </Cartao>
             <Cartao className="grid gap-3">
               <h2 className="font-display text-xl">Pontos de atenção</h2>
-              <PontosDeAtencao r={calculados[atual]!.r} />
+              <PontosDeAtencao
+                r={calculados[atual]!.r}
+                acao={
+                  podeEditar
+                    ? (a) => (
+                        <button
+                          type="button"
+                          className="underline"
+                          aria-label={`Levar para a Matriz de Prioridades: ${a.titulo}`}
+                          disabled={pendente}
+                          onClick={() =>
+                            iniciar(async () => setAviso(await levarAlertaParaMatriz(empresaId, a)))
+                          }
+                        >
+                          Levar para a Matriz de Prioridades
+                        </button>
+                      )
+                    : undefined
+                }
+              />
               <p className="text-mudo m-0 text-[12.5px]">
                 Referências gerais de mercado. A leitura final é sua, conforme o setor e a história
                 da empresa.
@@ -323,6 +348,15 @@ export function EditorRaioX({
             </Cartao>
           </div>
         </div>
+      ) : null}
+
+      {p ? (
+        <Cartao className="grid gap-4">
+          <h2 className="font-display text-xl">
+            Os indicadores, um a um · {p.label || "Sem nome"}
+          </h2>
+          <IndicadoresExplicados r={calculados[atual]!.r} />
+        </Cartao>
       ) : null}
 
       {periodos.length > 0 ? (

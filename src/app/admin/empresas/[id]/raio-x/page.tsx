@@ -2,7 +2,8 @@ import Link from "next/link";
 import { Chamada, Titulo } from "@/components/ui";
 import { valoresSchema } from "@/modules/raiox/calculo";
 import { carregarEmpresa } from "../carregar";
-import { EditorRaioX, type PeriodoTela } from "./editor";
+import { type PeriodoTela } from "./editor";
+import { TelaRaioX } from "./tela";
 
 export const metadata = { title: "Raio-X Financeiro" };
 
@@ -39,8 +40,8 @@ export default async function RaioXPage({ params }: { params: Promise<{ id: stri
         </Chamada>
         <Titulo>Raio-X Financeiro</Titulo>
       </header>
-      <EditorRaioX
-        key={chave}
+      <TelaRaioX
+        chave={chave}
         empresaId={id}
         iniciais={iniciais}
         podeEditar={acesso.pode("analyses.manage")}
