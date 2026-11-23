@@ -85,6 +85,32 @@ export default async function EmpresaPage({ params }: { params: Promise<{ id: st
           </Cartao>
         ) : null}
       </div>
+      <div className="grid gap-5 sm:grid-cols-2">
+        {acesso.pode("participants.read") ? (
+          <Cartao className="grid content-start gap-3">
+            <h2 className="font-display text-xl">Família e pessoas</h2>
+            <p className="text-[15px]">Quem é quem, gerações, participação e sucessão.</p>
+            <Link
+              href={`/admin/empresas/${id}/familia`}
+              className="text-terra-texto font-semibold underline"
+            >
+              Abrir a família
+            </Link>
+          </Cartao>
+        ) : null}
+        {acesso.pode("activities.read") ? (
+          <Cartao className="grid content-start gap-3">
+            <h2 className="font-display text-xl">Histórico</h2>
+            <p className="text-[15px]">Reuniões, decisões e marcos em ordem cronológica.</p>
+            <Link
+              href={`/admin/empresas/${id}/historico`}
+              className="text-terra-texto font-semibold underline"
+            >
+              Abrir o histórico
+            </Link>
+          </Cartao>
+        ) : null}
+      </div>
       {!podeAnalises && !podeCofre ? (
         <p className="text-mudo">
           As análises e o cofre desta empresa são restritos. Peça acesso a uma administradora.

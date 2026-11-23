@@ -15,5 +15,6 @@
 | [0011](0011-site-cms-e-lgpd.md)                     | Site público pelo CMS, mídias privadas e canais LGPD            | Aceita |
 | [0012](0012-construtor-de-questionarios.md)         | Construtor de questionários                                     | Aceita |
 | [0013](0013-empresas-raiox-e-cofre.md)              | Empresas com histórico, Raio-X Financeiro e cofre de documentos | Aceita |
+| [0014](0014-familia-e-linha-do-tempo.md)            | Família empresária e linha do tempo                             | Aceita |
 
 Modelo: Contexto → Decisão → Consequências.
