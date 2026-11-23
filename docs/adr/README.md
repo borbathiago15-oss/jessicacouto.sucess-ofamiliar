@@ -18,5 +18,6 @@
 | [0014](0014-familia-e-linha-do-tempo.md)            | Família empresária e linha do tempo                             | Aceita |
 | [0015](0015-funil-tarefas-e-agenda.md)              | Funil comercial, tarefas e agenda                               | Aceita |
 | [0016](0016-matriz-de-prioridades-e-pdca.md)        | Matriz de Prioridades e PDCA                                    | Aceita |
+| [0018](0018-relatorio-executivo.md)                 | Relatório Executivo JC                                          | Aceita |
 
 Modelo: Contexto → Decisão → Consequências.

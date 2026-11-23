@@ -14,40 +14,41 @@ Fonte da verdade: tabelas `public.roles`, `public.permissions` e `public.role_pe
 
 ✅ = concedido · — = negado
 
-| Permissão                                            | Admin | Relacionamento | Analista metodológico | Leitura executiva |
-| ---------------------------------------------------- | :---: | :------------: | :-------------------: | :---------------: |
-| users.read / users.manage                            |  ✅   |       —        |           —           |         —         |
-| audit.read                                           |  ✅   |       —        |           —           |         —         |
-| crm.access_all (todas as carteiras)                  |  ✅   |       —        |           —           |        ✅         |
-| organizations.read / create / update                 |  ✅   |       ✅       |           —           |         —         |
-| organizations.delete                                 |  ✅   |       —        |           —           |         —         |
-| participants.read / create / update                  |  ✅   |       ✅       |           —           |         —         |
-| participants.delete                                  |  ✅   |       —        |           —           |         —         |
-| consents.read / create                               |  ✅   |       ✅       |           —           |         —         |
-| consents.manage (avisos de privacidade)              |  ✅   |       —        |           —           |         —         |
-| campaigns.read                                       |  ✅   |       ✅       |           —           |        ✅         |
-| campaigns.manage                                     |  ✅   |       —        |           —           |         —         |
-| pipeline.read                                        |  ✅   |       ✅       |           —           |        ✅         |
-| pipeline.manage                                      |  ✅   |       —        |           —           |         —         |
-| opportunities.read                                   |  ✅   |       ✅       |           —           |        ✅         |
-| opportunities.create / update                        |  ✅   |       ✅       |           —           |         —         |
-| opportunities.delete                                 |  ✅   |       —        |           —           |         —         |
-| activities.read / create / update                    |  ✅   |       ✅       |           —           |         —         |
-| activities.delete                                    |  ✅   |       —        |           —           |         —         |
-| internal_notes.read / create (edita as próprias)     |  ✅   |       ✅       |           —           |         —         |
-| internal_notes.manage (edita as de terceiros)        |  ✅   |       —        |           —           |         —         |
-| questionnaires.read / create / update                |  ✅   |       —        |          ✅           |         —         |
-| questionnaires.delete (rascunhos)                    |  ✅   |       —        |           —           |         —         |
-| questionnaires.publish (aprovar piloto e publicação) |  ✅   |       —        |           —           |         —         |
-| analyses.read / manage (Raio-X Financeiro)           |  ✅   |       —        |           —           |         —         |
-| vault.read / upload / download / delete (cofre)      |  ✅   |       —        |           —           |         —         |
-| diagnostics.read (sessões e resultados da carteira)  |  ✅   |       ✅       |           —           |         —         |
-| diagnostics.read_answers (respostas individuais)     |  ✅   |       —        |           —           |         —         |
-| diagnostics.manage                                   |  ✅   |       —        |           —           |         —         |
-| reports.read                                         |  ✅   |       ✅       |           —           |         —         |
-| cms.read / create / update                           |  ✅   |       —        |          ✅           |         —         |
-| cms.publish                                          |  ✅   |       —        |           —           |         —         |
-| exports.create                                       |  ✅   |       —        |           —           |         —         |
+| Permissão                                                | Admin | Relacionamento | Analista metodológico | Leitura executiva |
+| -------------------------------------------------------- | :---: | :------------: | :-------------------: | :---------------: |
+| users.read / users.manage                                |  ✅   |       —        |           —           |         —         |
+| audit.read                                               |  ✅   |       —        |           —           |         —         |
+| crm.access_all (todas as carteiras)                      |  ✅   |       —        |           —           |        ✅         |
+| organizations.read / create / update                     |  ✅   |       ✅       |           —           |         —         |
+| organizations.delete                                     |  ✅   |       —        |           —           |         —         |
+| participants.read / create / update                      |  ✅   |       ✅       |           —           |         —         |
+| participants.delete                                      |  ✅   |       —        |           —           |         —         |
+| consents.read / create                                   |  ✅   |       ✅       |           —           |         —         |
+| consents.manage (avisos de privacidade)                  |  ✅   |       —        |           —           |         —         |
+| campaigns.read                                           |  ✅   |       ✅       |           —           |        ✅         |
+| campaigns.manage                                         |  ✅   |       —        |           —           |         —         |
+| pipeline.read                                            |  ✅   |       ✅       |           —           |        ✅         |
+| pipeline.manage                                          |  ✅   |       —        |           —           |         —         |
+| opportunities.read                                       |  ✅   |       ✅       |           —           |        ✅         |
+| opportunities.create / update                            |  ✅   |       ✅       |           —           |         —         |
+| opportunities.delete                                     |  ✅   |       —        |           —           |         —         |
+| activities.read / create / update                        |  ✅   |       ✅       |           —           |         —         |
+| activities.delete                                        |  ✅   |       —        |           —           |         —         |
+| internal_notes.read / create (edita as próprias)         |  ✅   |       ✅       |           —           |         —         |
+| internal_notes.manage (edita as de terceiros)            |  ✅   |       —        |           —           |         —         |
+| questionnaires.read / create / update                    |  ✅   |       —        |          ✅           |         —         |
+| questionnaires.delete (rascunhos)                        |  ✅   |       —        |           —           |         —         |
+| questionnaires.publish (aprovar piloto e publicação)     |  ✅   |       —        |           —           |         —         |
+| analyses.read / manage (Raio-X Financeiro)               |  ✅   |       —        |           —           |         —         |
+| vault.read / upload / download / delete (cofre)          |  ✅   |       —        |           —           |         —         |
+| diagnostics.read (sessões e resultados da carteira)      |  ✅   |       ✅       |           —           |         —         |
+| diagnostics.read_answers (respostas individuais)         |  ✅   |       —        |           —           |         —         |
+| diagnostics.manage                                       |  ✅   |       —        |           —           |         —         |
+| reports.read                                             |  ✅   |       ✅       |           —           |         —         |
+| reports.manage (assinatura e metodologia dos relatórios) |  ✅   |       —        |           —           |         —         |
+| cms.read / create / update                               |  ✅   |       —        |          ✅           |         —         |
+| cms.publish                                              |  ✅   |       —        |           —           |         —         |
+| exports.create                                           |  ✅   |       —        |           —           |         —         |
 
 ## Decisões pendentes da Jéssica
 
