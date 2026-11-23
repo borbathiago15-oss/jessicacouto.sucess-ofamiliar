@@ -70,34 +70,34 @@ export function FamiliaECaixa({ r }: { r: Resultado }) {
         <i className="bg-terra block h-full" style={{ width: largura(r.retiradasFamilia) }} />
         <i className="bg-salvia block h-full" style={{ width: largura(fica) }} />
       </div>
-      <dl className="m-0 grid gap-1 text-[13px] sm:grid-cols-2">
-        <div className="flex items-start gap-2">
+      <ul className="m-0 grid list-none gap-1 p-0 text-[13px] sm:grid-cols-2">
+        <li className="flex items-start gap-2">
           <i
             className="bg-terra mt-1 inline-block size-3 shrink-0 rounded-[3px]"
             aria-hidden="true"
           />
           <span>
-            <dt className="inline font-semibold">Retiradas da família: </dt>
-            <dd className="m-0 inline">{brl(r.retiradasFamilia)}</dd>
+            <b className="font-semibold">Retiradas da família: </b>
+            <span>{brl(r.retiradasFamilia)}</span>
             <span className="text-mudo block">
               Pró-labore, salários de familiares, despesas pessoais e lucros distribuídos.
             </span>
           </span>
-        </div>
-        <div className="flex items-start gap-2">
+        </li>
+        <li className="flex items-start gap-2">
           <i
             className="bg-salvia mt-1 inline-block size-3 shrink-0 rounded-[3px]"
             aria-hidden="true"
           />
           <span>
-            <dt className="inline font-semibold">Fica na empresa: </dt>
-            <dd className="m-0 inline">{brl(fica)}</dd>
+            <b className="font-semibold">Fica na empresa: </b>
+            <span>{brl(fica)}</span>
             <span className="text-mudo block">
               O que sobra para juros, impostos, investimento e reserva.
             </span>
           </span>
-        </div>
-      </dl>
+        </li>
+      </ul>
       {passou ? (
         <p className="bg-critico-fundo text-critico m-0 rounded-[10px] px-3 py-2 text-[13px]">
           A barra está toda tomada: a família retira mais do que a operação gera. A diferença sai do

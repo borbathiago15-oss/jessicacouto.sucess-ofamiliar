@@ -329,13 +329,13 @@ export function EditorRaioX({
                         <button
                           type="button"
                           className="underline"
+                          aria-label={`Levar para a Matriz de Prioridades: ${a.titulo}`}
                           disabled={pendente}
                           onClick={() =>
                             iniciar(async () => setAviso(await levarAlertaParaMatriz(empresaId, a)))
                           }
                         >
                           Levar para a Matriz de Prioridades
-                          <span className="sr-only">: {a.titulo}</span>
                         </button>
                       )
                     : undefined
