@@ -8,6 +8,7 @@ import {
 } from "@/modules/familia/schema";
 import { carregarEmpresa } from "../carregar";
 import { NovoRegistro } from "../familia/formularios";
+import { Compartilhar } from "../portal/controles";
 
 export const metadata = { title: "Histórico da empresa" };
 
@@ -26,7 +27,7 @@ export default async function HistoricoPage({ params }: { params: Promise<{ id: 
   const [atividades, periodos, documentos] = await Promise.all([
     supabase
       .from("activities")
-      .select("id, kind, summary, occurred_at, created_at")
+      .select("id, kind, summary, occurred_at, created_at, shared_with_client")
       .eq("organization_id", id)
       .order("occurred_at", { ascending: false })
       .limit(300),
@@ -45,6 +46,7 @@ export default async function HistoricoPage({ params }: { params: Promise<{ id: 
   const linha = montarLinhaDoTempo(
     (atividades.data ?? []).map<ItemLinha>((a) => ({
       id: `a-${a.id}`,
+      registro: { id: a.id, compartilhado: a.shared_with_client as boolean },
       quando: a.occurred_at ?? a.created_at,
       tipo: ROTULO_REGISTRO[a.kind as TipoRegistro] ?? "Registro",
       texto: a.summary,
@@ -118,6 +120,15 @@ export default async function HistoricoPage({ params }: { params: Promise<{ id: 
                 <Selo tom={item.tipo === "Decisão" ? "ok" : "neutro"}>{item.tipo}</Selo>
               </span>
               <span className="whitespace-pre-wrap">{item.texto}</span>
+              {item.registro && acesso.pode("portal.manage") ? (
+                <Compartilhar
+                  empresaId={id}
+                  tipo="registro"
+                  id={item.registro.id}
+                  inicial={item.registro.compartilhado}
+                  rotulo={item.texto.slice(0, 60)}
+                />
+              ) : null}
             </li>
           ))}
         </ol>

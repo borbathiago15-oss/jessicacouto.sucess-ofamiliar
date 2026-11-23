@@ -1,12 +1,9 @@
 import Link from "next/link";
-import { umDe } from "@/lib/supabase/relacao";
-import type { Papel, SituacaoSucessao } from "@/modules/familia/schema";
-import { diaDe } from "@/modules/funil/schema";
-import type { ItemPrioridade } from "@/modules/prioridades/schema";
-import { valoresSchema } from "@/modules/raiox/calculo";
 import { CorpoRelatorio, prepararRelatorio } from "@/modules/relatorio/relatorio";
 import { BotaoImprimir } from "../raio-x/relatorio/imprimir";
 import { carregarEmpresa } from "../carregar";
+import { carregarEntradaRelatorio } from "./dados";
+import { PublicarParaCliente } from "./publicar";
 import { SumarioEditor } from "./sumario-editor";
 
 export const metadata = { title: "Relatório Executivo" };
@@ -27,67 +24,15 @@ export default async function RelatorioExecutivoPage({
     "analyses.read",
   );
 
-  const [periodosR, familiaR, itensR, notasR, configR] = await Promise.all([
-    supabase
-      .from("financial_periods")
-      .select("label, months, values, position")
-      .eq("organization_id", id)
-      .order("position"),
-    acesso.pode("participants.read")
-      ? supabase
-          .from("organization_participants")
-          .select(
-            "is_family, generation, ownership_pct, works_in_company, successor_status, role_in_org, participants(full_name, declared_role)",
-          )
-          .eq("organization_id", id)
-      : Promise.resolve({ data: [] }),
-    supabase
-      .from("priority_items")
-      .select(
-        "id, title, description, origin, impact, urgency, effort, phase, why, responsible, due_on, indicator, target, result, learning",
-      )
-      .eq("organization_id", id),
-    supabase
-      .from("organization_report_notes")
-      .select("key_messages, decisions")
-      .eq("organization_id", id)
-      .maybeSingle(),
-    supabase
-      .from("report_settings")
-      .select("consultant_name, consultant_title, credentials, methodology, limitations")
-      .maybeSingle(),
-  ]);
-
-  const membros = (familiaR.data ?? []).map((v) => {
-    const p = umDe(v.participants);
-    return {
-      nome: (p?.full_name as string) ?? "",
-      papel: ((p?.declared_role as Papel) ?? "other") as Papel,
-      cargo: v.role_in_org as string | null,
-      is_family: v.is_family as boolean,
-      generation: v.generation as number | null,
-      ownership_pct: v.ownership_pct === null ? null : Number(v.ownership_pct),
-      works_in_company: v.works_in_company as boolean,
-      successor_status: v.successor_status as SituacaoSucessao,
-    };
-  });
-  const decisoes = (notasR.data?.decisions as string[] | undefined) ?? [];
-  const salvas = (notasR.data?.key_messages as string[] | undefined) ?? [];
-  const d = prepararRelatorio({
-    empresaNome: empresa.trade_name,
-    periodos: (periodosR.data ?? []).map((p) => ({
-      rotulo: p.label as string,
-      meses: p.months as number,
-      valores: valoresSchema.safeParse(p.values).data ?? {},
-    })),
-    membros,
-    itens: (itensR.data ?? []) as ItemPrioridade[],
-    mensagensSalvas: salvas,
-    decisoes,
-    config: configR.data,
-    hoje: diaDe(new Date()),
-    emissao: new Date(),
-  });
+  const entrada = await carregarEntradaRelatorio(
+    supabase,
+    id,
+    empresa.trade_name,
+    acesso.pode("participants.read"),
+  );
+  const d = prepararRelatorio(entrada);
+  const decisoes = entrada.decisoes;
+  const salvas = entrada.mensagensSalvas;
   const { mensagens, sugestoes, pendencias } = d;
 
   return (
@@ -138,6 +83,7 @@ export default async function RelatorioExecutivoPage({
             editado={salvas.length > 0 || decisoes.length > 0}
           />
         ) : null}
+        {acesso.pode("portal.manage") ? <PublicarParaCliente empresaId={id} /> : null}
       </div>
 
       <CorpoRelatorio d={d} apresentacao={apresentacao} />

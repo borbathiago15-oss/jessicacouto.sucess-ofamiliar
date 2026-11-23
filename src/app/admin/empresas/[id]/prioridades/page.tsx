@@ -14,6 +14,7 @@ import {
 } from "@/modules/prioridades/schema";
 import { carregarEmpresa } from "../carregar";
 import { EditarItem, NovoItem } from "./formularios";
+import { Compartilhar } from "../portal/controles";
 
 export const metadata = { title: "Matriz de Prioridades" };
 
@@ -29,11 +30,11 @@ export default async function PrioridadesPage({ params }: { params: Promise<{ id
   const { data } = await supabase
     .from("priority_items")
     .select(
-      "id, title, description, origin, impact, urgency, effort, phase, why, responsible, due_on, indicator, target, result, learning",
+      "id, title, description, origin, impact, urgency, effort, phase, why, responsible, due_on, indicator, target, result, learning, shared_with_client",
     )
     .eq("organization_id", id);
 
-  const itens = (data ?? []) as ItemPrioridade[];
+  const itens = (data ?? []) as (ItemPrioridade & { shared_with_client: boolean })[];
   const matriz = montarMatriz(itens);
   const hoje = diaDe(new Date());
   const vencidos = new Set(atrasados(itens, hoje).map((i) => i.id));
@@ -142,6 +143,15 @@ export default async function PrioridadesPage({ params }: { params: Promise<{ id
                           ) : null}
                           {i.origin !== "manual" ? (
                             <Selo tom="marca">{ROTULO_ORIGEM[i.origin]}</Selo>
+                          ) : null}
+                          {acesso.pode("portal.manage") ? (
+                            <Compartilhar
+                              empresaId={id}
+                              tipo="plano"
+                              id={i.id}
+                              inicial={i.shared_with_client}
+                              rotulo={i.title}
+                            />
                           ) : null}
                           {podeEditar ? <EditarItem empresaId={id} item={i} /> : null}
                         </li>

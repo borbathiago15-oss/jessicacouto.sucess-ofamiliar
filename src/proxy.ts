@@ -4,7 +4,7 @@ import { decideAdminRoute, type AssuranceLevel } from "@/lib/auth/admin-routes";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 
 /**
- * Proxy do /admin: renova a sessão e aplica as regras de navegação
+ * Proxy do /admin e do /portal: renova a sessão e aplica as regras de navegação
  * (login → MFA → painel). A autorização definitiva está no banco (RLS + AAL2).
  */
 export async function proxy(request: NextRequest) {
@@ -64,5 +64,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin", "/admin/:path*"],
+  matcher: ["/admin", "/admin/:path*", "/portal", "/portal/:path*"],
 };

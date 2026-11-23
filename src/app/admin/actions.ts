@@ -11,6 +11,7 @@ import {
   safeAdminPath,
 } from "@/lib/auth/admin-routes";
 import { publicEnv } from "@/lib/env/public";
+import { destinoAposLogin } from "@/lib/auth/destino";
 import { resolveAdminRoute } from "@/lib/auth/guard";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -42,7 +43,8 @@ export async function signInWithPassword(formData: FormData) {
   if (error) redirect(`${ADMIN_LOGIN}?erro=credenciais`);
 
   // Destino decidido no servidor: cadastro ou verificação do MFA antes do painel.
-  redirect((await resolveAdminRoute(ADMIN_HOME)) ?? ADMIN_HOME);
+  // Equipe vai ao painel; cliente convidado vai ao portal.
+  redirect((await resolveAdminRoute(ADMIN_HOME)) ?? (await destinoAposLogin()));
 }
 
 // ---------------------------------------------------------------------------
@@ -64,7 +66,7 @@ export async function verifyTotp(formData: FormData) {
   });
   if (error) redirect(`${ADMIN_MFA_VERIFY}?erro=codigo&next=${encodeURIComponent(next)}`);
 
-  redirect(next);
+  redirect(next === ADMIN_HOME ? await destinoAposLogin() : next);
 }
 
 // ---------------------------------------------------------------------------
@@ -122,7 +124,7 @@ export async function confirmTotpEnrollment(
   });
   if (error) return { error: "Código inválido ou expirado. Tente novamente." };
 
-  redirect(ADMIN_HOME);
+  redirect(await destinoAposLogin());
 }
 
 // ---------------------------------------------------------------------------
@@ -152,7 +154,7 @@ export async function updatePassword(formData: FormData) {
 
   // Encerra as demais sessões após a troca de senha.
   await supabase.auth.signOut({ scope: "others" });
-  redirect(ADMIN_HOME);
+  redirect(await destinoAposLogin());
 }
 
 // ---------------------------------------------------------------------------

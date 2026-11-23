@@ -50,3 +50,44 @@ export async function semViolacoes(page: Page) {
     .analyze();
   expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.length})`)).toEqual([]);
 }
+
+/**
+ * Cliente do portal: cria a conta (sem papel da equipe), liga às empresas indicadas
+ * pela chave de serviço (como a JC faria pela tela) e entra com MFA.
+ */
+export async function entrarComoCliente(
+  browser: Browser,
+  empresas: string[],
+  prefixo: string,
+): Promise<{ contexto: BrowserContext; page: Page; email: string }> {
+  const email = `${prefixo}.${randomUUID().slice(0, 8)}@exemplo.test`;
+  const password = `Aa1${randomBytes(18).toString("base64url")}`;
+  const admin = createClient(supabaseUrl!, serviceKey!, { auth: { persistSession: false } });
+  const { data, error } = await admin.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+  });
+  if (error || !data.user) throw error ?? new Error("Falha ao criar cliente de teste");
+  for (const org of empresas) {
+    const r = await admin
+      .from("portal_members")
+      .insert({ user_id: data.user.id, organization_id: org });
+    if (r.error) throw r.error;
+  }
+  const contexto = await browser.newContext();
+  const page = await contexto.newPage();
+  await page.goto("/admin/login");
+  await page.getByLabel("E-mail").fill(email);
+  await page.getByLabel("Senha").fill(password);
+  await page.getByRole("button", { name: "Entrar" }).click();
+  await expect(page).toHaveURL(/\/admin\/mfa\/cadastrar$/);
+  await page.getByRole("button", { name: "Gerar código QR" }).click();
+  const segredo = (await page.getByTestId("totp-secret").textContent())?.trim() ?? "";
+  const resto = Date.now() % 30000;
+  if (resto > 26000) await page.waitForTimeout(30000 - resto + 300);
+  await page.getByLabel("Código de 6 dígitos").fill(totp(segredo));
+  await page.getByRole("button", { name: "Confirmar" }).click();
+  await expect(page).toHaveURL(/\/portal/);
+  return { contexto, page, email };
+}

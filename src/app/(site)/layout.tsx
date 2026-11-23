@@ -65,6 +65,9 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
             <Link href="/privacidade/solicitacao" className="text-terra-texto underline">
               Seus direitos sobre os dados
             </Link>
+            <Link href="/portal" className="text-terra-texto underline">
+              Portal do cliente
+            </Link>
           </nav>
         </div>
       </footer>

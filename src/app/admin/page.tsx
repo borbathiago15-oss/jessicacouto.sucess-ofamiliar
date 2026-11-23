@@ -5,6 +5,7 @@ import { z } from "zod";
 import { revokeOtherSessions } from "./actions";
 import { FormMessage, buttonClass } from "./_components/auth-card";
 import { ADMIN_LOGIN } from "@/lib/auth/admin-routes";
+import { PORTAL_HOME } from "@/lib/auth/destino";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const accessSchema = z.object({
@@ -42,6 +43,11 @@ export default async function AdminHomePage({
   if (!access.data.aal2) redirect("/admin/mfa/verificar");
 
   const { roles, permissions } = access.data;
+  // Cliente convidado não usa o painel da equipe: vai ao portal.
+  if (roles.length === 0) {
+    const { data: empresas } = await supabase.rpc("portal_my_organizations");
+    if (Array.isArray(empresas) && empresas.length > 0) redirect(PORTAL_HOME);
+  }
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-3xl flex-col gap-8 px-6 py-16">

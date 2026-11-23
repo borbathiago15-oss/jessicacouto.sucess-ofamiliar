@@ -125,6 +125,18 @@ export default async function EmpresaPage({ params }: { params: Promise<{ id: st
             </Link>
           </Cartao>
         ) : null}
+        {acesso.pode("portal.manage") ? (
+          <Cartao className="grid content-start gap-3">
+            <h2 className="font-display text-xl">Portal do cliente</h2>
+            <p className="text-[15px]">Quem acessa, o que foi publicado e o que o cliente vê.</p>
+            <Link
+              href={`/admin/empresas/${id}/portal`}
+              className="text-terra-texto font-semibold underline"
+            >
+              Abrir o portal
+            </Link>
+          </Cartao>
+        ) : null}
         {acesso.pode("activities.read") ? (
           <Cartao className="grid content-start gap-3">
             <h2 className="font-display text-xl">Histórico</h2>
