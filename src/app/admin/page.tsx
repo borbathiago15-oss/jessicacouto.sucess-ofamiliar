@@ -1,3 +1,4 @@
+import { enforceAdminRoute } from "@/lib/auth/guard";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { revokeOtherSessions } from "./actions";
@@ -26,6 +27,7 @@ export default async function AdminHomePage({
 }: {
   searchParams: Promise<{ sessoes?: string }>;
 }) {
+  await enforceAdminRoute("/admin");
   const { sessoes } = await searchParams;
   const supabase = await createSupabaseServerClient();
   if (!supabase) redirect(`${ADMIN_LOGIN}?erro=configuracao`);

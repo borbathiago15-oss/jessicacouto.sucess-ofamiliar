@@ -11,6 +11,7 @@ import {
   safeAdminPath,
 } from "@/lib/auth/admin-routes";
 import { publicEnv } from "@/lib/env/public";
+import { resolveAdminRoute } from "@/lib/auth/guard";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const emailSchema = z.email().max(254);
@@ -40,7 +41,8 @@ export async function signInWithPassword(formData: FormData) {
   // Mensagem genérica: não revela se o e-mail existe.
   if (error) redirect(`${ADMIN_LOGIN}?erro=credenciais`);
 
-  redirect(ADMIN_HOME);
+  // Destino decidido no servidor: cadastro ou verificação do MFA antes do painel.
+  redirect((await resolveAdminRoute(ADMIN_HOME)) ?? ADMIN_HOME);
 }
 
 // ---------------------------------------------------------------------------

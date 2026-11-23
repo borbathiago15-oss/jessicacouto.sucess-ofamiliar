@@ -1,3 +1,4 @@
+import { enforceAdminRoute } from "@/lib/auth/guard";
 import { updatePassword } from "../actions";
 import {
   AuthCard,
@@ -18,6 +19,7 @@ export default async function ResetPasswordPage({
 }: {
   searchParams: Promise<{ erro?: string }>;
 }) {
+  await enforceAdminRoute("/admin/redefinir-senha");
   const { erro } = await searchParams;
 
   return (

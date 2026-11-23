@@ -1,3 +1,4 @@
+import { enforceAdminRoute } from "@/lib/auth/guard";
 import Link from "next/link";
 import { signInWithPassword } from "../actions";
 import {
@@ -20,6 +21,7 @@ export default async function LoginPage({
 }: {
   searchParams: Promise<{ erro?: string }>;
 }) {
+  await enforceAdminRoute("/admin/login");
   const { erro } = await searchParams;
   const configured = Boolean(getSupabasePublicConfig());
 
