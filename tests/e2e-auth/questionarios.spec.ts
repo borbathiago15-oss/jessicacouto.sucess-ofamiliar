@@ -1,7 +1,7 @@
 import { randomBytes, randomUUID } from "node:crypto";
 import AxeBuilder from "@axe-core/playwright";
 import { createClient } from "@supabase/supabase-js";
-import { expect, test, type Browser, type Page } from "@playwright/test";
+import { expect, test, type Browser, type BrowserContext, type Page } from "@playwright/test";
 import { totp } from "./totp";
 
 /**
@@ -18,6 +18,7 @@ test.describe.configure({ mode: "serial", timeout: 120_000 });
 const email = `quest.${randomUUID().slice(0, 8)}@exemplo.test`;
 const password = `Aa1${randomBytes(18).toString("base64url")}`;
 const titulo = `Questionário de teste ${randomUUID().slice(0, 6)}`;
+let contexto: BrowserContext;
 let page: Page;
 let endereco = "";
 
@@ -32,7 +33,9 @@ test.beforeAll(async ({ browser }: { browser: Browser }) => {
   const r = await admin.from("user_roles").insert({ user_id: data.user.id, role_key: "admin" });
   if (r.error) throw r.error;
 
-  page = await browser.newPage();
+  // Contexto explícito: o axe precisa dele para analisar a página.
+  contexto = await browser.newContext();
+  page = await contexto.newPage();
   await page.goto("/admin/login");
   await page.getByLabel("E-mail").fill(email);
   await page.getByLabel("Senha").fill(password);
@@ -49,7 +52,7 @@ test.beforeAll(async ({ browser }: { browser: Browser }) => {
 });
 
 test.afterAll(async () => {
-  await page?.close();
+  await contexto?.close();
 });
 
 test("cria questionário e abre a versão 1 em rascunho", async () => {
