@@ -156,6 +156,10 @@ begin
          is distinct from (to_jsonb(old) - array['status', 'decided_at', 'decision_reason', 'updated_at', 'opportunity_id']) then
     raise exception 'Proposta enviada não pode ser alterada: crie uma nova.' using errcode = '55000';
   end if;
+  -- Enquanto é rascunho, vale o valor-hora vigente; no envio ele fica congelado.
+  if old.status = 'draft' then
+    select s.hourly_rate into new.hourly_rate from public.proposal_settings s where s.id;
+  end if;
   if old.status in ('accepted', 'declined') and new.status is distinct from old.status then
     raise exception 'O resultado da proposta já foi registrado.' using errcode = '55000';
   end if;

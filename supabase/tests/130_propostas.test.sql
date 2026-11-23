@@ -59,6 +59,18 @@ select lives_ok(format($$ insert into public.proposal_items (proposal_id, name, 
 select results_eq(format($$ select horas, valor from private.proposal_totals(%L) $$, (select id from r where k = 'p1')),
                   $$ values (50.00::numeric, 21600.00::numeric) $$, 'cálculo: horas × valor-hora × fator − desconto');
 
+-- Rascunho acompanha o valor-hora vigente.
+select tests.authenticate_as((select id from u where k = 'admin'));
+update public.proposal_settings set hourly_rate = 500;
+select tests.authenticate_as((select id from u where k = 'relA'));
+update public.proposals set title = title where id = (select id from r where k = 'p1');
+select is((select hourly_rate from public.proposals where id = (select id from r where k = 'p1')), 500.00::numeric,
+          'rascunho passa a usar o valor-hora vigente');
+select tests.authenticate_as((select id from u where k = 'admin'));
+update public.proposal_settings set hourly_rate = 400;
+select tests.authenticate_as((select id from u where k = 'relA'));
+update public.proposals set title = title where id = (select id from r where k = 'p1');
+
 -- Resultado só depois do envio.
 select throws_ok(format($$ select public.proposal_set_status(%L, 'accepted') $$, (select id from r where k = 'p1')),
                  '55000', null, 'não aceita sem enviar');
