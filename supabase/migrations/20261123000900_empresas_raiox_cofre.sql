@@ -35,8 +35,8 @@ as $$
                 'proLabore', 'salariosFamiliares', 'despesasPessoais', 'distribuicoes', 'familiaresNaEmpresa',
                 'caixa', 'receber', 'estoques', 'outrosAC', 'imobilizado',
                 'fornecedores', 'emprestimosCP', 'outrosPC', 'emprestimosLP', 'patrimonioLiquido')
-           or jsonb_typeof(e.value) <> 'number'
-           or abs((e.value)::numeric) >= 1e13
+           -- CASE garante que só números são convertidos (a ordem do OR não é garantida).
+           or case when jsonb_typeof(e.value) = 'number' then abs((e.value)::numeric) >= 1e13 else true end
      );
 $$;
 
