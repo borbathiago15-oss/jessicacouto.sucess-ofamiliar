@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { enforceAdminRoute } from "@/lib/auth/guard";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -78,6 +79,15 @@ export default async function AdminHomePage({
         <p className="text-sm" data-testid="permission-count">
           {permissions.length} permissões ativas · verificação em duas etapas concluída
         </p>
+      </section>
+
+      <section aria-labelledby="areas" className="flex flex-col gap-2">
+        <h2 id="areas" className="font-display text-xl">
+          Áreas
+        </h2>
+        <Link href="/admin/conteudo" className="text-terra-texto underline">
+          Conteúdo do site
+        </Link>
       </section>
 
       <section aria-labelledby="seguranca" className="flex flex-col gap-3">

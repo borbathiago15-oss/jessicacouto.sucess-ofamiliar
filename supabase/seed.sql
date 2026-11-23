@@ -82,7 +82,7 @@ insert into public.diagnostic_results (session_id, version_id, engine_version, r
 insert into public.cms_pages (id, slug, title) values
   ('00000000-0000-4000-8000-000000000801', 'pagina-exemplo', 'Página de exemplo');
 insert into public.cms_page_versions (id, page_id, version_number, content) values
-  ('00000000-0000-4000-8000-000000000802', '00000000-0000-4000-8000-000000000801', 1, '{"blocos": ["Texto fictício"]}');
+  ('00000000-0000-4000-8000-000000000802', '00000000-0000-4000-8000-000000000801', 1, '{"blocos":[{"tipo":"texto","paragrafos":["Texto fictício"]}]}');
 update public.cms_page_versions set status = 'in_review' where id = '00000000-0000-4000-8000-000000000802';
 update public.cms_page_versions set status = 'published' where id = '00000000-0000-4000-8000-000000000802';
 

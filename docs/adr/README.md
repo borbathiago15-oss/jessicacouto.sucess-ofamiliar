@@ -12,5 +12,6 @@
 | [0008](0008-autenticacao-mfa-e-sessoes.md)          | Autenticação, MFA obrigatório e sessões validadas no banco | Aceita |
 | [0009](0009-backup-e-restauracao.md)                | Backup e restauração testados                              | Aceita |
 | [0010](0010-design-system-terracota-clara.md)       | Design system terracota clara                              | Aceita |
+| [0011](0011-site-cms-e-lgpd.md)                     | Site público pelo CMS, mídias privadas e canais LGPD       | Aceita |
 
 Modelo: Contexto → Decisão → Consequências.
