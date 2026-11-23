@@ -64,6 +64,23 @@ export const blocoSchema = z.discriminatedUnion("tipo", [
     cta: cta.optional(),
   }),
   z.object({
+    tipo: z.literal("servicos"),
+    titulo: texto(160),
+    texto: texto(600).optional(),
+    itens: z
+      .array(
+        z.object({
+          nome: texto(80),
+          paraQuem: texto(200),
+          entrega: texto(600),
+          formato: texto(120).optional(),
+          href: linkSchema.optional(),
+        }),
+      )
+      .min(1)
+      .max(16),
+  }),
+  z.object({
     tipo: z.literal("imagem"),
     path: midiaPathSchema,
     alt: texto(200),
@@ -83,6 +100,7 @@ export const PAGINAS_SITE = [
   { slug: "conheca-jessica", rota: "/conheca-jessica", nome: "Conheça Jéssica", menu: true },
   { slug: "metodologia", rota: "/metodologia", nome: "Metodologia", menu: true },
   { slug: "diagnosticos", rota: "/diagnosticos", nome: "Diagnósticos", menu: true },
+  { slug: "servicos", rota: "/servicos", nome: "Serviços", menu: true },
   { slug: "guias", rota: "/guias", nome: "Guias", menu: true },
   { slug: "contato", rota: "/contato", nome: "Vamos conversar", menu: true },
   { slug: "privacidade", rota: "/privacidade", nome: "Política de Privacidade", menu: false },
@@ -101,6 +119,7 @@ export const ROTULO_BLOCO: Record<TipoBloco, string> = {
   movimentos: "Movimentos",
   caminhos: "Caminhos",
   destaque: "Destaque",
+  servicos: "Serviços",
   imagem: "Imagem",
 };
 
@@ -121,6 +140,12 @@ export function blocoVazio(tipo: TipoBloco): Bloco {
       };
     case "destaque":
       return { tipo, titulo: "Novo destaque", texto: "Texto do destaque." };
+    case "servicos":
+      return {
+        tipo,
+        titulo: "Novo título",
+        itens: [{ nome: "Serviço", paraQuem: "Para quem é", entrega: "O que entrega" }],
+      };
     case "imagem":
       return {
         tipo,

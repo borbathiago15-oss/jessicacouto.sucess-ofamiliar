@@ -94,7 +94,9 @@ insert into public.cms_pages (id, slug, title) values
   ('00000000-0000-4000-8000-000000000904', 'diagnosticos', 'Diagnósticos'),
   ('00000000-0000-4000-8000-000000000905', 'guias', 'Guias'),
   ('00000000-0000-4000-8000-000000000906', 'contato', 'Vamos conversar'),
-  ('00000000-0000-4000-8000-000000000907', 'privacidade', 'Política de Privacidade');
+  ('00000000-0000-4000-8000-000000000907', 'privacidade', 'Política de Privacidade'),
+  ('00000000-0000-4000-8000-000000000908', 'artigos/artigo-de-exemplo', 'Artigo de exemplo'),
+  ('00000000-0000-4000-8000-000000000909', 'servicos', 'Serviços');
 
 insert into public.cms_page_versions (page_id, version_number, content) values
   ('00000000-0000-4000-8000-000000000901', 1, $json${"blocos":[
@@ -109,9 +111,11 @@ insert into public.cms_page_versions (page_id, version_number, content) values
   ('00000000-0000-4000-8000-000000000904', 1, '{"blocos":[{"tipo":"texto","titulo":"Página de exemplo","paragrafos":["Conteúdo de exemplo."]}]}'),
   ('00000000-0000-4000-8000-000000000905', 1, '{"blocos":[{"tipo":"texto","titulo":"Página de exemplo","paragrafos":["Conteúdo de exemplo."]}]}'),
   ('00000000-0000-4000-8000-000000000906', 1, '{"blocos":[{"tipo":"texto","titulo":"Página de exemplo","paragrafos":["Conteúdo de exemplo."]}]}'),
-  ('00000000-0000-4000-8000-000000000907', 1, '{"blocos":[{"tipo":"texto","titulo":"Política de exemplo","paragrafos":["Texto fictício. A política real depende de revisão jurídica."]}]}');
+  ('00000000-0000-4000-8000-000000000907', 1, '{"blocos":[{"tipo":"texto","titulo":"Política de exemplo","paragrafos":["Texto fictício. A política real depende de revisão jurídica."]}]}'),
+  ('00000000-0000-4000-8000-000000000908', 1, '{"blocos":[{"tipo":"texto","paragrafos":["Parágrafo fictício de artigo.","Outro parágrafo fictício."]}],"artigo":{"resumo":"Resumo fictício de um artigo de exemplo.","tema":"planejar"}}'),
+  ('00000000-0000-4000-8000-000000000909', 1, '{"blocos":[{"tipo":"servicos","titulo":"Serviços de exemplo","itens":[{"nome":"Serviço A","paraQuem":"Descrição fictícia de público.","entrega":"Descrição fictícia de entrega.","formato":"Formato fictício"},{"nome":"Serviço B","paraQuem":"Descrição fictícia de público.","entrega":"Descrição fictícia de entrega."}]}]}');
 
 update public.cms_page_versions set status = 'in_review'
- where page_id between '00000000-0000-4000-8000-000000000901' and '00000000-0000-4000-8000-000000000907';
+ where page_id between '00000000-0000-4000-8000-000000000901' and '00000000-0000-4000-8000-000000000909';
 update public.cms_page_versions set status = 'published'
- where page_id between '00000000-0000-4000-8000-000000000901' and '00000000-0000-4000-8000-000000000907';
+ where page_id between '00000000-0000-4000-8000-000000000901' and '00000000-0000-4000-8000-000000000909';

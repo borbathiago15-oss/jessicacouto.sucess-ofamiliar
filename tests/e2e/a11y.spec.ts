@@ -6,6 +6,7 @@ const ROTAS_PUBLICAS = [
   "/conheca-jessica",
   "/metodologia",
   "/diagnosticos",
+  "/servicos",
   "/guias",
   "/contato",
   "/privacidade",
@@ -15,6 +16,7 @@ const ROTAS_PUBLICAS = [
 // Acessibilidade automática (WCAG 2.1 A e AA), com e sem o banner de cookies.
 for (const rota of [
   ...ROTAS_PUBLICAS,
+  "/artigos",
   "/design",
   "/design/relatorio",
   "/admin/login",
@@ -32,7 +34,7 @@ for (const rota of [
 test("sem Supabase, as páginas públicas mostram aviso neutro, nunca texto inventado", async ({
   page,
 }) => {
-  for (const rota of ROTAS_PUBLICAS.slice(0, 7)) {
+  for (const rota of ROTAS_PUBLICAS.slice(0, 8)) {
     await page.goto(rota);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Conteúdo em preparação");
   }
