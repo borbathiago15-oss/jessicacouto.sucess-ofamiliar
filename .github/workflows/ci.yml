@@ -71,17 +71,14 @@ jobs:
         run: supabase start -x studio,imgproxy,vector,logflare,edge-runtime,supavisor
       - name: Verificar serviços
         run: supabase status -o env | grep -E '^(API_URL|DB_URL)=' | sed -E 's#(://[^:]+:)[^@]+@#\1***@#'
-      - name: Reaplicar banco do zero (migrations e seeds)
-        run: supabase db reset
+      - name: Reaplicar banco do zero (somente migrations)
+        run: supabase db reset --no-seed
       - name: Lint do schema
         run: supabase db lint --level warning --fail-on error
       - name: Testes de banco (pgTAP)
-        run: |
-          if [ -d supabase/tests ] && find supabase/tests -name "*.sql" | grep -q .; then
-            supabase test db
-          else
-            echo "Nenhum teste de banco ainda (M1 adicionará os testes pgTAP)."
-          fi
+        run: supabase test db
+      - name: Simulado de backup e restauração (dados fictícios)
+        run: bash scripts/db/backup-restore-drill.sh
       - name: Encerrar
         if: always()
         run: supabase stop --no-backup
@@ -118,6 +115,23 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run build
       - run: npx playwright test -c playwright.auth.config.ts --trace off
+      - name: Bootstrap da primeira administradora (idempotência e recusas)
+        run: |
+          set -euo pipefail
+          EMAIL="bootstrap.ci.$(date +%s)@exemplo.test"
+          first="$(npm run -s admin:bootstrap -- --email "$EMAIL")"; echo "$first"
+          echo "$first" | grep -q 'RESULT=invited'
+          second="$(npm run -s admin:bootstrap -- --email "$EMAIL")"; echo "$second"
+          echo "$second" | grep -q 'RESULT=already-admin'
+          count="$(psql "$SUPABASE_DB_URL" -X -A -t -c "select count(*) from public.user_roles ur join auth.users u on u.id = ur.user_id where u.email = '$EMAIL' and ur.role_key = 'admin'")"
+          test "$count" = "1"
+          audit="$(psql "$SUPABASE_DB_URL" -X -A -t -c "select count(*) from public.audit_logs where action = 'bootstrap.admin'")"
+          test "$audit" -ge 1
+          # Recusas: produção sem confirmação, e-mail inválido, ambiente de deploy.
+          if NEXT_PUBLIC_APP_ENV=production npm run -s admin:bootstrap -- --email "$EMAIL"; then exit 1; fi
+          if npm run -s admin:bootstrap -- --email "nao-e-email"; then exit 1; fi
+          if VERCEL=1 npm run -s admin:bootstrap -- --email "$EMAIL"; then exit 1; fi
+          echo "Bootstrap idempotente e protegido."
       - name: Encerrar
         if: always()
         run: supabase stop --no-backup

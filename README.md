@@ -50,16 +50,17 @@ npm run dev                  # http://localhost:3000
 
 ## Scripts
 
-| Script                            | Descrição                                                                                     |
-| --------------------------------- | --------------------------------------------------------------------------------------------- |
-| `npm run dev`                     | Servidor de desenvolvimento                                                                   |
-| `npm run build` / `npm start`     | Build e execução de produção                                                                  |
-| `npm run lint`                    | ESLint                                                                                        |
-| `npm run typecheck`               | Verificação de tipos                                                                          |
-| `npm run format` / `format:check` | Prettier                                                                                      |
-| `npm test`                        | Testes de unidade (Vitest)                                                                    |
-| `npm run test:e2e`                | Testes ponta a ponta (Playwright; requer `npm run build` e `npx playwright install chromium`) |
-| `npm run check`                   | lint + tipos + formatação + testes                                                            |
+| Script                                 | Descrição                                                                                     |
+| -------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `npm run dev`                          | Servidor de desenvolvimento                                                                   |
+| `npm run build` / `npm start`          | Build e execução de produção                                                                  |
+| `npm run lint`                         | ESLint                                                                                        |
+| `npm run typecheck`                    | Verificação de tipos                                                                          |
+| `npm run format` / `format:check`      | Prettier                                                                                      |
+| `npm test`                             | Testes de unidade (Vitest)                                                                    |
+| `npm run test:e2e`                     | Testes ponta a ponta (Playwright; requer `npm run build` e `npx playwright install chromium`) |
+| `npm run admin:bootstrap -- --email …` | Cria/confirma a primeira administradora (manual; ver `docs/operacao/runbooks.md`)             |
+| `npm run check`                        | lint + tipos + formatação + testes                                                            |
 
 ## Ambientes
 
@@ -86,6 +87,15 @@ prefixo fazem o build falhar.
 - `feat/<módulo>-<assunto>`: uma funcionalidade por branch, com Pull Request para `develop`.
 - Commits pequenos, mensagens no padrão Conventional Commits.
 - O CI (lint, tipos, testes, build, e2e e Gitleaks) deve passar antes do merge.
+
+## Banco de dados e segurança (M1)
+
+- Migrations em `supabase/migrations`; testes pgTAP em `supabase/tests` (rodam no CI, ADR 0007).
+- MFA TOTP obrigatório e validado no banco (AAL2), sessões revogáveis na hora (ADR 0008).
+- Matriz de permissões: [`docs/seguranca/permissoes.md`](docs/seguranca/permissoes.md).
+- Procedimentos de contas, MFA e sessões: [`docs/operacao/runbooks.md`](docs/operacao/runbooks.md).
+- Backup e restauração: [`docs/operacao/backup-e-restauracao.md`](docs/operacao/backup-e-restauracao.md).
+- `supabase/seed.sql` contém somente dados fictícios (desenvolvimento local e simulado de backup).
 
 ## Estrutura
 
