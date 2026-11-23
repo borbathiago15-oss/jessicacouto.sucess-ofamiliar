@@ -66,8 +66,8 @@ test("matriz posiciona o item e o PDCA exige plano e resultado", async () => {
     "Para executar, defina responsável e prazo no plano.",
   );
 
-  await cartao.getByLabel("Responsável").fill("Sócio fictício");
-  await cartao.getByLabel("Prazo").fill("2030-03-31");
+  await cartao.getByLabel("Responsável", { exact: true }).fill("Sócio fictício");
+  await cartao.getByLabel("Prazo", { exact: true }).fill("2030-03-31");
   await cartao.getByRole("button", { name: "Salvar" }).click();
   const executando = page
     .getByRole("region", { name: /^Executar \(/ })
