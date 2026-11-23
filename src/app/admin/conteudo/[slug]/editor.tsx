@@ -1,0 +1,648 @@
+"use client";
+
+import { useState, useTransition, type ReactNode } from "react";
+import { Blocos } from "@/components/site/blocos";
+import { Botao, Cartao, Selo, campoClasses } from "@/components/ui";
+import {
+  ROTULO_BLOCO,
+  blocoVazio,
+  type Bloco,
+  type Conteudo,
+  type TipoBloco,
+} from "@/modules/cms/schema";
+import {
+  enviarImagem,
+  enviarParaRevisao,
+  publicar,
+  salvarRascunho,
+  type Resultado,
+} from "../actions";
+import { ROTULO_STATUS } from "../status";
+
+type Props = {
+  slug: string;
+  rota: string;
+  inicial: Conteudo;
+  statusInicial: string | null;
+  versaoInicial: number | null;
+  podeEditar: boolean;
+  podePublicar: boolean;
+};
+
+const rotuloCampo = "grid gap-1 text-[13px] font-semibold";
+
+function Texto({
+  rotulo,
+  valor,
+  onChange,
+  longo,
+  id,
+}: {
+  rotulo: string;
+  valor: string;
+  onChange: (v: string) => void;
+  longo?: boolean;
+  id: string;
+}) {
+  return (
+    <label htmlFor={id} className={rotuloCampo}>
+      {rotulo}
+      {longo ? (
+        <textarea
+          id={id}
+          rows={3}
+          className={campoClasses}
+          value={valor}
+          onChange={(e) => onChange(e.target.value)}
+        />
+      ) : (
+        <input
+          id={id}
+          className={campoClasses}
+          value={valor}
+          onChange={(e) => onChange(e.target.value)}
+        />
+      )}
+    </label>
+  );
+}
+
+function opcional(v: string) {
+  return v.trim() ? v : undefined;
+}
+
+export function Editor({
+  slug,
+  rota,
+  inicial,
+  statusInicial,
+  versaoInicial,
+  podeEditar,
+  podePublicar,
+}: Props) {
+  const [blocos, setBlocos] = useState<Bloco[]>(inicial.blocos);
+  const [status, setStatus] = useState(statusInicial);
+  const [versao, setVersao] = useState(versaoInicial);
+  const [alterado, setAlterado] = useState(false);
+  const [aviso, setAviso] = useState<{ ok: boolean; texto: string } | null>(null);
+  const [novoTipo, setNovoTipo] = useState<TipoBloco>("texto");
+  const [pendente, iniciar] = useTransition();
+
+  const atualizar = (i: number, b: Bloco) => {
+    setBlocos((atual) => atual.map((x, k) => (k === i ? b : x)));
+    setAlterado(true);
+  };
+  const mover = (i: number, d: -1 | 1) => {
+    setBlocos((atual) => {
+      const novo = [...atual];
+      const [b] = novo.splice(i, 1);
+      if (b) novo.splice(i + d, 0, b);
+      return novo;
+    });
+    setAlterado(true);
+  };
+  const remover = (i: number) => {
+    setBlocos((atual) => atual.filter((_, k) => k !== i));
+    setAlterado(true);
+  };
+
+  function aplicar(r: Resultado) {
+    setAviso({ ok: r.ok, texto: r.mensagem });
+    if (r.ok) {
+      setStatus(r.status);
+      setVersao(r.versao);
+      setAlterado(false);
+    }
+  }
+
+  const salvar = () =>
+    iniciar(async () => aplicar(await salvarRascunho(slug, JSON.stringify({ blocos }))));
+  const revisar = () => iniciar(async () => aplicar(await enviarParaRevisao(slug)));
+  const publicarAgora = () => iniciar(async () => aplicar(await publicar(slug)));
+
+  async function subirImagem(arquivo: File | undefined, aoEnviar: (path: string) => void) {
+    if (!arquivo) return;
+    const fd = new FormData();
+    fd.set("arquivo", arquivo);
+    const r = await enviarImagem(slug, fd);
+    if (r.ok) aoEnviar(r.path);
+    else setAviso({ ok: false, texto: r.mensagem });
+  }
+
+  const [rotuloStatus, tomStatus] = ROTULO_STATUS[status ?? ""] ?? [
+    "Sem versão",
+    "neutro" as const,
+  ];
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start">
+      <div className="grid gap-4">
+        <Cartao className="sticky top-3 z-10 grid gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <span className="flex items-center gap-2">
+              <Selo tom={tomStatus}>{rotuloStatus}</Selo>
+              {versao ? <span className="text-mudo text-sm">versão {versao}</span> : null}
+              {alterado ? (
+                <span className="text-atencao text-sm font-semibold">alterações não salvas</span>
+              ) : null}
+            </span>
+            <a
+              href={rota}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-terra-texto text-sm underline"
+            >
+              Ver página publicada
+            </a>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              onClick={salvar}
+              disabled={!podeEditar || pendente}
+            >
+              Salvar rascunho
+            </Botao>
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              variante="secundario"
+              onClick={revisar}
+              disabled={!podeEditar || pendente || alterado || status !== "draft"}
+            >
+              Enviar para revisão
+            </Botao>
+            {podePublicar ? (
+              <Botao
+                type="button"
+                tamanho="pequeno"
+                variante="secundario"
+                onClick={publicarAgora}
+                disabled={pendente || alterado || status !== "in_review"}
+              >
+                Publicar
+              </Botao>
+            ) : null}
+          </div>
+          {aviso ? (
+            <p
+              role={aviso.ok ? "status" : "alert"}
+              data-testid="editor-aviso"
+              className={
+                aviso.ok ? "text-ok text-sm font-semibold" : "text-critico text-sm font-semibold"
+              }
+            >
+              {aviso.texto}
+            </p>
+          ) : null}
+          {!podeEditar ? (
+            <p className="text-mudo text-sm">Você pode ver, mas não editar este conteúdo.</p>
+          ) : null}
+        </Cartao>
+
+        {blocos.map((b, i) => (
+          <Cartao
+            key={i}
+            className="grid gap-3"
+            aria-label={`Bloco ${i + 1}: ${ROTULO_BLOCO[b.tipo]}`}
+          >
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <b className="font-display text-lg">
+                {i + 1}. {ROTULO_BLOCO[b.tipo]}
+              </b>
+              <span className="flex gap-1">
+                <Botao
+                  type="button"
+                  tamanho="pequeno"
+                  variante="secundario"
+                  onClick={() => mover(i, -1)}
+                  disabled={i === 0}
+                  aria-label={`Subir bloco ${i + 1}`}
+                >
+                  Subir
+                </Botao>
+                <Botao
+                  type="button"
+                  tamanho="pequeno"
+                  variante="secundario"
+                  onClick={() => mover(i, 1)}
+                  disabled={i === blocos.length - 1}
+                  aria-label={`Descer bloco ${i + 1}`}
+                >
+                  Descer
+                </Botao>
+                <Botao
+                  type="button"
+                  tamanho="pequeno"
+                  variante="secundario"
+                  onClick={() => remover(i)}
+                  aria-label={`Remover bloco ${i + 1}`}
+                >
+                  Remover
+                </Botao>
+              </span>
+            </div>
+            <CamposBloco
+              id={`b${i}`}
+              bloco={b}
+              onChange={(nb) => atualizar(i, nb)}
+              onImagem={(arquivo, aoEnviar) => subirImagem(arquivo, aoEnviar)}
+            />
+          </Cartao>
+        ))}
+
+        <Cartao superficie="blush" className="flex flex-wrap items-end gap-3">
+          <label htmlFor="novo-bloco" className={rotuloCampo}>
+            Novo bloco
+            <select
+              id="novo-bloco"
+              className={campoClasses}
+              value={novoTipo}
+              onChange={(e) => setNovoTipo(e.target.value as TipoBloco)}
+            >
+              {(Object.keys(ROTULO_BLOCO) as TipoBloco[]).map((t) => (
+                <option key={t} value={t}>
+                  {ROTULO_BLOCO[t]}
+                </option>
+              ))}
+            </select>
+          </label>
+          <Botao
+            type="button"
+            tamanho="pequeno"
+            onClick={() => {
+              setBlocos((a) => [...a, blocoVazio(novoTipo)]);
+              setAlterado(true);
+            }}
+          >
+            Adicionar bloco
+          </Botao>
+        </Cartao>
+      </div>
+
+      <section
+        aria-label="Prévia"
+        className="border-linho bg-porcelana grid gap-3 rounded-[var(--radius-cartao)] border p-5"
+      >
+        <span className="text-mudo text-[13px] font-semibold">Prévia (não publicada)</span>
+        <div className="bg-papel rounded-2xl p-5">
+          <Blocos blocos={blocos} midiaBase="/admin/midia" />
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function CamposBloco({
+  id,
+  bloco: b,
+  onChange,
+  onImagem,
+}: {
+  id: string;
+  bloco: Bloco;
+  onChange: (b: Bloco) => void;
+  onImagem: (arquivo: File | undefined, aoEnviar: (path: string) => void) => void;
+}) {
+  const imagemInput = (rotulo: string, aoEnviar: (path: string) => void): ReactNode => (
+    <label htmlFor={`${id}-img`} className={rotuloCampo}>
+      {rotulo}
+      <input
+        id={`${id}-img`}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        className="text-sm"
+        onChange={(e) => onImagem(e.target.files?.[0], aoEnviar)}
+      />
+    </label>
+  );
+
+  switch (b.tipo) {
+    case "hero":
+      return (
+        <div className="grid gap-3">
+          <Texto
+            id={`${id}-chamada`}
+            rotulo="Chamada (opcional)"
+            valor={b.chamada ?? ""}
+            onChange={(v) => onChange({ ...b, chamada: opcional(v) })}
+          />
+          <Texto
+            id={`${id}-titulo`}
+            rotulo="Título"
+            valor={b.titulo}
+            onChange={(v) => onChange({ ...b, titulo: v })}
+          />
+          <Texto
+            id={`${id}-texto`}
+            rotulo="Texto de apoio (opcional)"
+            longo
+            valor={b.texto ?? ""}
+            onChange={(v) => onChange({ ...b, texto: opcional(v) })}
+          />
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Texto
+              id={`${id}-cta1r`}
+              rotulo="Botão principal"
+              valor={b.ctaPrimario?.rotulo ?? ""}
+              onChange={(v) =>
+                onChange({
+                  ...b,
+                  ctaPrimario: v
+                    ? { rotulo: v, href: b.ctaPrimario?.href ?? "/diagnosticos" }
+                    : undefined,
+                })
+              }
+            />
+            <Texto
+              id={`${id}-cta1h`}
+              rotulo="Link do botão principal"
+              valor={b.ctaPrimario?.href ?? ""}
+              onChange={(v) =>
+                onChange({
+                  ...b,
+                  ctaPrimario: { rotulo: b.ctaPrimario?.rotulo ?? "Saiba mais", href: v },
+                })
+              }
+            />
+            <Texto
+              id={`${id}-cta2r`}
+              rotulo="Botão secundário"
+              valor={b.ctaSecundario?.rotulo ?? ""}
+              onChange={(v) =>
+                onChange({
+                  ...b,
+                  ctaSecundario: v
+                    ? { rotulo: v, href: b.ctaSecundario?.href ?? "/guias" }
+                    : undefined,
+                })
+              }
+            />
+            <Texto
+              id={`${id}-cta2h`}
+              rotulo="Link do botão secundário"
+              valor={b.ctaSecundario?.href ?? ""}
+              onChange={(v) =>
+                onChange({
+                  ...b,
+                  ctaSecundario: { rotulo: b.ctaSecundario?.rotulo ?? "Saiba mais", href: v },
+                })
+              }
+            />
+          </div>
+          {imagemInput("Foto (somente fotos reais e autorizadas)", (path) =>
+            onChange({ ...b, imagem: { path, alt: b.imagem?.alt ?? "Jéssica Couto" } }),
+          )}
+          {b.imagem ? (
+            <div className="flex flex-wrap items-end gap-3">
+              <Texto
+                id={`${id}-alt`}
+                rotulo="Descrição da foto"
+                valor={b.imagem.alt}
+                onChange={(v) => onChange({ ...b, imagem: { path: b.imagem!.path, alt: v } })}
+              />
+              <Botao
+                type="button"
+                tamanho="pequeno"
+                variante="secundario"
+                onClick={() => onChange({ ...b, imagem: undefined })}
+              >
+                Remover foto
+              </Botao>
+            </div>
+          ) : null}
+        </div>
+      );
+    case "texto":
+      return (
+        <div className="grid gap-3">
+          <Texto
+            id={`${id}-titulo`}
+            rotulo="Título (opcional)"
+            valor={b.titulo ?? ""}
+            onChange={(v) => onChange({ ...b, titulo: opcional(v) })}
+          />
+          <Texto
+            id={`${id}-pars`}
+            rotulo="Parágrafos (separe com uma linha em branco)"
+            longo
+            valor={b.paragrafos.join("\n\n")}
+            onChange={(v) =>
+              onChange({
+                ...b,
+                paragrafos: v
+                  .split(/\n\s*\n/)
+                  .map((p) => p.trim())
+                  .filter(Boolean),
+              })
+            }
+          />
+        </div>
+      );
+    case "movimentos":
+      return (
+        <div className="grid gap-3">
+          <Texto
+            id={`${id}-titulo`}
+            rotulo="Título"
+            valor={b.titulo}
+            onChange={(v) => onChange({ ...b, titulo: v })}
+          />
+          {b.itens.map((it, k) => (
+            <div key={k} className="grid gap-2 sm:grid-cols-[minmax(0,.7fr)_minmax(0,1.3fr)]">
+              <Texto
+                id={`${id}-n${k}`}
+                rotulo={`Movimento ${k + 1}`}
+                valor={it.nome}
+                onChange={(v) =>
+                  onChange({
+                    ...b,
+                    itens: b.itens.map((x, j) => (j === k ? { ...x, nome: v } : x)),
+                  })
+                }
+              />
+              <Texto
+                id={`${id}-d${k}`}
+                rotulo="Descrição"
+                valor={it.descricao}
+                onChange={(v) =>
+                  onChange({
+                    ...b,
+                    itens: b.itens.map((x, j) => (j === k ? { ...x, descricao: v } : x)),
+                  })
+                }
+              />
+            </div>
+          ))}
+          <div className="flex gap-2">
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              variante="secundario"
+              onClick={() =>
+                onChange({ ...b, itens: [...b.itens, { nome: "Novo", descricao: "Descrição" }] })
+              }
+              disabled={b.itens.length >= 8}
+            >
+              Adicionar item
+            </Botao>
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              variante="secundario"
+              onClick={() => onChange({ ...b, itens: b.itens.slice(0, -1) })}
+              disabled={b.itens.length <= 1}
+            >
+              Remover último
+            </Botao>
+          </div>
+        </div>
+      );
+    case "caminhos":
+      return (
+        <div className="grid gap-3">
+          <Texto
+            id={`${id}-titulo`}
+            rotulo="Título"
+            valor={b.titulo}
+            onChange={(v) => onChange({ ...b, titulo: v })}
+          />
+          <Texto
+            id={`${id}-texto`}
+            rotulo="Texto (opcional)"
+            valor={b.texto ?? ""}
+            onChange={(v) => onChange({ ...b, texto: opcional(v) })}
+          />
+          {b.itens.map((it, k) => (
+            <div key={k} className="grid gap-2 sm:grid-cols-3">
+              <Texto
+                id={`${id}-t${k}`}
+                rotulo={`Caminho ${k + 1}`}
+                valor={it.titulo}
+                onChange={(v) =>
+                  onChange({
+                    ...b,
+                    itens: b.itens.map((x, j) => (j === k ? { ...x, titulo: v } : x)),
+                  })
+                }
+              />
+              <Texto
+                id={`${id}-d${k}`}
+                rotulo="Descrição"
+                valor={it.descricao}
+                onChange={(v) =>
+                  onChange({
+                    ...b,
+                    itens: b.itens.map((x, j) => (j === k ? { ...x, descricao: v } : x)),
+                  })
+                }
+              />
+              <Texto
+                id={`${id}-h${k}`}
+                rotulo="Link"
+                valor={it.href}
+                onChange={(v) =>
+                  onChange({
+                    ...b,
+                    itens: b.itens.map((x, j) => (j === k ? { ...x, href: v } : x)),
+                  })
+                }
+              />
+            </div>
+          ))}
+          <div className="flex gap-2">
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              variante="secundario"
+              onClick={() =>
+                onChange({
+                  ...b,
+                  itens: [
+                    ...b.itens,
+                    { titulo: "Novo", descricao: "Descrição", href: "/diagnosticos" },
+                  ],
+                })
+              }
+              disabled={b.itens.length >= 4}
+            >
+              Adicionar caminho
+            </Botao>
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              variante="secundario"
+              onClick={() => onChange({ ...b, itens: b.itens.slice(0, -1) })}
+              disabled={b.itens.length <= 1}
+            >
+              Remover último
+            </Botao>
+          </div>
+        </div>
+      );
+    case "destaque":
+      return (
+        <div className="grid gap-3">
+          <Texto
+            id={`${id}-chamada`}
+            rotulo="Chamada (opcional)"
+            valor={b.chamada ?? ""}
+            onChange={(v) => onChange({ ...b, chamada: opcional(v) })}
+          />
+          <Texto
+            id={`${id}-titulo`}
+            rotulo="Título"
+            valor={b.titulo}
+            onChange={(v) => onChange({ ...b, titulo: v })}
+          />
+          <Texto
+            id={`${id}-texto`}
+            rotulo="Texto"
+            longo
+            valor={b.texto}
+            onChange={(v) => onChange({ ...b, texto: v })}
+          />
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Texto
+              id={`${id}-ctar`}
+              rotulo="Botão (opcional)"
+              valor={b.cta?.rotulo ?? ""}
+              onChange={(v) =>
+                onChange({
+                  ...b,
+                  cta: v ? { rotulo: v, href: b.cta?.href ?? "/guias" } : undefined,
+                })
+              }
+            />
+            <Texto
+              id={`${id}-ctah`}
+              rotulo="Link do botão"
+              valor={b.cta?.href ?? ""}
+              onChange={(v) =>
+                onChange({ ...b, cta: { rotulo: b.cta?.rotulo ?? "Saiba mais", href: v } })
+              }
+            />
+          </div>
+        </div>
+      );
+    case "imagem":
+      return (
+        <div className="grid gap-3">
+          {imagemInput("Imagem (JPG, PNG ou WebP, até 5 MB)", (path) => onChange({ ...b, path }))}
+          <Texto
+            id={`${id}-alt`}
+            rotulo="Descrição da imagem (acessibilidade)"
+            valor={b.alt}
+            onChange={(v) => onChange({ ...b, alt: v })}
+          />
+          <Texto
+            id={`${id}-leg`}
+            rotulo="Legenda (opcional)"
+            valor={b.legenda ?? ""}
+            onChange={(v) => onChange({ ...b, legenda: opcional(v) })}
+          />
+        </div>
+      );
+  }
+}
