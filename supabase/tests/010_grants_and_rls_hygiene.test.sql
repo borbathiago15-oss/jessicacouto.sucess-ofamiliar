@@ -57,16 +57,22 @@ select is_empty(
   'funções security definer definem search_path'
 );
 
--- 8. anon não executa nenhuma função de public.
+-- 8. anon executa SOMENTE as funções públicas da lista fechada abaixo.
 select is_empty(
   $$ select p.proname from pg_proc p join pg_namespace n on n.oid = p.pronamespace
      where n.nspname = 'public' and has_function_privilege('anon', p.oid, 'execute')
-       and p.proname not like 'cms_get_published%' $$,
-  'anon não executa funções de public (exceto leitura de conteúdo publicado)'
+       and p.proname not in ('cms_get_published_page', 'registrar_solicitacao_titular') $$,
+  'anon executa apenas: leitura de conteúdo publicado e registro de pedido do titular'
 );
 
--- 9. anon não acessa o schema private.
-select ok(not has_schema_privilege('anon', 'private', 'usage'), 'anon não usa o schema private');
+-- 9. No schema private, anon executa SOMENTE a checagem de mídia publicada
+--    (usada pela política de leitura pública do Storage).
+select is_empty(
+  $$ select p.proname from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+     where n.nspname = 'private' and has_function_privilege('anon', p.oid, 'execute')
+       and p.proname not in ('cms_midia_publicada') $$,
+  'anon executa apenas cms_midia_publicada no schema private'
+);
 
 -- 10. Na prática: anon não lê nenhuma tabela.
 select tests.as_anon();
