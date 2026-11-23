@@ -6,9 +6,27 @@
 }
 
 html {
-  background-color: var(--color-cream);
-  color: var(--color-charcoal);
+  background-color: var(--color-porcelana);
+  color: var(--color-cacau);
   font-family: var(--font-sans);
+  font-size: 100%;
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  text-wrap: balance;
+}
+
+a {
+  text-underline-offset: 3px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-terra-texto);
+  outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -17,5 +35,6 @@ html {
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

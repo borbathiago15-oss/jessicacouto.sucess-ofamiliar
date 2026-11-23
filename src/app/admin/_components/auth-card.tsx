@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { FioContinuidade, Monograma, botaoClasses, campoClasses } from "@/components/ui";
 
 export function AuthCard({
   title,
@@ -11,11 +12,16 @@ export function AuthCard({
 }) {
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center gap-6 px-6 py-16">
-      <p className="text-burgundy text-xs tracking-[0.2em] uppercase">
-        JC | Sucessão de Sucesso · Administração
-      </p>
-      <h1 className="font-display text-burgundy text-3xl">{title}</h1>
-      {description ? <p className="text-sm leading-relaxed">{description}</p> : null}
+      <div className="flex items-center gap-3">
+        <Monograma />
+        <div className="leading-tight">
+          <p className="font-display text-lg font-semibold">Sucessão de Sucesso</p>
+          <p className="text-mudo text-[13px]">Ambiente administrativo</p>
+        </div>
+      </div>
+      <FioContinuidade />
+      <h1 className="font-display text-[2rem] leading-tight font-semibold">{title}</h1>
+      {description ? <p className="text-mudo leading-relaxed">{description}</p> : null}
       {children}
     </main>
   );
@@ -28,8 +34,8 @@ export function FormMessage({ tone, children }: { tone: "error" | "info"; childr
       data-testid="form-message"
       className={
         tone === "error"
-          ? "border-burgundy/40 text-burgundy rounded border bg-white px-3 py-2 text-sm"
-          : "border-deep-green/40 text-deep-green rounded border bg-white px-3 py-2 text-sm"
+          ? "bg-critico-fundo text-critico rounded-xl px-3.5 py-2.5 text-sm font-medium"
+          : "bg-ok-fundo text-ok rounded-xl px-3.5 py-2.5 text-sm font-medium"
       }
     >
       {children}
@@ -37,8 +43,6 @@ export function FormMessage({ tone, children }: { tone: "error" | "info"; childr
   );
 }
 
-export const inputClass =
-  "w-full rounded border border-charcoal/30 bg-white px-3 py-2 text-base focus:border-burgundy focus:outline-2 focus:outline-burgundy";
-export const buttonClass =
-  "rounded bg-burgundy px-4 py-2 font-medium text-white hover:bg-burgundy/90 focus:outline-2 focus:outline-offset-2 focus:outline-burgundy";
-export const labelClass = "flex flex-col gap-1 text-sm font-medium";
+export const inputClass = campoClasses;
+export const buttonClass = botaoClasses("primario");
+export const labelClass = "grid gap-1.5 text-[13.5px] font-semibold";

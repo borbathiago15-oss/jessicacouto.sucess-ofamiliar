@@ -1,16 +1,41 @@
 /*
- * Tokens de marca JC | Sucessão de Sucesso — PROVISÓRIOS.
- * Paleta de referência do Documento Mestre §3.2, pendente de validação final.
- * Tipografia definitiva pendente de aprovação: por ora, pilhas de fontes do sistema.
+ * Tokens de marca JC | Sucessão de Sucesso — paleta "terracota clara" (ADR 0010).
+ * Fonte da verdade das cores e fontes. O espelho em TypeScript (tokens.ts) é usado
+ * nos gráficos em SVG; um teste garante que os dois não divergem.
+ * Tema único e claro, por decisão de marca.
  */
 @theme {
-  --color-burgundy: #4b0f1f;
-  --color-gold: #c9a86a;
-  --color-cream: #f5ede3;
-  --color-charcoal: #2e2e2e;
-  --color-deep-green: #17372f; /* complementar — validar com Jéssica */
-  --color-white: #ffffff;
+  /* Superfícies */
+  --color-porcelana: #fbf6f3;
+  --color-papel: #fffdfb;
+  --color-blush: #f3e1d8;
+  --color-blush-2: #eacabc;
+  --color-linho: #ece0d6;
+  --color-salvia-claro: #e4eae3;
 
-  --font-display: ui-serif, Georgia, "Times New Roman", serif;
-  --font-sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, Arial, sans-serif;
+  /* Marca */
+  --color-terra: #b5674e;
+  --color-terra-texto: #8e4a35;
+  --color-terra-escuro: #7a3e2c;
+  --color-champanhe: #d8bfa6;
+  --color-salvia: #7d8f80;
+
+  /* Texto */
+  --color-cacau: #3a2e2a;
+  --color-mudo: #6f605a;
+
+  /* Estados */
+  --color-ok: #4f6b55;
+  --color-ok-fundo: #e4ece3;
+  --color-atencao: #8a5a1c;
+  --color-atencao-fundo: #f6e9d6;
+  --color-critico: #a8443a;
+  --color-critico-fundo: #f7e2de;
+
+  /* Tipografia (fontes auto-hospedadas pelo next/font) */
+  --font-display: var(--font-bodoni), "Bodoni 72", Didot, Georgia, serif;
+  --font-sans: var(--font-figtree), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --radius-cartao: 18px;
+  --radius-campo: 12px;
 }

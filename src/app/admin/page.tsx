@@ -46,13 +46,13 @@ export default async function AdminHomePage({
     <main className="mx-auto flex min-h-dvh max-w-3xl flex-col gap-8 px-6 py-16">
       <header className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-burgundy text-xs tracking-[0.2em] uppercase">
-            JC | Sucessão de Sucesso
-          </p>
-          <h1 className="font-display text-burgundy text-3xl">Ambiente administrativo</h1>
+          <p className="text-terra-texto text-[13.5px] font-semibold">JC | Sucessão de Sucesso</p>
+          <h1 className="font-display text-[2rem] leading-tight font-semibold">
+            Ambiente administrativo
+          </h1>
         </div>
         <form action="/admin/sair" method="post">
-          <button type="submit" className="text-burgundy text-sm underline">
+          <button type="submit" className="text-terra-texto text-sm underline">
             Sair
           </button>
         </form>
