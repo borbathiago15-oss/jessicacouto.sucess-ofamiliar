@@ -88,6 +88,9 @@ export default async function AdminHomePage({
         <Link href="/admin/conteudo" className="text-terra-texto underline">
           Conteúdo do site
         </Link>
+        <Link href="/admin/questionarios" className="text-terra-texto underline">
+          Questionários
+        </Link>
       </section>
 
       <section aria-labelledby="seguranca" className="flex flex-col gap-3">
