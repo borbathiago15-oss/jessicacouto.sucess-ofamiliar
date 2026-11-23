@@ -40,7 +40,7 @@ export default async function RecoverPasswordPage({
           Enviar link
         </button>
       </form>
-      <Link href="/admin/login" className="text-burgundy text-sm underline">
+      <Link href="/admin/login" className="text-terra-texto text-sm underline">
         Voltar ao login
       </Link>
     </AuthCard>

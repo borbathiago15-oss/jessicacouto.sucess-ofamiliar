@@ -57,7 +57,7 @@ export default async function LoginPage({
               Entrar
             </button>
           </form>
-          <Link href="/admin/recuperar-senha" className="text-burgundy text-sm underline">
+          <Link href="/admin/recuperar-senha" className="text-terra-texto text-sm underline">
             Esqueci minha senha
           </Link>
         </>
