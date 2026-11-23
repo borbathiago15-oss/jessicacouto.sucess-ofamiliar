@@ -28,6 +28,13 @@ as $$
   );
 $$;
 
+-- Antes de abrir o schema private para anon: nenhuma função dele pode continuar
+-- executável por PUBLIC (o padrão do Postgres). Quem já usava segue usando.
+revoke execute on all functions in schema private from public, anon;
+grant execute on all functions in schema private to authenticated, service_role;
+-- Para funções futuras: o padrão por schema não remove o grant global a PUBLIC.
+alter default privileges revoke execute on functions from public;
+alter default privileges in schema private grant execute on functions to authenticated, service_role;
 grant execute on function private.cms_midia_publicada(text) to anon, authenticated;
 grant usage on schema private to anon;
 
