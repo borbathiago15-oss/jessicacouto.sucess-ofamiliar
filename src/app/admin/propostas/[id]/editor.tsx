@@ -360,7 +360,7 @@ export function EditorProposta({
         </fieldset>
       </div>
 
-      <div className="grid gap-4 lg:sticky lg:top-3">
+      <div className="grid gap-4 lg:sticky lg:top-3 lg:max-h-[calc(100dvh-1.5rem)] lg:overflow-y-auto">
         <Cartao className="grid gap-2" data-testid="proposta-resumo">
           <h2 className="font-display text-xl">Investimento</h2>
           {totaisCongelados ? (
