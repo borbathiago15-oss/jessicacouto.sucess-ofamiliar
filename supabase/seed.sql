@@ -20,10 +20,7 @@ update public.profiles set display_name = 'Administradora Fictícia'
 where id = '00000000-0000-4000-8000-000000000001';
 insert into public.user_roles (user_id, role_key) values ('00000000-0000-4000-8000-000000000001', 'admin');
 
-insert into public.pipeline_stages (id, name, position, is_closed, is_won) values
-  ('00000000-0000-4000-8000-000000000101', 'Etapa fictícia A', 1, false, false),
-  ('00000000-0000-4000-8000-000000000102', 'Etapa fictícia B', 2, false, false),
-  ('00000000-0000-4000-8000-000000000103', 'Etapa fictícia C (encerrada)', 3, true, false);
+-- As etapas do funil vêm da migration (etapas padrão).
 
 insert into public.organizations (id, trade_name, segment, size_band, owner_id) values
   ('00000000-0000-4000-8000-000000000201', 'Empresa Exemplo Alfa', 'Segmento fictício', 'faixa-1', '00000000-0000-4000-8000-000000000001'),
@@ -47,7 +44,7 @@ insert into public.consent_records (participant_id, purpose, granted, notice_ver
 
 insert into public.opportunities (id, organization_id, stage_id, title, owner_id) values
   ('00000000-0000-4000-8000-000000000501', '00000000-0000-4000-8000-000000000201',
-   '00000000-0000-4000-8000-000000000101', 'Oportunidade fictícia', '00000000-0000-4000-8000-000000000001');
+   (select id from public.pipeline_stages where position = 10), 'Oportunidade fictícia', '00000000-0000-4000-8000-000000000001');
 
 -- Questionário fictício genérico (sem conteúdo metodológico real).
 insert into public.instruments (id, key, name) values

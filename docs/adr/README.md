@@ -16,5 +16,6 @@
 | [0012](0012-construtor-de-questionarios.md)         | Construtor de questionários                                     | Aceita |
 | [0013](0013-empresas-raiox-e-cofre.md)              | Empresas com histórico, Raio-X Financeiro e cofre de documentos | Aceita |
 | [0014](0014-familia-e-linha-do-tempo.md)            | Família empresária e linha do tempo                             | Aceita |
+| [0015](0015-funil-tarefas-e-agenda.md)              | Funil comercial, tarefas e agenda                               | Aceita |
 
 Modelo: Contexto → Decisão → Consequências.
