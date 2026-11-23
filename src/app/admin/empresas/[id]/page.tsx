@@ -99,6 +99,21 @@ export default async function EmpresaPage({ params }: { params: Promise<{ id: st
           </Cartao>
         ) : null}
         {podeAnalises ? (
+          <Cartao className="grid content-start gap-3 sm:col-span-2" superficie="borda">
+            <h2 className="font-display text-xl">Relatório Executivo</h2>
+            <p className="text-[15px]">
+              Conclusões, cenário de caixa, família e plano em um só documento, também em formato de
+              apresentação.
+            </p>
+            <Link
+              href={`/admin/empresas/${id}/relatorio`}
+              className="text-terra-texto font-semibold underline"
+            >
+              Abrir o relatório
+            </Link>
+          </Cartao>
+        ) : null}
+        {podeAnalises ? (
           <Cartao className="grid content-start gap-3">
             <h2 className="font-display text-xl">Matriz de Prioridades</h2>
             <p className="text-[15px]">O que atacar primeiro, com o ciclo PDCA de cada item.</p>

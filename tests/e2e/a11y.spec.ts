@@ -13,7 +13,13 @@ const ROTAS_PUBLICAS = [
 ];
 
 // Acessibilidade automática (WCAG 2.1 A e AA), com e sem o banner de cookies.
-for (const rota of [...ROTAS_PUBLICAS, "/design", "/admin/login", "/admin/recuperar-senha"]) {
+for (const rota of [
+  ...ROTAS_PUBLICAS,
+  "/design",
+  "/design/relatorio",
+  "/admin/login",
+  "/admin/recuperar-senha",
+]) {
   test(`sem violações de acessibilidade em ${rota}`, async ({ page }) => {
     await page.goto(rota);
     const { violations } = await new AxeBuilder({ page })
