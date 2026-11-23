@@ -53,9 +53,13 @@ function EnviarArquivo({ org, pedido }: { org: string; pedido: PedidoPortal }) {
         <input id={id} name="arquivo" type="file" required className="text-sm font-normal" />
       </label>
       <div>
-        <Botao type="submit" tamanho="pequeno" disabled={pendente}>
-          {pendente ? "Guardando…" : `Guardar no cofre`}
-          <span className="sr-only">: {pedido.title}</span>
+        <Botao
+          type="submit"
+          tamanho="pequeno"
+          disabled={pendente}
+          aria-label={`Guardar no cofre: ${pedido.title}`}
+        >
+          {pendente ? "Guardando…" : "Guardar no cofre"}
         </Botao>
       </div>
       <Mensagem aviso={aviso} testid="envio-aviso" />

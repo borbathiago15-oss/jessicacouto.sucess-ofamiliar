@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Cartao, Chamada, Selo, Titulo } from "@/components/ui";
 import { carregarEmpresa } from "../carregar";
-import { ConvidarCliente, RetirarAcesso, RetirarPublicacao } from "./controles";
+import { ConvidarCliente, MembrosDoPortal, RetirarPublicacao } from "./controles";
 
 export const metadata = { title: "Portal do cliente" };
 
@@ -67,26 +67,14 @@ export default async function PortalDaEmpresa({ params }: { params: Promise<{ id
         <h2 id="acessos" className="font-display text-xl">
           Pessoas com acesso
         </h2>
-        {ativos.length === 0 ? (
-          <p className="text-mudo">Ninguém tem acesso ainda.</p>
-        ) : (
-          <ul className="border-linho m-0 grid list-none border-t p-0" data-testid="portal-membros">
-            {ativos.map((m) => (
-              <li
-                key={m.user_id}
-                className="border-linho flex flex-wrap items-center justify-between gap-3 border-b py-3"
-              >
-                <span className="grid">
-                  <span className="font-semibold">{m.email}</span>
-                  <span className="text-mudo text-[13px]">
-                    Último acesso: {dataHora(m.last_seen)}
-                  </span>
-                </span>
-                <RetirarAcesso empresaId={id} userId={m.user_id} email={m.email} />
-              </li>
-            ))}
-          </ul>
-        )}
+        <MembrosDoPortal
+          empresaId={id}
+          membros={ativos.map((m) => ({
+            user_id: m.user_id,
+            email: m.email,
+            ultimo_acesso: dataHora(m.last_seen),
+          }))}
+        />
         {retirados.length ? (
           <p className="text-mudo m-0 text-[13px]">
             Acesso retirado: {retirados.map((m) => m.email).join(", ")}.

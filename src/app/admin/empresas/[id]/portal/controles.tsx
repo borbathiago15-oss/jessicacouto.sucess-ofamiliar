@@ -48,33 +48,74 @@ export function ConvidarCliente({ empresaId }: { empresaId: string }) {
   );
 }
 
-export function RetirarAcesso({
+/**
+ * Lista de quem tem acesso. O aviso de "acesso retirado" fica fora da lista: a
+ * pessoa sai dela ao perder o acesso, e o item desmonta junto.
+ */
+export function MembrosDoPortal({
+  empresaId,
+  membros,
+}: {
+  empresaId: string;
+  membros: { user_id: string; email: string; ultimo_acesso: string }[];
+}) {
+  const [aviso, setAviso] = useState<Aviso>(null);
+  return (
+    <div className="grid gap-2">
+      {membros.length === 0 ? (
+        <p className="text-mudo m-0">Ninguém tem acesso ainda.</p>
+      ) : (
+        <ul className="border-linho m-0 grid list-none border-t p-0" data-testid="portal-membros">
+          {membros.map((m) => (
+            <li
+              key={m.user_id}
+              className="border-linho flex flex-wrap items-center justify-between gap-3 border-b py-3"
+            >
+              <span className="grid">
+                <span className="font-semibold">{m.email}</span>
+                <span className="text-mudo text-[13px]">Último acesso: {m.ultimo_acesso}</span>
+              </span>
+              <RetirarAcesso
+                empresaId={empresaId}
+                userId={m.user_id}
+                email={m.email}
+                aoTerminar={setAviso}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
+      <Mensagem aviso={aviso} testid="retirar-aviso" />
+    </div>
+  );
+}
+
+function RetirarAcesso({
   empresaId,
   userId,
   email,
+  aoTerminar,
 }: {
   empresaId: string;
   userId: string;
   email: string;
+  aoTerminar: (aviso: Aviso) => void;
 }) {
-  const [aviso, setAviso] = useState<Aviso>(null);
   const [pendente, iniciar] = useTransition();
   return (
-    <span className="grid justify-items-end gap-1">
-      <Botao
-        type="button"
-        tamanho="pequeno"
-        variante="secundario"
-        disabled={pendente}
-        onClick={() => {
-          if (window.confirm(`Retirar o acesso de ${email} a esta empresa?`))
-            iniciar(async () => setAviso(await retirarAcesso(empresaId, userId)));
-        }}
-      >
-        Retirar acesso<span className="sr-only"> de {email}</span>
-      </Botao>
-      <Mensagem aviso={aviso} testid="retirar-aviso" />
-    </span>
+    <Botao
+      type="button"
+      tamanho="pequeno"
+      variante="secundario"
+      disabled={pendente}
+      aria-label={`Retirar acesso de ${email}`}
+      onClick={() => {
+        if (window.confirm(`Retirar o acesso de ${email} a esta empresa?`))
+          iniciar(async () => aoTerminar(await retirarAcesso(empresaId, userId)));
+      }}
+    >
+      Retirar acesso
+    </Botao>
   );
 }
 
