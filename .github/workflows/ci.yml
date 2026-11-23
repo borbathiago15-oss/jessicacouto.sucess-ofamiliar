@@ -86,6 +86,42 @@ jobs:
         if: always()
         run: supabase stop --no-backup
 
+  auth-e2e:
+    name: Autenticação /admin com MFA (Supabase local efêmero)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - uses: supabase/setup-cli@689adcfb80d947100a1eab127289b97d1fb07b13 # v3.2.0
+        with:
+          version: 3.2.0
+      - run: npm ci
+      - name: Subir Supabase local
+        run: supabase start -x studio,imgproxy,vector,logflare,edge-runtime,supavisor
+      - name: Exportar chaves efêmeras (mascaradas)
+        run: |
+          set -euo pipefail
+          eval "$(supabase status -o env)"
+          for value in "$ANON_KEY" "$SERVICE_ROLE_KEY" "$DB_URL"; do echo "::add-mask::$value"; done
+          {
+            echo "NEXT_PUBLIC_APP_ENV=development"
+            echo "NEXT_PUBLIC_SITE_URL=http://localhost:3100"
+            echo "NEXT_PUBLIC_SUPABASE_URL=$API_URL"
+            echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY"
+            echo "SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY"
+            echo "SUPABASE_DB_URL=$DB_URL"
+          } >> "$GITHUB_ENV"
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - run: npx playwright test -c playwright.auth.config.ts --trace off
+      - name: Encerrar
+        if: always()
+        run: supabase stop --no-backup
+
   secrets:
     name: Varredura de segredos (Gitleaks)
     runs-on: ubuntu-latest
