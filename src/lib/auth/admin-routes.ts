@@ -78,11 +78,13 @@ export function safeAdminPath(next: string | null | undefined, fallback = ADMIN_
   const path = normalize(next.split("?")[0] ?? "");
   if (path !== ADMIN_HOME && !path.startsWith(`${ADMIN_HOME}/`)) return fallback;
   if (PUBLIC_ADMIN_ROUTES.has(path)) return fallback;
+  // Telas de MFA nunca são destino de retorno: depois de verificar, vai ao painel.
+  if (path === ADMIN_MFA_ENROLL || path === ADMIN_MFA_VERIFY) return fallback;
   return path;
 }
 
 function withNext(target: string, current: string): string {
-  if (current === ADMIN_HOME || current === target) return target;
+  if (current === ADMIN_HOME || current === target || current === ADMIN_MFA_ENROLL) return target;
   return `${target}?next=${encodeURIComponent(current)}`;
 }
 

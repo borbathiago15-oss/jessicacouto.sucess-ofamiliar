@@ -52,7 +52,7 @@ describe("decideAdminRoute", () => {
 
   it("AAL1 com fator não pode cadastrar outro fator nem trocar senha sem MFA", () => {
     expect(decideAdminRoute({ ...base, currentLevel: "aal1", pathname: ADMIN_MFA_ENROLL })).toBe(
-      `${ADMIN_MFA_VERIFY}?next=%2Fadmin%2Fmfa%2Fcadastrar`,
+      ADMIN_MFA_VERIFY,
     );
     expect(
       decideAdminRoute({ ...base, currentLevel: "aal1", pathname: ADMIN_PASSWORD_RESET }),
@@ -84,6 +84,8 @@ describe("safeAdminPath", () => {
     "/administrador",
     "/\\exemplo-malicioso.test",
     "/admin/login",
+    "/admin/mfa/cadastrar",
+    "/admin/mfa/verificar",
     "javascript:alert(1)",
     "",
     null,

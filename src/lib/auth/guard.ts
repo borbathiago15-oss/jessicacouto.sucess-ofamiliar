@@ -1,6 +1,6 @@
 import "server-only";
 import { redirect } from "next/navigation";
-import { ADMIN_LOGIN, decideAdminRoute, type AssuranceLevel } from "./admin-routes";
+import { decideAdminRoute, type AssuranceLevel } from "./admin-routes";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 /**
@@ -12,7 +12,16 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
  */
 export async function resolveAdminRoute(pathname: string): Promise<string | null> {
   const supabase = await createSupabaseServerClient();
-  if (!supabase) return `${ADMIN_LOGIN}?erro=configuracao`;
+  if (!supabase) {
+    // Sem Supabase configurado: rotas públicas (login) seguem; as demais vão ao login.
+    return decideAdminRoute({
+      pathname,
+      configured: false,
+      hasUser: false,
+      currentLevel: null,
+      nextLevel: null,
+    });
+  }
 
   const { data } = await supabase.auth.getUser();
   let currentLevel: AssuranceLevel = null;
