@@ -13,5 +13,6 @@
 | [0009](0009-backup-e-restauracao.md)                | Backup e restauração testados                              | Aceita |
 | [0010](0010-design-system-terracota-clara.md)       | Design system terracota clara                              | Aceita |
 | [0011](0011-site-cms-e-lgpd.md)                     | Site público pelo CMS, mídias privadas e canais LGPD       | Aceita |
+| [0012](0012-construtor-de-questionarios.md)         | Construtor de questionários                                | Aceita |
 
 Modelo: Contexto → Decisão → Consequências.
