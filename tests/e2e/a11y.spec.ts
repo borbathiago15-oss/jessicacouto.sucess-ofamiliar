@@ -11,4 +11,3 @@ for (const rota of ["/", "/design", "/admin/login", "/admin/recuperar-senha"]) {
     expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.length})`)).toEqual([]);
   });
 }
-

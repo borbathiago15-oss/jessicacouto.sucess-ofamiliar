@@ -26,13 +26,13 @@ Seeds e testes usam **somente dados fictícios**. Proteção de segredos em trê
 
 ## Stack
 
-| Camada               | Tecnologia                                                               |
-| -------------------- | ------------------------------------------------------------------------ |
-| Aplicação            | Next.js 16 (App Router), React 19, TypeScript 6 (strict)                 |
-| Estilo               | Tailwind CSS 4 com tokens de marca provisórios (`src/styles/tokens.css`) |
-| Dados e autenticação | Supabase: PostgreSQL, Auth, RLS, Storage privado (a partir do M1)        |
-| Hospedagem           | Vercel                                                                   |
-| Qualidade            | ESLint 9, Prettier, Vitest, Playwright, Gitleaks                         |
+| Camada               | Tecnologia                                                                         |
+| -------------------- | ---------------------------------------------------------------------------------- |
+| Aplicação            | Next.js 16 (App Router), React 19, TypeScript 6 (strict)                           |
+| Estilo               | Tailwind CSS 4 + design system terracota clara (ADR 0010; referência em `/design`) |
+| Dados e autenticação | Supabase: PostgreSQL, Auth, RLS, Storage privado (a partir do M1)                  |
+| Hospedagem           | Vercel                                                                             |
+| Qualidade            | ESLint 9, Prettier, Vitest, Playwright, Gitleaks                                   |
 
 ## Requisitos
 
