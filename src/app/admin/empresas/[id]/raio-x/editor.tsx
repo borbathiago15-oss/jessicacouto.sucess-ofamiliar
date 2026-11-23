@@ -15,6 +15,7 @@ import {
 import {
   FamiliaECaixa,
   GraficoHistorico,
+  IndicadoresExplicados,
   Kpis,
   PontosDeAtencao,
   TabelaIndicadores,
@@ -347,6 +348,15 @@ export function EditorRaioX({
             </Cartao>
           </div>
         </div>
+      ) : null}
+
+      {p ? (
+        <Cartao className="grid gap-4">
+          <h2 className="font-display text-xl">
+            Os indicadores, um a um · {p.label || "Sem nome"}
+          </h2>
+          <IndicadoresExplicados r={calculados[atual]!.r} />
+        </Cartao>
       ) : null}
 
       {periodos.length > 0 ? (
