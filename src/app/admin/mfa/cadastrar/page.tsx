@@ -1,7 +1,9 @@
+import { enforceAdminRoute } from "@/lib/auth/guard";
 import { AuthCard } from "../../_components/auth-card";
 import { EnrollForm } from "./enroll-form";
 
-export default function EnrollMfaPage() {
+export default async function EnrollMfaPage() {
+  await enforceAdminRoute("/admin/mfa/cadastrar");
   return (
     <AuthCard
       title="Cadastre seu autenticador"

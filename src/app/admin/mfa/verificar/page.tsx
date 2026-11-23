@@ -1,3 +1,4 @@
+import { enforceAdminRoute } from "@/lib/auth/guard";
 import { verifyTotp } from "../../actions";
 import {
   AuthCard,
@@ -13,6 +14,7 @@ export default async function VerifyMfaPage({
 }: {
   searchParams: Promise<{ erro?: string; next?: string }>;
 }) {
+  await enforceAdminRoute("/admin/mfa/verificar");
   const { erro, next } = await searchParams;
 
   return (
