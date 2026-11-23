@@ -9,6 +9,14 @@
 - O pipeline comercial deverá ser único e configurável, evitando fluxos duplicados.
 - M0 e M1 somente devem avançar em branch própria; nada será integrado à `main` ou produção sem revisão e aprovação.
 
+**Decisão de 2026-11-23: Diagnóstico de Sucessão como porta de entrada.**
+
+- O diagnóstico público do site passa a ser um único **Diagnóstico de Sucessão** de triagem, com 7 perguntas e cerca de 3 minutos (seção 6.0).
+- Os três instrumentos de maturidade (empresa, fundador e sucessor) continuam existindo como **aprofundamento**, aplicados depois da conversa com Jéssica ou dentro do Diagnóstico Completo.
+- O porte da empresa pode ser perguntado **somente por faixa de faturamento anual**, nunca pelo valor exato. Isso substitui a proibição anterior de pedir faturamento no diagnóstico inicial.
+- O resultado público é escrito no tom de voz de Jéssica, em primeira pessoa, e diz o que ela faria diante dos riscos apontados. Não é nota de maturidade.
+- O texto das perguntas, das opções, das regras de triagem e das mensagens é conteúdo exclusivo de Jéssica: fica no banco de dados e no painel administrativo, nunca neste repositório.
+
 **Estado verificado do GitHub nesta atualização:** repositório `borbathiago15-oss/jessicacouto.sucess-ofamiliar`, branch padrão `main`, visibilidade pública. O nome ainda não foi alterado.
 
 **Atenção à visibilidade pública:** não armazenar segredos, tokens, chaves, credenciais, dados pessoais de participantes, respostas de diagnósticos, PDFs privados ou informações confidenciais no repositório. Arquivos de exemplo devem conter dados fictícios. Segredos devem ficar em variáveis de ambiente e secret managers. A documentação pública deve ser revisada antes de cada commit.
@@ -18,7 +26,7 @@
 # JC | SUCESSÃO DE SUCESSO
 ## Documento Mestre do Projeto e Especificação para Claude
 
-**Versão:** 0.2  
+**Versão:** 0.6  
 **Status:** Base de projeto consolidada para validação com Jéssica Couto.  
 **Natureza:** Marca pessoal com metodologia própria e plataforma digital proprietária.
 
@@ -41,7 +49,7 @@ A plataforma não deve parecer um software genérico de consultoria. Deve comuni
 | Posicionamento | Marca pessoal de Jéssica com metodologia própria |
 | Nome da metodologia | JC | Sucessão de Sucesso |
 | Público | Fundadores, sucessores, herdeiros e famílias empresárias |
-| Diagnósticos | Três instrumentos separados: empresa, fundador e sucessor |
+| Diagnósticos | Diagnóstico de Sucessão (triagem pública) e três instrumentos de aprofundamento: empresa, fundador e sucessor |
 | Guia | Download gratuito mediante cadastro |
 | Identidade selecionada | Conceito 01, Continuidade |
 | Padrão gráfico | Continuidade e Movimento |
@@ -127,10 +135,13 @@ Esses movimentos descrevem a lógica da metodologia. Não significam que todo cl
 
 ## 2.3 Produtos de entrada
 
+- Diagnóstico de Sucessão: triagem pública e gratuita, porta de entrada do site.
+- Guia JC gratuito, disponibilizado mediante cadastro.
+
+Aprofundamento, depois da conversa com Jéssica:
 - Diagnóstico da Empresa Familiar.
 - Diagnóstico do Fundador.
 - Diagnóstico do Sucessor.
-- Guia JC gratuito, disponibilizado mediante cadastro.
 
 ## 2.4 Plataforma privada
 
@@ -201,7 +212,7 @@ A página deve:
 - Apresentar a proposta de Jéssica.
 - Explicar por que sucessão não é apenas transferência de cargo ou patrimônio.
 - Mostrar a relação entre família, propriedade e gestão.
-- Convidar o usuário a escolher o diagnóstico adequado.
+- Convidar o usuário a fazer o Diagnóstico de Sucessão.
 - Apresentar o guia gratuito.
 - Direcionar para a história de Jéssica e metodologia.
 
@@ -230,12 +241,15 @@ Explicar os cinco movimentos: Origem, Realidade, Preparação, Alinhamento e Con
 
 ## 4.5 Página Diagnósticos
 
-Apresentar três caminhos separados:
-- Sou fundador(a): avaliar a preparação da empresa e a disposição para preparar a transição.
-- Sou sucessor(a): refletir sobre experiência, competências, autonomia e preparação.
-- Quero avaliar minha empresa: analisar estrutura, gestão, governança e continuidade.
+Apresentar um único ponto de partida: o **Diagnóstico de Sucessão** (seção 6.0), para fundadores, sucessores, sócios e herdeiros. A primeira pergunta identifica o papel e a geração de quem responde, o que substitui a escolha de caminho na entrada.
 
-O usuário pode escolher mais de um instrumento, mas cada aplicação será registrada separadamente. Não juntar respostas de pessoas diferentes sem consentimento explícito.
+Explicar em seguida o que vem depois da conversa:
+- Diagnóstico do Fundador: preparação da empresa e disposição para preparar a transição.
+- Diagnóstico do Sucessor: experiência, competências, autonomia e preparação.
+- Diagnóstico da Empresa Familiar: estrutura, gestão, governança e continuidade.
+- Diagnóstico Completo: o trabalho contratado.
+
+Cada aplicação é registrada separadamente. Não juntar respostas de pessoas diferentes sem consentimento explícito.
 
 ---
 
@@ -281,9 +295,44 @@ Referenciais orientam o desenho, mas não autorizam copiar questionários, escal
 
 ---
 
-# 6. Os três instrumentos de diagnóstico
+# 6. Os instrumentos de diagnóstico
 
-Cada instrumento deve possuir formulário, regras, pontuação, relatório e histórico independentes.
+Cada instrumento deve possuir formulário, regras, pontuação ou triagem, relatório e histórico independentes.
+
+## 6.0 Porta de entrada: Diagnóstico de Sucessão
+
+**Objetivo:** triagem. Saber quem é a pessoa, quão urgente é o tema para ela e qual é a dor, sem pedir nada que ela teria receio de contar a alguém de fora da família. Se o perfil interessar, Jéssica marca uma conversa.
+
+**Formato:** 7 perguntas, cerca de 3 minutos. Seis de escolha (uma delas com até 2 opções) e uma pergunta aberta, opcional, no fim.
+
+Temas, na ordem:
+1. Papel e geração de quem responde.
+2. Porte da empresa, em faixas de faturamento anual.
+3. Formalização da sucessão (com a opção “Não sei responder”).
+4. Maior risco percebido na sucessão (até 2).
+5. Quem participa das decisões hoje.
+6. Horizonte em que a pessoa pensa a sucessão.
+7. O tema que a pessoa resolveria nos próximos 90 dias (texto curto, livre).
+
+**O que o resultado entrega à pessoa:**
+- Uma mensagem de abertura conforme a geração de quem responde.
+- O retrato das respostas: onde a família está.
+- Para cada risco marcado, o que Jéssica faria, em primeira pessoa.
+- Um próximo passo conforme a urgência: conversa com Jéssica ou conteúdos.
+
+**O que o CRM recebe:**
+- Classificação do interessado em três níveis: conversa imediata, conversa em até 30 dias ou nutrição por conteúdo, com os motivos visíveis.
+- A dor provável, conforme o porte.
+- Os riscos marcados e a resposta aberta, nas palavras da pessoa.
+
+**Regras:**
+- Faturamento somente em faixas; nunca o valor exato, CPF ou dados societários.
+- A pergunta aberta avisa que não é preciso citar nomes; o conteúdo é tratado como dado pessoal e não aparece em agregados identificáveis.
+- “Não sei responder” é informação, não dado faltante.
+- As regras de classificação e todos os textos são de Jéssica, configuráveis no painel e versionados no banco. Os exemplos do repositório são fictícios.
+- Não é avaliação de maturidade, psicológica, jurídica nem contábil.
+
+Os instrumentos A, B e C abaixo são de **aprofundamento**: aplicados depois da conversa com Jéssica ou dentro do Diagnóstico Completo.
 
 ## 6.1 Instrumento A: Diagnóstico da Empresa Familiar
 
@@ -307,7 +356,7 @@ Informações cadastrais sugeridas:
 - Número de familiares envolvidos na gestão, em faixas.
 - Papel do respondente.
 
-Não pedir faturamento, CPF ou dados societários detalhados no diagnóstico inicial.
+Não pedir faturamento exato, CPF ou dados societários detalhados. O porte, quando necessário, é perguntado só em faixas, como no Diagnóstico de Sucessão.
 
 ## 6.2 Instrumento B: Diagnóstico do Fundador
 
@@ -341,7 +390,7 @@ O resultado não determina se a pessoa deve ou não assumir a empresa. Aponta as
 
 ## 6.4 Estrutura inicial de perguntas
 
-Cada instrumento deve ter aproximadamente 8 a 12 perguntas, com tempo estimado de 5 a 8 minutos a validar em testes.
+Cada instrumento de aprofundamento deve ter aproximadamente 8 a 12 perguntas, com tempo estimado de 5 a 8 minutos a validar em testes. O Diagnóstico de Sucessão segue a seção 6.0.
 
 Formato de resposta:
 - Escala de 1 a 5.
@@ -527,7 +576,7 @@ Campos:
 - Histórico de contatos.
 
 Status iniciais:
-Novo; diagnóstico iniciado; diagnóstico concluído; relatório entregue; guia baixado; conversa solicitada; contato em andamento; oportunidade em avaliação; encerrado.
+Novo; diagnóstico iniciado; diagnóstico concluído; triagem: conversa imediata, conversa em até 30 dias ou nutrição; relatório entregue; guia baixado; conversa solicitada; contato em andamento; oportunidade em avaliação; encerrado.
 
 ## 9.5 WhatsApp e e-mail
 
@@ -716,13 +765,13 @@ As permissões finais devem ser configuráveis e aplicadas no backend por RLS, n
 
 ## 9.6.4 Fluxo de trabalho recomendado
 
-1. Pessoa acessa o site e escolhe um diagnóstico ou guia.
+1. Pessoa acessa o site e faz o Diagnóstico de Sucessão ou pede o guia.
 2. O sistema registra origem, campanha e aviso de privacidade apresentado.
 3. Pessoa conclui o instrumento ou solicita o guia.
 4. O CRM cria ou atualiza o participante e relaciona a empresa, evitando duplicidades indevidas.
 5. O sistema gera o PDF correspondente e registra a entrega.
 6. O dashboard atualiza indicadores.
-7. Se a pessoa solicitar contato, uma atividade aparece para a equipe.
+7. A triagem classifica o interessado. Conversa imediata ou pedido de contato geram uma atividade para a equipe; nutrição entra na lista de conteúdos, se houver consentimento.
 8. A equipe registra conversa, necessidade e próxima ação.
 9. Se houver aderência, cria oportunidade e proposta.
 10. Jéssica acompanha a evolução e decide os próximos passos.
@@ -733,7 +782,7 @@ Separar indicadores em quatro grupos:
 
 **Aquisição e engajamento:** visitantes convertidos, cadastros, origem, campanha, downloads e conclusão dos formulários.
 
-**Conhecimento sobre o público:** distribuição por perfil, segmento, geração, dimensão avaliada e principais temas declarados. Sempre apresentar agregados quando houver risco de identificação.
+**Conhecimento sobre o público:** distribuição por perfil, segmento, geração, porte, riscos mais apontados, horizonte, classificação da triagem e principais temas declarados. Sempre apresentar agregados quando houver risco de identificação.
 
 **Relacionamento:** contatos solicitados, conversas realizadas, tarefas pendentes, tempo de resposta e histórico de interação.
 
@@ -863,7 +912,7 @@ Não prometer “nenhuma informação será utilizada para fins publicitários�
 - Site institucional JC.
 - Página Conheça Jéssica.
 - Página Metodologia JC.
-- Três instrumentos de diagnóstico separados.
+- Diagnóstico de Sucessão (triagem pública) e três instrumentos de aprofundamento separados.
 - Questionários versionados.
 - Regras determinísticas.
 - Cadastro e PDF personalizado.
@@ -907,7 +956,7 @@ Banco de dados, autenticação, permissões, RLS, ambientes e auditoria.
 **Saída:** fundação testada.
 
 ## Fase 3 — Diagnósticos
-Três instrumentos independentes, versionamento, cálculo e salvamento.
+Diagnóstico de Sucessão com triagem, três instrumentos de aprofundamento independentes, versionamento, cálculo e salvamento.
 
 **Saída:** diagnósticos testados com casos de referência.
 
@@ -978,7 +1027,7 @@ Antes de programar:
 
 “Leia integralmente o arquivo docs/DOCUMENTO_MESTRE_PROJETO.md e o README do repositório. Este projeto é a plataforma JC | Sucessão de Sucesso, posicionada como marca pessoal de Jéssica Couto com metodologia própria.
 
-As decisões confirmadas são: três instrumentos independentes de diagnóstico (empresa, fundador e sucessor); guia gratuito com download mediante cadastro; CRM para Jéssica e equipe; relatórios em PDF; identidade conceito Continuidade com padrão Continuidade e Movimento.
+As decisões confirmadas são: Diagnóstico de Sucessão como triagem pública e três instrumentos independentes de aprofundamento (empresa, fundador e sucessor); guia gratuito com download mediante cadastro; CRM para Jéssica e equipe; relatórios em PDF; identidade conceito Continuidade com padrão Continuidade e Movimento.
 
 Sua primeira tarefa é auditar o repositório e apresentar um plano técnico, sem iniciar ainda a implementação. Liste arquitetura, pastas, banco de dados, relações, RLS, fluxos, riscos LGPD, testes e decisões que dependem de Jéssica.
 
@@ -991,13 +1040,15 @@ Não trate perguntas, pontuações, faixas ou recomendações propostas neste do
 1. Aprovar a narrativa de sua trajetória e os fatos biográficos.
 2. Aprovar identidade visual final e aplicações.
 3. Validar os cinco movimentos da metodologia.
-4. Validar dimensões e perguntas dos três instrumentos.
+4. Validar dimensões e perguntas dos três instrumentos de aprofundamento.
 5. Aprovar regras de pontuação e interpretação.
 6. Aprovar recomendações e relatórios.
 7. Aprovar conteúdo e título final do guia.
 8. Aprovar política de privacidade e retenção.
 9. Definir domínio, e-mail e serviços.
 10. Definir equipe, papéis e permissões.
+11. Escrever, com a própria voz, as mensagens do Diagnóstico de Sucessão: abertura por geração e “o que eu faria” por risco.
+12. Aprovar as regras de triagem do Diagnóstico de Sucessão (conversa imediata, conversa em até 30 dias, nutrição).
 
 ---
 
@@ -1008,4 +1059,4 @@ Não trate perguntas, pontuações, faixas ou recomendações propostas neste do
 - GO NEXT. Referência pública de governança e sucessão familiar. https://gonext.com.br/
 - BRASIL. Lei nº 13.709, de 14 de agosto de 2018. Lei Geral de Proteção de Dados Pessoais. https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm
 
-**Documento mestre — JC | Sucessão de Sucesso — versão 0.5.**
+**Documento mestre — JC | Sucessão de Sucesso — versão 0.6.**
