@@ -309,7 +309,7 @@ export function EditorRaioX({
             ) : null}
           </Cartao>
 
-          <div className="grid gap-4 lg:sticky lg:top-3">
+          <div className="grid gap-4 lg:sticky lg:top-3 lg:max-h-[calc(100dvh-1.5rem)] lg:overflow-y-auto">
             <Cartao className="grid gap-3">
               <h2 className="font-display text-xl">Indicadores · {p.label || "Sem nome"}</h2>
               <Kpis r={calculados[atual]!.r} />
