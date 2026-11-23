@@ -23,7 +23,8 @@ export default function PortalLayout({ children }: { children: ReactNode }) {
               <span className="text-mudo text-xs">Jéssica Couto · Sucessão de Sucesso</span>
             </span>
           </Link>
-          <Link href="/admin/sair" className="text-terra-texto text-sm underline">
+          {/* Sem pré-carregamento: abrir o endereço de saída encerra a sessão. */}
+          <Link href="/admin/sair" prefetch={false} className="text-terra-texto text-sm underline">
             Sair
           </Link>
         </div>
