@@ -6,11 +6,15 @@
 -- =============================================================================
 
 -- Usuária fictícia sem senha (não consegue entrar; serve de referência de autoria).
+-- Os campos de token precisam ser texto vazio (não nulo) para o Supabase Auth listar usuários.
 insert into auth.users (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at,
-                        raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+                        raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+                        confirmation_token, recovery_token, email_change_token_new, email_change,
+                        email_change_token_current, phone_change, phone_change_token, reauthentication_token)
 values ('00000000-0000-4000-8000-000000000001', '00000000-0000-0000-0000-000000000000',
         'authenticated', 'authenticated', 'admin.ficticia@exemplo.test', '', now(),
-        '{"provider":"email","providers":["email"]}', '{}', now(), now());
+        '{"provider":"email","providers":["email"]}', '{}', now(), now(),
+        '', '', '', '', '', '', '', '');
 
 update public.profiles set display_name = 'Administradora Fictícia'
 where id = '00000000-0000-4000-8000-000000000001';
