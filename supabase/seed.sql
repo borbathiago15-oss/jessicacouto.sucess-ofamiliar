@@ -85,3 +85,36 @@ insert into public.cms_page_versions (id, page_id, version_number, content) valu
   ('00000000-0000-4000-8000-000000000802', '00000000-0000-4000-8000-000000000801', 1, '{"blocos": ["Texto fictício"]}');
 update public.cms_page_versions set status = 'in_review' where id = '00000000-0000-4000-8000-000000000802';
 update public.cms_page_versions set status = 'published' where id = '00000000-0000-4000-8000-000000000802';
+
+-- -----------------------------------------------------------------------------
+-- Páginas do site (M3): conteúdo GENÉRICO de exemplo, publicado para o ambiente
+-- local. Os textos reais são escritos pela Jéssica no CMS, nunca no repositório.
+-- -----------------------------------------------------------------------------
+insert into public.cms_pages (id, slug, title) values
+  ('00000000-0000-4000-8000-000000000901', 'inicio', 'Início'),
+  ('00000000-0000-4000-8000-000000000902', 'conheca-jessica', 'Conheça Jéssica'),
+  ('00000000-0000-4000-8000-000000000903', 'metodologia', 'Metodologia'),
+  ('00000000-0000-4000-8000-000000000904', 'diagnosticos', 'Diagnósticos'),
+  ('00000000-0000-4000-8000-000000000905', 'guias', 'Guias'),
+  ('00000000-0000-4000-8000-000000000906', 'contato', 'Vamos conversar'),
+  ('00000000-0000-4000-8000-000000000907', 'privacidade', 'Política de Privacidade');
+
+insert into public.cms_page_versions (page_id, version_number, content) values
+  ('00000000-0000-4000-8000-000000000901', 1, $json${"blocos":[
+    {"tipo":"hero","chamada":"Chamada de exemplo","titulo":"Título de exemplo da página inicial","texto":"Texto de apoio de exemplo. O conteúdo definitivo é escrito no CMS.","ctaPrimario":{"rotulo":"Fazer o diagnóstico","href":"/diagnosticos"},"ctaSecundario":{"rotulo":"Receber o guia","href":"/guias"}},
+    {"tipo":"texto","titulo":"Seção de exemplo","paragrafos":["Parágrafo de exemplo um.","Parágrafo de exemplo dois."]},
+    {"tipo":"movimentos","titulo":"Movimentos de exemplo","itens":[{"nome":"Primeiro","descricao":"Descrição de exemplo"},{"nome":"Segundo","descricao":"Descrição de exemplo"},{"nome":"Terceiro","descricao":"Descrição de exemplo"}]},
+    {"tipo":"caminhos","titulo":"Caminhos de exemplo","itens":[{"titulo":"Caminho A","descricao":"Descrição de exemplo","href":"/diagnosticos"},{"titulo":"Caminho B","descricao":"Descrição de exemplo","href":"/diagnosticos"}]},
+    {"tipo":"destaque","chamada":"Destaque de exemplo","titulo":"Título do destaque","texto":"Texto do destaque de exemplo.","cta":{"rotulo":"Saiba mais","href":"/guias"}}
+  ]}$json$),
+  ('00000000-0000-4000-8000-000000000902', 1, '{"blocos":[{"tipo":"texto","titulo":"Página de exemplo","paragrafos":["Conteúdo de exemplo."]}]}'),
+  ('00000000-0000-4000-8000-000000000903', 1, '{"blocos":[{"tipo":"texto","titulo":"Página de exemplo","paragrafos":["Conteúdo de exemplo."]}]}'),
+  ('00000000-0000-4000-8000-000000000904', 1, '{"blocos":[{"tipo":"texto","titulo":"Página de exemplo","paragrafos":["Conteúdo de exemplo."]}]}'),
+  ('00000000-0000-4000-8000-000000000905', 1, '{"blocos":[{"tipo":"texto","titulo":"Página de exemplo","paragrafos":["Conteúdo de exemplo."]}]}'),
+  ('00000000-0000-4000-8000-000000000906', 1, '{"blocos":[{"tipo":"texto","titulo":"Página de exemplo","paragrafos":["Conteúdo de exemplo."]}]}'),
+  ('00000000-0000-4000-8000-000000000907', 1, '{"blocos":[{"tipo":"texto","titulo":"Política de exemplo","paragrafos":["Texto fictício. A política real depende de revisão jurídica."]}]}');
+
+update public.cms_page_versions set status = 'in_review'
+ where page_id between '00000000-0000-4000-8000-000000000901' and '00000000-0000-4000-8000-000000000907';
+update public.cms_page_versions set status = 'published'
+ where page_id between '00000000-0000-4000-8000-000000000901' and '00000000-0000-4000-8000-000000000907';
