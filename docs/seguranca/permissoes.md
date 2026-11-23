@@ -45,6 +45,8 @@ Fonte da verdade: tabelas `public.roles`, `public.permissions` e `public.role_pe
 | diagnostics.read_answers (respostas individuais)     |  ✅   |       —        |           —           |         —         |
 | diagnostics.manage                                   |  ✅   |       —        |           —           |         —         |
 | reports.read                                         |  ✅   |       ✅       |           —           |         —         |
+| proposals.read / manage (propostas comerciais)       |  ✅   |       ✅       |           —           |         —         |
+| proposals.catalog (etapas, valor-hora, condições)    |  ✅   |       —        |           —           |         —         |
 | cms.read / create / update                           |  ✅   |       —        |          ✅           |         —         |
 | cms.publish                                          |  ✅   |       —        |           —           |         —         |
 | exports.create                                       |  ✅   |       —        |           —           |         —         |
