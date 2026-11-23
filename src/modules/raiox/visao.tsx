@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import {
   alertas,
   brl,
@@ -6,6 +7,7 @@ import {
   pct,
   variacao,
   vezes,
+  type Alerta,
   type Resultado,
 } from "./calculo";
 
@@ -91,7 +93,14 @@ const TOM_ALERTA = {
   ok: "bg-ok-fundo text-ok",
 } as const;
 
-export function PontosDeAtencao({ r }: { r: Resultado }) {
+export function PontosDeAtencao({
+  r,
+  acao,
+}: {
+  r: Resultado;
+  /** Ação opcional por alerta (ex.: levar para a Matriz de Prioridades). */
+  acao?: (alerta: Alerta) => ReactNode;
+}) {
   const lista = alertas(r);
   return (
     <ul className="m-0 grid list-none gap-2 p-0" data-testid="raiox-alertas">
@@ -105,6 +114,7 @@ export function PontosDeAtencao({ r }: { r: Resultado }) {
           <li key={a.titulo} className={`rounded-[10px] px-3 py-2 text-sm ${TOM_ALERTA[a.nivel]}`}>
             <b className="block">{a.titulo}</b>
             {a.texto}
+            {acao && a.nivel !== "ok" ? <span className="mt-1.5 block">{acao(a)}</span> : null}
           </li>
         ))
       )}

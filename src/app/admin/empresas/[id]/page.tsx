@@ -98,6 +98,18 @@ export default async function EmpresaPage({ params }: { params: Promise<{ id: st
             </Link>
           </Cartao>
         ) : null}
+        {podeAnalises ? (
+          <Cartao className="grid content-start gap-3">
+            <h2 className="font-display text-xl">Matriz de Prioridades</h2>
+            <p className="text-[15px]">O que atacar primeiro, com o ciclo PDCA de cada item.</p>
+            <Link
+              href={`/admin/empresas/${id}/prioridades`}
+              className="text-terra-texto font-semibold underline"
+            >
+              Abrir a matriz
+            </Link>
+          </Cartao>
+        ) : null}
         {acesso.pode("activities.read") ? (
           <Cartao className="grid content-start gap-3">
             <h2 className="font-display text-xl">Histórico</h2>

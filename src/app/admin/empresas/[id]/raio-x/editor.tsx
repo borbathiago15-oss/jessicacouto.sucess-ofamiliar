@@ -20,6 +20,7 @@ import {
   TabelaIndicadores,
 } from "@/modules/raiox/visao";
 import { excluirPeriodo, importarArquivoOffline, salvarPeriodo, type Aviso } from "../../actions";
+import { levarAlertaParaMatriz } from "../prioridades/actions";
 
 export type PeriodoTela = {
   id: string | null;
@@ -315,7 +316,26 @@ export function EditorRaioX({
             </Cartao>
             <Cartao className="grid gap-3">
               <h2 className="font-display text-xl">Pontos de atenção</h2>
-              <PontosDeAtencao r={calculados[atual]!.r} />
+              <PontosDeAtencao
+                r={calculados[atual]!.r}
+                acao={
+                  podeEditar
+                    ? (a) => (
+                        <button
+                          type="button"
+                          className="underline"
+                          disabled={pendente}
+                          onClick={() =>
+                            iniciar(async () => setAviso(await levarAlertaParaMatriz(empresaId, a)))
+                          }
+                        >
+                          Levar para a Matriz de Prioridades
+                          <span className="sr-only">: {a.titulo}</span>
+                        </button>
+                      )
+                    : undefined
+                }
+              />
               <p className="text-mudo m-0 text-[12.5px]">
                 Referências gerais de mercado. A leitura final é sua, conforme o setor e a história
                 da empresa.
