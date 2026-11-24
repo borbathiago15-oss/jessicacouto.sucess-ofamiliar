@@ -26,6 +26,13 @@ describe("tokens de cor", () => {
   });
 });
 
+describe("destaque em mostarda", () => {
+  // Elementos gráficos (linhas, marcadores, barras) pedem 3:1 (WCAG 1.4.11). Texto nunca usa "terra".
+  it.each(["porcelana", "papel"] as const)("mostarda sobre %s atinge 3:1", (fundo) => {
+    expect(contraste(cores.terra, cores[fundo])).toBeGreaterThanOrEqual(3);
+  });
+});
+
 describe("contraste", () => {
   it("preto sobre branco é 21:1", () => {
     expect(contraste("#000000", "#ffffff")).toBeCloseTo(21, 5);

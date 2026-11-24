@@ -42,7 +42,7 @@ export default function DesignSystemPage() {
           <Monograma />
           <Chamada>JC | Sucessão de Sucesso · Design system</Chamada>
         </div>
-        <Titulo>Terracota clara</Titulo>
+        <Titulo>Creme, marrom e mostarda</Titulo>
         <p className="text-mudo max-w-[62ch]">
           Tokens, tipografia, componentes e gráficos da plataforma. Fonte da verdade:{" "}
           <code>src/styles/tokens.css</code>. Dados desta página são fictícios.
