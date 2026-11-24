@@ -82,6 +82,19 @@ test("o familiar vê a pendência e envia direto no cofre", async () => {
   );
   expect(r.status()).toBe(200);
   expect(await r.text()).toBe(pdf.toString());
+
+  // No armazenamento, o arquivo está cifrado: quem tivesse só o Storage não leria nada.
+  const s = createClient(supabaseUrl!, serviceKey!, { auth: { persistSession: false } });
+  const { data: registro } = await s
+    .from("vault_documents")
+    .select("storage_path, enc_key_version")
+    .eq("file_name", arquivo)
+    .single();
+  expect(registro?.enc_key_version).toBe(1);
+  const bruto = await s.storage.from("vault").download(registro!.storage_path);
+  const cru = Buffer.from(await bruto.data!.arrayBuffer());
+  expect(cru.equals(pdf)).toBe(false);
+  expect(cru.includes(Buffer.from("%PDF"))).toBe(false);
 });
 
 test("outro familiar da mesma empresa não abre o arquivo", async () => {

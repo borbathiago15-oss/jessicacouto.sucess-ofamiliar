@@ -93,6 +93,7 @@ select throws_ok(format($$ insert into storage.objects (bucket_id, name) values 
                  '42501', null, 'cliente não sobe arquivo sem registro');
 select lives_ok($$ insert into storage.objects (bucket_id, name) values ('vault', (select v from t where k = 'pathX1')) $$,
                 'cliente sobe o arquivo registrado');
+select public.vault_set_encryption((select id from r where k = 'docX1'), 1, repeat('A', 80), repeat('B', 16), repeat('C', 24));
 select lives_ok($$ select public.portal_confirm_upload((select id from r where k = 'docX1')) $$, 'confirma o envio');
 select is(public.portal_document_requests((select id from r where k = 'orgX')) -> 0 ->> 'status', 'sent',
           'pedido passa para enviado');
@@ -194,6 +195,7 @@ select tests.as_postgres();
 insert into t select 'pathX2', storage_path from public.vault_documents where id = (select id from r where k = 'docX2');
 select tests.authenticate_as((select id from u where k = 'x2'));
 insert into storage.objects (bucket_id, name) values ('vault', (select v from t where k = 'pathX2'));
+select public.vault_set_encryption((select id from r where k = 'docX2'), 1, repeat('A', 80), repeat('B', 16), repeat('C', 24));
 select lives_ok($$ select public.portal_confirm_upload((select id from r where k = 'docX2')) $$, 'X2 envia');
 
 select tests.authenticate_as((select id from u where k = 'admin'));

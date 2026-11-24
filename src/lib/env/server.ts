@@ -7,4 +7,7 @@ import { parseServerEnv } from "./schema";
  */
 export const serverEnv = parseServerEnv({
   SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
+  VAULT_MASTER_KEY: process.env.VAULT_MASTER_KEY,
+  VAULT_MASTER_KEY_VERSION: process.env.VAULT_MASTER_KEY_VERSION,
+  VAULT_PREVIOUS_KEYS: process.env.VAULT_PREVIOUS_KEYS,
 });

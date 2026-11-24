@@ -6,6 +6,7 @@ import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { LIMITE_COFRE, TIPOS_COFRE } from "@/modules/cofre/tipos";
 import { conteudoConfere } from "@/modules/cofre/pedidos";
+import { guardarCifrado } from "@/lib/cofre/arquivo";
 
 export type AvisoPortal = { ok: boolean; mensagem: string } | null;
 
@@ -61,14 +62,13 @@ export async function enviarParaPedido(
   if (error || !registro)
     return { ok: false, mensagem: mensagem(error ?? {}, "Não foi possível enviar.") };
 
-  const envio = await supabase.storage
-    .from("vault")
-    .upload(registro.storage_path, bytes, { contentType: arquivo.type, upsert: false });
-  if (envio.error) {
+  const guardado = await guardarCifrado(supabase, registro, bytes, arquivo.type);
+  if (!guardado.ok) {
     // Desfaz o registro pendente para não deixar documento "fantasma".
     await supabase.rpc("portal_start_delete", { p_id: registro.id });
+    await supabase.storage.from("vault").remove([registro.storage_path]);
     await supabase.rpc("portal_finish_delete", { p_id: registro.id });
-    return { ok: false, mensagem: "O envio falhou. Tente de novo." };
+    return { ok: false, mensagem: guardado.mensagem };
   }
   const confirmacao = await supabase.rpc("portal_confirm_upload", { p_id: registro.id });
   if (confirmacao.error) return { ok: false, mensagem: "O envio não pôde ser confirmado." };

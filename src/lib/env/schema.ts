@@ -22,6 +22,16 @@ export const publicEnvSchema = z.object({
 
 export const serverEnvSchema = z.object({
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
+  // Chave mestra do cofre (32 bytes em base64). Só no servidor; nunca NEXT_PUBLIC_.
+  VAULT_MASTER_KEY: z
+    .string()
+    .refine((v) => Buffer.from(v, "base64").length === 32, "precisa ter 32 bytes em base64")
+    .optional(),
+  VAULT_MASTER_KEY_VERSION: z
+    .string()
+    .regex(/^[1-9][0-9]*$/, "inteiro ≥ 1")
+    .optional(),
+  VAULT_PREVIOUS_KEYS: z.string().optional(),
 });
 
 export type PublicEnv = z.infer<typeof publicEnvSchema>;

@@ -103,7 +103,9 @@ jobs:
         run: |
           set -euo pipefail
           eval "$(supabase status -o env)"
-          for value in "$ANON_KEY" "$SERVICE_ROLE_KEY" "$DB_URL"; do echo "::add-mask::$value"; done
+          # Chave do cofre fictícia, gerada a cada execução (nenhum valor versionado).
+          VAULT_MASTER_KEY="$(head -c 32 /dev/urandom | base64 | tr -d '\n')"
+          for value in "$ANON_KEY" "$SERVICE_ROLE_KEY" "$DB_URL" "$VAULT_MASTER_KEY"; do echo "::add-mask::$value"; done
           {
             echo "NEXT_PUBLIC_APP_ENV=development"
             echo "NEXT_PUBLIC_SITE_URL=http://localhost:3100"
@@ -111,6 +113,8 @@ jobs:
             echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY"
             echo "SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY"
             echo "SUPABASE_DB_URL=$DB_URL"
+            echo "VAULT_MASTER_KEY=$VAULT_MASTER_KEY"
+            echo "VAULT_MASTER_KEY_VERSION=1"
           } >> "$GITHUB_ENV"
       - run: npx playwright install --with-deps chromium
       - run: npm run build
