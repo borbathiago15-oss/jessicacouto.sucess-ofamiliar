@@ -137,7 +137,7 @@ test("a JC vê a resposta no CRM com o nível e os motivos", async ({ browser })
     await cartao.getByText("Converter em cliente").click();
     await cartao.getByLabel("Nome da empresa").fill(`Empresa Fictícia ${sufixo}`);
     await cartao.getByRole("button", { name: "Criar cliente" }).click();
-    await expect(cartao.getByTestId("converter-aviso")).toContainText("Cliente criado");
+    // Convertido, o cartão troca o formulário pelo link da empresa.
     await cartao.getByRole("link", { name: "Abrir empresa e ferramentas" }).click();
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(`Empresa Fictícia ${sufixo}`);
 
