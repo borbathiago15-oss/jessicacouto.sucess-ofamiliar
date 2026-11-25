@@ -122,6 +122,50 @@ function IconePerfil({ nome }: { nome: string }) {
   );
 }
 
+/** Capa desenhada no padrão da marca, para quando não houver imagem da capa. */
+export function CapaDesenhada({
+  titulo,
+  subtitulo,
+  pequena,
+}: {
+  titulo: string;
+  subtitulo?: string;
+  pequena?: boolean;
+}) {
+  return (
+    <div
+      aria-hidden="true"
+      className={`bg-cacau text-papel relative mx-auto grid aspect-[3/4.2] w-full max-w-[15rem] content-between overflow-hidden rounded-md shadow-[0_18px_40px_-18px_rgba(46,33,24,0.55)] ${pequena ? "p-2.5" : "p-6"}`}
+    >
+      <span
+        className={`border-champanhe/70 font-display text-champanhe grid place-items-center rounded-full border font-semibold ${pequena ? "size-5 text-[8px]" : "size-10 text-[15px]"}`}
+      >
+        JC
+      </span>
+      <svg viewBox="0 0 200 60" className="absolute right-0 bottom-24 left-0 w-full opacity-70">
+        <path
+          d="M0 44 C 45 44, 60 14, 100 16 S 160 50, 200 14"
+          fill="none"
+          stroke="var(--color-champanhe)"
+          strokeWidth="1.2"
+        />
+        <circle cx="100" cy="16" r="3" fill="var(--color-terra)" />
+      </svg>
+      <span className="relative grid gap-2">
+        <b
+          className={`font-display leading-tight font-semibold ${pequena ? "text-[0.7rem]" : "text-[1.35rem]"}`}
+        >
+          {titulo}
+        </b>
+        {subtitulo ? <span className="text-champanhe text-[11.5px]">{subtitulo}</span> : null}
+        {pequena ? null : (
+          <span className="text-[11px] tracking-wide text-white/70">Jéssica Couto</span>
+        )}
+      </span>
+    </div>
+  );
+}
+
 /**
  * Desenha os blocos do CMS com o design system. Componente puro (sem acesso a dados),
  * usado no site público e na prévia do editor.
@@ -396,6 +440,117 @@ function BlocoUnico({
           </div>
           {b.cta ? <Acao {...b.cta} /> : null}
         </Cartao>
+      );
+    case "livro":
+      return (
+        <section className="bg-blush grid items-center gap-8 rounded-[28px] px-6 py-8 sm:px-10 sm:py-10 md:grid-cols-[minmax(0,15rem)_minmax(0,1fr)] md:gap-12">
+          {b.capa ? (
+            // eslint-disable-next-line @next/next/no-img-element -- mídia servida pela rota /midia com políticas do Storage
+            <img
+              src={urlMidia(b.capa.path, midiaBase)}
+              alt={b.capa.alt}
+              className="mx-auto w-full max-w-[15rem] rounded-md shadow-[0_18px_40px_-18px_rgba(46,33,24,0.55)]"
+            />
+          ) : (
+            <CapaDesenhada titulo={b.titulo} subtitulo={b.subtitulo} />
+          )}
+          <div className="grid gap-4">
+            {b.chamada ? <Chamada>{b.chamada}</Chamada> : null}
+            <h2 className="font-display m-0 text-[clamp(1.9rem,3.6vw,2.7rem)] leading-tight font-medium">
+              {b.titulo}
+            </h2>
+            <p className="m-0 max-w-[60ch] text-[1.03rem]">{b.texto}</p>
+            {b.topicos.length ? (
+              <ul className="m-0 grid list-none gap-2 p-0 sm:grid-cols-2 sm:gap-x-6">
+                {b.topicos.map((t, i) => (
+                  <li key={i} className="grid grid-cols-[1.1rem_minmax(0,1fr)] gap-2 text-[15px]">
+                    <span aria-hidden="true" className="text-terra-texto font-semibold">
+                      ✓
+                    </span>
+                    {t}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            {b.cta ? (
+              <div>
+                <Acao {...b.cta} />
+              </div>
+            ) : null}
+          </div>
+        </section>
+      );
+    case "faq":
+      return (
+        <section className="grid gap-5 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] md:gap-10">
+          <Titulo nivel={2}>{b.titulo}</Titulo>
+          <div className="border-linho grid border-t">
+            {b.itens.map((it, i) => (
+              <details key={i} className="border-linho group border-b">
+                <summary className="flex cursor-pointer list-none items-start justify-between gap-4 py-4 text-[1.05rem] font-semibold [&::-webkit-details-marker]:hidden">
+                  <span>{it.pergunta}</span>
+                  <span
+                    aria-hidden="true"
+                    className="text-terra-texto mt-0.5 text-xl leading-none transition-transform group-open:rotate-45 motion-reduce:transition-none"
+                  >
+                    +
+                  </span>
+                </summary>
+                <p className="text-mudo m-0 max-w-[62ch] pb-5 text-[15.5px]">{it.resposta}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+      );
+    case "situacoes":
+      return (
+        <section className="grid gap-6">
+          <div className="grid gap-2">
+            <Titulo nivel={2}>{b.titulo}</Titulo>
+            {b.texto ? <p className="text-mudo m-0 max-w-[62ch]">{b.texto}</p> : null}
+          </div>
+          <ul className="m-0 grid list-none gap-3 p-0 md:grid-cols-2">
+            {b.itens.map((it, i) => (
+              <li
+                key={i}
+                className="bg-papel border-linho grid content-start gap-2 rounded-[var(--radius-cartao)] border border-l-4 border-l-[var(--color-terra)] p-5"
+              >
+                <b className="font-display text-[1.2rem] leading-snug font-semibold">
+                  {it.situacao}
+                </b>
+                <span className="text-mudo text-[15px]">{it.resposta}</span>
+              </li>
+            ))}
+          </ul>
+          {b.cta ? (
+            <div>
+              <Acao {...b.cta} />
+            </div>
+          ) : null}
+        </section>
+      );
+    case "checklist":
+      return (
+        <section className="bg-papel border-linho grid gap-6 rounded-[28px] border px-6 py-8 sm:px-10">
+          <div className="grid gap-2">
+            <Titulo nivel={2}>{b.titulo}</Titulo>
+            {b.texto ? <p className="text-mudo m-0 max-w-[62ch]">{b.texto}</p> : null}
+          </div>
+          <div className="grid gap-6 md:grid-cols-[repeat(auto-fit,minmax(16rem,1fr))]">
+            {b.grupos.map((g, i) => (
+              <fieldset key={i} className="m-0 grid content-start gap-2.5 border-0 p-0">
+                <legend className="font-display mb-2 text-[1.2rem] font-semibold">{g.nome}</legend>
+                {g.itens.map((item, k) => (
+                  <label key={k} className="flex items-start gap-2.5 text-[15px]">
+                    <input type="checkbox" className="accent-terra-texto mt-1 size-4 shrink-0" />
+                    <span>{item}</span>
+                  </label>
+                ))}
+              </fieldset>
+            ))}
+          </div>
+          {b.nota ? <p className="text-mudo m-0 text-[13.5px]">{b.nota}</p> : null}
+        </section>
       );
     case "imagem":
       return (

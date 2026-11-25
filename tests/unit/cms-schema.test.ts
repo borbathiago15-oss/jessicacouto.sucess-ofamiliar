@@ -72,3 +72,42 @@ describe("blocos novos", () => {
     );
   });
 });
+
+describe("blocos da fase 1 do site", () => {
+  it("aceita livro, perguntas, situações e checklist válidos", () => {
+    const r = conteudoSchema.safeParse({
+      blocos: [
+        {
+          tipo: "livro",
+          titulo: "Livro fictício",
+          texto: "Texto fictício.",
+          topicos: ["Um", "Dois"],
+        },
+        { tipo: "faq", titulo: "Perguntas", itens: [{ pergunta: "P?", resposta: "R." }] },
+        {
+          tipo: "situacoes",
+          titulo: "Quando",
+          itens: [
+            { situacao: "A", resposta: "B" },
+            { situacao: "C", resposta: "D" },
+          ],
+        },
+        { tipo: "checklist", titulo: "Lista", grupos: [{ nome: "G", itens: ["I"] }] },
+      ],
+    });
+    expect(r.success).toBe(true);
+  });
+
+  it("recusa situações com um item só e perguntas sem resposta", () => {
+    expect(
+      conteudoSchema.safeParse({
+        blocos: [{ tipo: "situacoes", titulo: "Q", itens: [{ situacao: "A", resposta: "B" }] }],
+      }).success,
+    ).toBe(false);
+    expect(
+      conteudoSchema.safeParse({
+        blocos: [{ tipo: "faq", titulo: "P", itens: [{ pergunta: "P?", resposta: "" }] }],
+      }).success,
+    ).toBe(false);
+  });
+});

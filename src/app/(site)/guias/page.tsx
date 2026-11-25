@@ -6,7 +6,7 @@ import { buscarPaginaPublicada } from "@/modules/cms/queries";
 import { listaPublicaSchema } from "@/modules/materiais/schema";
 import { FormularioMaterial } from "./formulario";
 
-export const metadata: Metadata = { title: "Guias" };
+export const metadata: Metadata = { title: "Livro" };
 // O material disponível pode mudar a qualquer momento (ativado na área da JC).
 export const dynamic = "force-dynamic";
 
