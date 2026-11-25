@@ -18,6 +18,15 @@ export const linkSchema = z
 const texto = (max: number) => z.string().trim().min(1).max(max);
 const cta = z.object({ rotulo: texto(60), href: linkSchema });
 
+/** Ícones disponíveis no bloco "Para quem é" (desenhados no site, não enviados). */
+export const ICONES_PERFIL = ["construiu", "assume", "familia", "socio"] as const;
+export const ROTULO_ICONE_PERFIL: Record<(typeof ICONES_PERFIL)[number], string> = {
+  construiu: "Quem construiu",
+  assume: "Quem vai assumir",
+  familia: "Família",
+  socio: "Sócios e herdeiros",
+};
+
 /** Caminho de mídia no bucket privado "cms". */
 export const midiaPathSchema = z
   .string()
@@ -86,6 +95,40 @@ export const blocoSchema = z.discriminatedUnion("tipo", [
     alt: texto(200),
     legenda: texto(200).optional(),
   }),
+  // Faixa de números (dados com fonte): por que o tema importa.
+  z.object({
+    tipo: z.literal("numeros"),
+    titulo: texto(160).optional(),
+    itens: z
+      .array(z.object({ valor: texto(12), rotulo: texto(160), fonte: texto(160).optional() }))
+      .min(2)
+      .max(4),
+  }),
+  // Para quem é: um cartão por papel, com ícone.
+  z.object({
+    tipo: z.literal("perfis"),
+    titulo: texto(160),
+    texto: texto(400).optional(),
+    itens: z
+      .array(
+        z.object({
+          icone: z.enum(ICONES_PERFIL),
+          nome: texto(60),
+          descricao: texto(300),
+          href: linkSchema.optional(),
+          rotulo: texto(40).optional(),
+        }),
+      )
+      .min(2)
+      .max(4),
+  }),
+  // Os três círculos (família, propriedade e gestão), desenhados.
+  z.object({
+    tipo: z.literal("circulos"),
+    titulo: texto(160),
+    texto: texto(400).optional(),
+    itens: z.array(z.object({ nome: texto(40), descricao: texto(240) })).length(3),
+  }),
 ]);
 
 export const conteudoSchema = z.object({ blocos: z.array(blocoSchema).max(40) });
@@ -121,6 +164,9 @@ export const ROTULO_BLOCO: Record<TipoBloco, string> = {
   destaque: "Destaque",
   servicos: "Serviços",
   imagem: "Imagem",
+  numeros: "Números",
+  perfis: "Para quem é",
+  circulos: "Três círculos",
 };
 
 /** Bloco novo, vazio mas válido como rascunho editável. */
@@ -151,6 +197,33 @@ export function blocoVazio(tipo: TipoBloco): Bloco {
         tipo,
         path: "paginas/inicio/00000000-0000-4000-8000-000000000000.jpg",
         alt: "Descreva a imagem",
+      };
+    case "numeros":
+      return {
+        tipo,
+        itens: [
+          { valor: "0%", rotulo: "O que o número mostra", fonte: "Fonte do dado" },
+          { valor: "0", rotulo: "O que o número mostra", fonte: "Fonte do dado" },
+        ],
+      };
+    case "perfis":
+      return {
+        tipo,
+        titulo: "Para quem é",
+        itens: [
+          { icone: "construiu", nome: "Quem construiu", descricao: "Descrição" },
+          { icone: "assume", nome: "Quem vai assumir", descricao: "Descrição" },
+        ],
+      };
+    case "circulos":
+      return {
+        tipo,
+        titulo: "Família, propriedade e gestão",
+        itens: [
+          { nome: "Família", descricao: "Descrição" },
+          { nome: "Propriedade", descricao: "Descrição" },
+          { nome: "Gestão", descricao: "Descrição" },
+        ],
       };
   }
 }

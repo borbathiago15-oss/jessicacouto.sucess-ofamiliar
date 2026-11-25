@@ -83,6 +83,13 @@ function textoDosBlocos(blocos: Bloco[]): string {
           return [b.chamada, b.titulo, b.texto].join(" ");
         case "imagem":
           return b.legenda ?? "";
+        case "numeros":
+          return [b.titulo, ...b.itens.map((i) => `${i.valor} ${i.rotulo}`)].join(" ");
+        case "perfis":
+        case "circulos":
+          return [b.titulo, b.texto, ...b.itens.map((i) => `${i.nome} ${i.descricao}`)].join(" ");
+        default:
+          return "";
       }
     })
     .join(" ");
