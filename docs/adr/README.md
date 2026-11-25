@@ -25,5 +25,6 @@
 | [0021](0021-pedidos-de-documentos-no-cofre.md)      | Pedidos de documentos e envio pelo cliente no cofre             | Aceita |
 | [0022](0022-blindagem-do-cofre.md)                  | Blindagem do cofre de documentos                                | Aceita |
 | [0023](0023-organograma.md)                         | Organograma: estrutura atual e proposta JC                      | Aceita |
+| [0024](0024-diagnostico-de-sucessao.md)             | Diagnóstico de Sucessão público                                 | Aceita |
 
 Modelo: Contexto → Decisão → Consequências.
