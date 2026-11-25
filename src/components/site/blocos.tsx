@@ -56,24 +56,30 @@ function BlocoUnico({
           <div className="grid gap-5">
             {b.chamada ? <Chamada>{b.chamada}</Chamada> : null}
             {primeiro ? (
-              <h1 className="font-display text-[clamp(2.5rem,6.2vw,4.9rem)] leading-none font-medium tracking-[-0.02em]">
+              <h1 className="font-display text-[clamp(2.25rem,min(5.4vw,7.2dvh),4.5rem)] leading-none font-medium tracking-[-0.02em]">
                 {b.titulo}
               </h1>
             ) : (
-              <h2 className="font-display text-[clamp(2.2rem,5vw,3.6rem)] leading-none font-medium tracking-[-0.02em]">
+              <h2 className="font-display text-[clamp(2rem,min(4.6vw,6.4dvh),3.4rem)] leading-none font-medium tracking-[-0.02em]">
                 {b.titulo}
               </h2>
             )}
-            {b.texto ? <p className="text-mudo max-w-[46ch] text-lg">{b.texto}</p> : null}
+            {b.texto ? <p className="text-mudo m-0 max-w-[46ch] text-lg">{b.texto}</p> : null}
             {b.ctaPrimario || b.ctaSecundario ? (
               <div className="flex flex-wrap gap-3">
                 {b.ctaPrimario ? <Acao {...b.ctaPrimario} /> : null}
                 {b.ctaSecundario ? <Acao {...b.ctaSecundario} variante="secundario" /> : null}
               </div>
             ) : null}
+            {primeiro ? (
+              <div className="grid max-w-[22rem] gap-1 pt-2">
+                <span className="font-display text-terra-texto text-2xl italic">Jéssica Couto</span>
+                <FioContinuidade />
+              </div>
+            ) : null}
           </div>
           {b.imagem ? (
-            <figure className="bg-blush relative m-0 aspect-[3/4] max-w-full overflow-hidden rounded-[999px_999px_18px_18px]">
+            <figure className="bg-blush relative m-0 aspect-[3/4] w-full max-w-[min(100%,calc((100dvh-12rem)*0.75))] justify-self-center overflow-hidden rounded-[999px_999px_18px_18px]">
               {/* eslint-disable-next-line @next/next/no-img-element -- mídia servida pela rota /midia com políticas do Storage */}
               <img
                 src={urlMidia(b.imagem.path, midiaBase)}
@@ -84,8 +90,13 @@ function BlocoUnico({
           ) : (
             <div
               aria-hidden="true"
-              className="from-blush to-blush-2 hidden aspect-[3/4] rounded-[999px_999px_18px_18px] bg-gradient-to-b md:block"
-            />
+              className="from-blush to-blush-2 hidden aspect-[3/4] w-full max-w-[min(100%,calc((100dvh-12rem)*0.75))] place-items-center justify-self-center rounded-[999px_999px_18px_18px] bg-gradient-to-b md:grid"
+            >
+              {/* Sem foto publicada: o arco mostra o monograma da marca, nunca uma imagem inventada. */}
+              <span className="border-terra/60 font-display text-terra-texto grid size-[clamp(96px,12vw,150px)] place-items-center rounded-full border text-[clamp(2.4rem,4.5vw,3.6rem)] font-semibold">
+                JC
+              </span>
+            </div>
           )}
         </section>
       );
