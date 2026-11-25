@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Cartao, Selo } from "@/components/ui";
 import { ROTULO_CATEGORIA, tamanhoLegivel } from "@/modules/cofre/tipos";
 import { ROTULO_REGISTRO, type TipoRegistro } from "@/modules/familia/schema";
+import { ArvoreOrganograma } from "@/modules/organograma/arvore";
 import { ROTULO_FASE } from "@/modules/prioridades/schema";
 import type { VisaoPortal } from "./schema";
 
@@ -152,6 +153,32 @@ export function VisaoDoCliente({ v, base }: { v: VisaoPortal; base: string | nul
           )}
         </Cartao>
       </div>
+
+      {v.organograma && v.organograma.cargos.length ? (
+        <Cartao className="grid gap-4" data-testid="portal-organograma">
+          <div className="grid gap-1">
+            <h2 className="font-display text-xl">Estrutura proposta pela JC</h2>
+            <p className="text-mudo m-0 text-sm">
+              Como a Jéssica propõe organizar a empresa, com o porquê de cada mudança.
+            </p>
+          </div>
+          {v.organograma.resumo ? (
+            <p className="m-0 max-w-[72ch] whitespace-pre-line">{v.organograma.resumo}</p>
+          ) : null}
+          <ArvoreOrganograma
+            detalhes={false}
+            rotulo="Estrutura proposta"
+            cargos={v.organograma.cargos.map((c) => ({
+              ...c,
+              is_family: false,
+              is_owner: false,
+              defined_role: false,
+              has_backup: false,
+              also_reports_to: null,
+            }))}
+          />
+        </Cartao>
+      ) : null}
     </div>
   );
 }

@@ -1,6 +1,9 @@
 import { brl, type Resultado } from "@/modules/raiox/calculo";
 import { lerIndicadores, type LeituraIndicador } from "@/modules/raiox/leitura";
 import type { resumoDaFamilia } from "@/modules/familia/schema";
+import { analisarOrganograma } from "@/modules/organograma/analise";
+import { compararEstruturas } from "@/modules/organograma/comparar";
+import type { Cargo } from "@/modules/organograma/schema";
 import { ordenar, quadrante, ROTULO_FASE, type ItemPrioridade } from "@/modules/prioridades/schema";
 
 /**
@@ -20,7 +23,7 @@ export type Achado = {
   /** Frase de conclusão, já com o número que a sustenta. */
   mensagem: string;
   gravidade: 3 | 2 | 1;
-  origem: "financeiro" | "familia" | "plano";
+  origem: "financeiro" | "familia" | "plano" | "organograma";
 };
 
 // ---------------------------------------------------------------------------
@@ -201,6 +204,27 @@ export function achadosDoPlano(itens: ItemPrioridade[], hoje: string): Achado[] 
       origem: "plano",
       mensagem: `${plural(vencidos.length, "ação do plano está", "ações do plano estão")} com o prazo vencido.`,
     });
+  return a;
+}
+
+/** Pontos da estrutura atual (até 3, os mais graves) e o efeito da proposta JC. */
+export function achadosDoOrganograma(atual: Cargo[], proposta: Cargo[]): Achado[] {
+  if (!atual.length) return [];
+  const pontos = analisarOrganograma(atual);
+  const a: Achado[] = pontos.slice(0, 3).map((p) => ({
+    gravidade: p.nivel === "critico" ? 3 : 2,
+    origem: "organograma",
+    mensagem: `${p.titulo}: ${p.texto}`,
+  }));
+  if (proposta.length && pontos.length) {
+    const c = compararEstruturas(atual, proposta);
+    if (c.resolvidos.length)
+      a.push({
+        gravidade: 1,
+        origem: "organograma",
+        mensagem: `A estrutura proposta pela JC resolve ${plural(c.resolvidos.length, "ponto", "pontos")} de atenção da estrutura atual.`,
+      });
+  }
   return a;
 }
 

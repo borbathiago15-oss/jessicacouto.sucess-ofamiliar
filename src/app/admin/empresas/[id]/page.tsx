@@ -115,6 +115,20 @@ export default async function EmpresaPage({ params }: { params: Promise<{ id: st
         ) : null}
         {podeAnalises ? (
           <Cartao className="grid content-start gap-3">
+            <h2 className="font-display text-xl">Organograma</h2>
+            <p className="text-[15px]">
+              Estrutura atual, pontos que travam e a reorganização proposta pela JC.
+            </p>
+            <Link
+              href={`/admin/empresas/${id}/organograma`}
+              className="text-terra-texto font-semibold underline"
+            >
+              Abrir o organograma
+            </Link>
+          </Cartao>
+        ) : null}
+        {podeAnalises ? (
+          <Cartao className="grid content-start gap-3">
             <h2 className="font-display text-xl">Matriz de Prioridades</h2>
             <p className="text-[15px]">O que atacar primeiro, com o ciclo PDCA de cada item.</p>
             <Link
