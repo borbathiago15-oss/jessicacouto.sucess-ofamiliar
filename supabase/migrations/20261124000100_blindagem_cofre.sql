@@ -119,7 +119,8 @@ as $$
   select coalesce((select u.email::text from auth.users u where u.id = p_user), 'pessoa removida');
 $$;
 
--- Muitos downloads da mesma pessoa em pouco tempo (alerta uma vez ao atingir o limite).
+-- Muitos downloads da mesma pessoa em pouco tempo: no máximo um alerta por pessoa a
+-- cada 10 minutos (vale também quando várias aberturas entram de uma vez).
 create or replace function private.alert_mass_download()
 returns trigger
 language plpgsql
@@ -131,7 +132,10 @@ declare
 begin
   select count(*) into n from public.vault_access_log l
    where l.user_id = new.user_id and l.at > now() - interval '10 minutes';
-  if n = 10 then
+  if n >= 10 and not exists (
+       select 1 from public.security_alerts a
+        where a.kind = 'mass_download' and a.user_id = new.user_id
+          and a.created_at > now() - interval '10 minutes') then
     insert into public.security_alerts (kind, user_id, organization_id, detail)
     select 'mass_download', new.user_id, d.organization_id,
            format('%s abriu 10 documentos do cofre em menos de 10 minutos.', private.email_de(new.user_id))
