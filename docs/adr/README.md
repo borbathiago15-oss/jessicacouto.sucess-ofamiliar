@@ -26,5 +26,6 @@
 | [0022](0022-blindagem-do-cofre.md)                  | Blindagem do cofre de documentos                                | Aceita |
 | [0023](0023-organograma.md)                         | Organograma: estrutura atual e proposta JC                      | Aceita |
 | [0024](0024-diagnostico-de-sucessao.md)             | Diagnóstico de Sucessão público                                 | Aceita |
+| [0025](0025-materiais-com-cadastro.md)              | Guias e materiais gratuitos com cadastro                        | Aceita |
 
 Modelo: Contexto → Decisão → Consequências.

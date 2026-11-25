@@ -110,6 +110,9 @@ export default async function AdminHomePage({
         <Link href="/admin/diagnostico" className="text-terra-texto underline">
           Diagnóstico de Sucessão
         </Link>
+        <Link href="/admin/materiais" className="text-terra-texto underline">
+          Guias e materiais
+        </Link>
         <Link href="/admin/funil" className="text-terra-texto underline">
           Funil comercial
         </Link>

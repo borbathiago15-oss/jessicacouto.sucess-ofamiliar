@@ -8,7 +8,10 @@ export const revalidate = 300;
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return PAGINAS_SITE.filter((p) => p.slug !== "inicio").map((p) => ({ slug: p.slug }));
+  // Início e Guias têm rotas próprias (a de Guias inclui o cadastro do material).
+  return PAGINAS_SITE.filter((p) => !["inicio", "guias"].includes(p.slug)).map((p) => ({
+    slug: p.slug,
+  }));
 }
 
 type Props = { params: Promise<{ slug: string }> };
@@ -21,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function PaginaSite({ params }: Props) {
   const { slug } = await params;
   const definicao = paginaPorSlug(slug);
-  if (!definicao || slug === "inicio") notFound();
+  if (!definicao || slug === "inicio" || slug === "guias") notFound();
 
   const pagina = await buscarPaginaPublicada(slug);
   if (!pagina) return <ConteudoEmPreparacao />;
