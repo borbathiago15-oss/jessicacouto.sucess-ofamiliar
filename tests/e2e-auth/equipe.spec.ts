@@ -27,3 +27,38 @@ test("a administradora acessa Equipe e Portal do cliente pelo menu", async ({ br
     await contexto.close();
   }
 });
+
+test("convite por link: a pessoa abre o link, aceita e cria a senha", async ({ browser }) => {
+  const sufixo = Math.random().toString(36).slice(2, 8);
+  const { contexto, page } = await entrarComo(browser, "admin", "equipe-link");
+  let link = "";
+  try {
+    await page.goto("/admin/equipe");
+    await page.getByLabel("Nome").fill(`Pessoa Fictícia ${sufixo}`);
+    await page.getByLabel("E-mail").fill(`convite.${sufixo}@exemplo.test`);
+    await page.getByRole("button", { name: "Gerar link de convite" }).click();
+    await expect(page.getByTestId("equipe-convite-aviso")).toContainText("Link de convite pronto");
+    link = await page.getByTestId("equipe-convite-link").inputValue();
+    expect(link).toMatch(/\/admin\/convite\?t=[A-Za-z0-9_-]+&tipo=invite$/);
+    await expect(page.getByTestId("equipe-lista")).toContainText(`Pessoa Fictícia ${sufixo}`);
+  } finally {
+    await contexto.close();
+  }
+
+  // Abrir o link (como faz a prévia do WhatsApp) não usa o convite; o clique usa.
+  const convidado = await browser.newContext();
+  const p = await convidado.newPage();
+  try {
+    const caminho = new URL(link).pathname + new URL(link).search;
+    await p.goto(caminho);
+    await p.goto(caminho);
+    await expect(p.getByRole("heading", { level: 1 })).toHaveText(
+      "Você recebeu um convite para a área da JC",
+    );
+    await semViolacoes(p);
+    await p.getByRole("link", { name: "Aceitar convite e criar senha" }).click();
+    await expect(p).toHaveURL(/\/admin\/redefinir-senha/);
+  } finally {
+    await convidado.close();
+  }
+});
