@@ -71,6 +71,12 @@ function BlocoUnico({
                 {b.ctaSecundario ? <Acao {...b.ctaSecundario} variante="secundario" /> : null}
               </div>
             ) : null}
+            {primeiro ? (
+              <div className="grid max-w-[22rem] gap-1 pt-2">
+                <span className="font-display text-terra-texto text-2xl italic">Jéssica Couto</span>
+                <FioContinuidade />
+              </div>
+            ) : null}
           </div>
           {b.imagem ? (
             <figure className="bg-blush relative m-0 aspect-[3/4] max-w-full overflow-hidden rounded-[999px_999px_18px_18px]">
@@ -84,8 +90,13 @@ function BlocoUnico({
           ) : (
             <div
               aria-hidden="true"
-              className="from-blush to-blush-2 hidden aspect-[3/4] rounded-[999px_999px_18px_18px] bg-gradient-to-b md:block"
-            />
+              className="from-blush to-blush-2 hidden aspect-[3/4] place-items-center rounded-[999px_999px_18px_18px] bg-gradient-to-b md:grid"
+            >
+              {/* Sem foto publicada: o arco mostra o monograma da marca, nunca uma imagem inventada. */}
+              <span className="border-terra/60 font-display text-terra-texto grid size-[clamp(96px,12vw,150px)] place-items-center rounded-full border text-[clamp(2.4rem,4.5vw,3.6rem)] font-semibold">
+                JC
+              </span>
+            </div>
           )}
         </section>
       );
