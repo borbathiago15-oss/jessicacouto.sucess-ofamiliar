@@ -21,3 +21,11 @@ O Documento Mestre (§3.2) previa bordô, dourado, bege, grafite e verde profund
 - Trocar a paleta ou as fontes (por exemplo, Playfair Display e Montserrat, como no quadro de marca anterior) é uma mudança localizada em tokens e no `layout.tsx`.
 - As faixas de leitura dos gráficos são **exemplos** até a aprovação metodológica (§7.2).
 - Fotografias da Jéssica só entram com autorização e a partir dos arquivos originais.
+
+## Revisão de 2026-11-24: creme, marrom e mostarda
+
+A pedido do proprietário, a paleta passou a ser **creme, marrom e mostarda**, por trazer mais sofisticação à marca.
+
+- **Cremes** nas superfícies (`porcelana`, `papel`, `blush`, `linho`), **marrons** no texto e na marca (`cacau`, `terra-texto`, `terra-escuro`) e **mostarda** nos destaques (`terra`): linhas, marcadores, barras e gráficos. `champanhe` virou areia, para séries secundárias.
+- Os **nomes dos tokens foram mantidos** para a troca valer na plataforma inteira sem mexer em cada tela; o significado de cada um está no cabeçalho de `src/styles/tokens.css`.
+- **Mostarda nunca é usada em texto:** sobre o creme ela não atinge o contraste de leitura. Como elemento gráfico, atinge 3:1 (WCAG 1.4.11), verificado em `tests/unit/design-tokens.test.ts`. Todos os pares de texto seguem com WCAG AA (≥ 4,5:1).

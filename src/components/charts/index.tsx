@@ -86,7 +86,7 @@ export function Radar({
       {comparacao ? (
         <polygon
           points={poligono(comparacao)}
-          fill="rgba(216,191,166,.25)"
+          fill="rgba(214,196,160,.25)"
           stroke={cores.champanhe}
           strokeWidth="1.8"
           strokeLinejoin="round"
