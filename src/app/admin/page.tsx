@@ -6,6 +6,8 @@ import { ADMIN_LOGIN } from "@/lib/auth/admin-routes";
 import { PORTAL_HOME } from "@/lib/auth/destino";
 import { umDe } from "@/lib/supabase/relacao";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { Selo } from "@/components/ui";
+import { ROTULO_NIVEL, TOM_NIVEL, type Nivel } from "@/modules/diagnostico/schema";
 import { revokeOtherSessions } from "./actions";
 import { FormMessage, buttonClass } from "./_components/auth-card";
 
@@ -139,6 +141,113 @@ async function carregarPainel(supabase: Supabase, pode: (p: string) => boolean) 
   };
 }
 
+type Lead = {
+  id: string;
+  nome: string;
+  origem: string;
+  quando: string;
+  href: string;
+  nivel: Nivel | null;
+};
+
+/** Clientes com etapa e atalhos, e os leads mais recentes do site. */
+async function carregarCerebro(supabase: Supabase, pode: (p: string) => boolean) {
+  const nada = Promise.resolve({ data: null });
+  const [empresas, diagnosticos, pedidos] = await Promise.all([
+    pode("organizations.read")
+      ? supabase
+          .from("organizations")
+          .select(
+            "id, trade_name, updated_at, opportunities(updated_at, pipeline_stages(name, is_closed))",
+          )
+          .order("updated_at", { ascending: false })
+          .limit(8)
+      : nada,
+    pode("diagnostics.read_answers")
+      ? supabase
+          .from("triage_submissions")
+          .select("id, level, created_at, participants(full_name)")
+          .order("created_at", { ascending: false })
+          .limit(6)
+      : nada,
+    pode("cms.read")
+      ? supabase
+          .from("material_downloads")
+          .select("id, created_at, participants(full_name), materials(title)")
+          .order("created_at", { ascending: false })
+          .limit(6)
+      : nada,
+  ]);
+
+  type Op = { updated_at: string; pipeline_stages: unknown };
+  const clientes = (
+    (empresas.data ?? []) as {
+      id: string;
+      trade_name: string;
+      updated_at: string;
+      opportunities: Op[] | null;
+    }[]
+  ).map((e) => {
+    const abertas = (e.opportunities ?? [])
+      .map((o) => ({
+        quando: o.updated_at,
+        etapa: umDe(o.pipeline_stages as never) as unknown as
+          { name: string; is_closed: boolean } | undefined,
+      }))
+      .filter((o) => o.etapa && !o.etapa.is_closed)
+      .sort((a, b) => b.quando.localeCompare(a.quando));
+    const ultima = [e.updated_at, ...(e.opportunities ?? []).map((o) => o.updated_at)]
+      .sort()
+      .at(-1)!;
+    return {
+      id: e.id,
+      nome: e.trade_name,
+      etapa: abertas[0]?.etapa?.name ?? null,
+      atualizada: ultima,
+    };
+  });
+
+  const nomeDe = (r: unknown) =>
+    (umDe(r as never) as unknown as { full_name?: string } | undefined)?.full_name ??
+    "Pessoa removida";
+  const leads: Lead[] = [
+    ...(
+      (diagnosticos.data ?? []) as {
+        id: string;
+        level: Nivel;
+        created_at: string;
+        participants: unknown;
+      }[]
+    ).map((d) => ({
+      id: `d-${d.id}`,
+      nome: nomeDe(d.participants),
+      origem: "Diagnóstico de Sucessão",
+      quando: d.created_at,
+      href: "/admin/diagnostico",
+      nivel: d.level,
+    })),
+    ...(
+      (pedidos.data ?? []) as {
+        id: string;
+        created_at: string;
+        participants: unknown;
+        materials: unknown;
+      }[]
+    ).map((m) => ({
+      id: `m-${m.id}`,
+      nome: nomeDe(m.participants),
+      origem: `Baixou: ${(umDe(m.materials as never) as unknown as { title?: string } | undefined)?.title ?? "material"}`,
+      quando: m.created_at,
+      href: "/admin/materiais",
+      nivel: null,
+    })),
+  ]
+    .sort((a, b) => b.quando.localeCompare(a.quando))
+    .slice(0, 7);
+
+  return { clientes, leads };
+}
+
 function Indicador({
   rotulo,
   valor,
@@ -240,8 +349,9 @@ export default async function AdminHomePage({
 
   const permissoes = new Set(permissions);
   const pode = (p: string) => permissoes.has(p);
-  const [p, perfil] = await Promise.all([
+  const [p, c, perfil] = await Promise.all([
     carregarPainel(supabase, pode),
+    carregarCerebro(supabase, pode),
     supabase.from("profiles").select("display_name").eq("id", access.data.user_id).maybeSingle(),
   ]);
   const nome = perfil.data?.display_name?.trim().split(" ")[0];
@@ -300,6 +410,86 @@ export default async function AdminHomePage({
           testid="kpi-oportunidades"
         />
       </section>
+
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
+        {pode("organizations.read") ? (
+          <Painel titulo="Clientes" acao={{ href: "/admin/empresas", rotulo: "Todas as empresas" }}>
+            {c.clientes.length === 0 ? (
+              <p className="text-mudo m-0 text-sm">
+                Nenhum cliente ainda. No funil, use “Converter em cliente”.
+              </p>
+            ) : (
+              <ul className="m-0 grid list-none gap-0 p-0" data-testid="painel-clientes">
+                {c.clientes.map((e) => (
+                  <li
+                    key={e.id}
+                    className="border-linho grid gap-1.5 border-b py-3 last:border-0 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
+                  >
+                    <span className="grid gap-0.5">
+                      <Link
+                        href={`/admin/empresas/${e.id}`}
+                        className="text-cacau text-[15px] font-semibold"
+                      >
+                        {e.nome}
+                      </Link>
+                      <span className="text-mudo text-[12.5px]">
+                        {e.etapa ?? "Sem oportunidade aberta"} · atualizada em{" "}
+                        {dataCurta(e.atualizada)}
+                      </span>
+                    </span>
+                    <span className="flex flex-wrap gap-x-3 gap-y-1 text-[13px]">
+                      {pode("analyses.read") ? (
+                        <>
+                          <Link
+                            href={`/admin/empresas/${e.id}/raio-x`}
+                            className="text-terra-texto"
+                          >
+                            Raio-X<span className="sr-only"> de {e.nome}</span>
+                          </Link>
+                          <Link
+                            href={`/admin/empresas/${e.id}/relatorio`}
+                            className="text-terra-texto"
+                          >
+                            Relatório<span className="sr-only"> de {e.nome}</span>
+                          </Link>
+                        </>
+                      ) : null}
+                      {pode("portal.manage") ? (
+                        <Link href={`/admin/empresas/${e.id}/portal`} className="text-terra-texto">
+                          Portal<span className="sr-only"> de {e.nome}</span>
+                        </Link>
+                      ) : null}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Painel>
+        ) : null}
+
+        {c.leads.length ? (
+          <Painel titulo="Leads do site">
+            <ul className="m-0 grid list-none gap-0 p-0" data-testid="painel-leads">
+              {c.leads.map((l) => (
+                <li
+                  key={l.id}
+                  className="border-linho grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b py-2.5 last:border-0"
+                >
+                  <span className="grid gap-0.5">
+                    <Link href={l.href} className="text-cacau text-[14px] font-semibold">
+                      {l.nome}
+                    </Link>
+                    <span className="text-mudo text-[12.5px]">
+                      {l.origem} · {dataHora(l.quando)}
+                    </span>
+                  </span>
+                  {l.nivel ? <Selo tom={TOM_NIVEL[l.nivel]}>{ROTULO_NIVEL[l.nivel]}</Selo> : null}
+                </li>
+              ))}
+            </ul>
+          </Painel>
+        ) : null}
+      </div>
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
         {pode("opportunities.read") ? (

@@ -30,23 +30,31 @@ function mensagemDoBanco(error: { code?: string; message?: string }, padrao: str
 const uuid = z.uuid();
 
 export async function criarInstrumento(_: Aviso, form: FormData): Promise<Aviso> {
-  const dados = z
-    .object({
-      key: z.string().regex(/^[a-z0-9_]{1,60}$/, "Identificador: letras minúsculas, números e _."),
-      name: z.string().trim().min(1, "Informe o nome.").max(200),
-    })
-    .safeParse({ key: form.get("key"), name: form.get("name") });
-  if (!dados.success) return { ok: false, mensagem: dados.error.issues[0]!.message };
+  const nome = z
+    .string()
+    .trim()
+    .min(2, "Informe o nome do instrumento.")
+    .max(200)
+    .safeParse(form.get("name"));
+  if (!nome.success) return { ok: false, mensagem: nome.error.issues[0]!.message };
+  // Código interno a partir do nome: "Diagnóstico do Fundador" → "diagnostico_do_fundador".
+  const base =
+    nome.data
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "")
+      .slice(0, 50) || "instrumento";
   const supabase = await cliente();
-  const { error } = await supabase.from("instruments").insert(dados.data);
+  let error: { code?: string; message?: string } | null = null;
+  for (let n = 1; n <= 20; n++) {
+    const key = n === 1 ? base : `${base}_${n}`;
+    ({ error } = await supabase.from("instruments").insert({ key, name: nome.data }));
+    if (error?.code !== "23505") break;
+  }
   if (error)
-    return {
-      ok: false,
-      mensagem:
-        error.code === "23505"
-          ? "Já existe um instrumento com esse identificador."
-          : mensagemDoBanco(error, "Não foi possível criar o instrumento."),
-    };
+    return { ok: false, mensagem: mensagemDoBanco(error, "Não foi possível criar o instrumento.") };
   revalidatePath("/admin/questionarios");
   return { ok: true, mensagem: "Instrumento criado." };
 }

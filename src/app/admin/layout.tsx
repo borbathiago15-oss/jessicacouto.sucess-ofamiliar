@@ -64,6 +64,11 @@ function menu(a: Acesso, alertas: number): GrupoMenu[] {
           rotulo: "Questionários",
           icone: "questionarios" as const,
         },
+        a.pode("portal.manage") && {
+          href: "/admin/portal",
+          rotulo: "Portal do cliente",
+          icone: "portal" as const,
+        },
         a.pode("reports.manage") && {
           href: "/admin/relatorios/configuracao",
           rotulo: "Configuração dos relatórios",
@@ -83,6 +88,16 @@ function menu(a: Acesso, alertas: number): GrupoMenu[] {
           href: "/admin/materiais",
           rotulo: "Guias e materiais",
           icone: "materiais" as const,
+        },
+      ].filter(Boolean) as GrupoMenu["itens"],
+    },
+    {
+      titulo: "Administração",
+      itens: [
+        a.pode("users.read") && {
+          href: "/admin/equipe",
+          rotulo: "Equipe",
+          icone: "equipe" as const,
         },
       ].filter(Boolean) as GrupoMenu["itens"],
     },

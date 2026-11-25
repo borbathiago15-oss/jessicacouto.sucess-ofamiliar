@@ -61,20 +61,19 @@ export function NovoQuestionario({
 export function NovoInstrumento() {
   const [aviso, acao, pendente] = useActionState(criarInstrumento, null);
   return (
-    <form action={acao} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+    <form action={acao} className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
       <Campo
-        id="ni-key"
-        name="key"
-        rotulo="Identificador"
-        ajuda="Letras minúsculas, números e _."
+        id="ni-name"
+        name="name"
+        rotulo="Nome do instrumento"
+        ajuda="Ex.: Diagnóstico do Fundador. O código interno é criado a partir do nome."
         required
-        pattern="[a-z0-9_]{1,60}"
+        maxLength={200}
       />
-      <Campo id="ni-name" name="name" rotulo="Nome do instrumento" required maxLength={200} />
       <Botao type="submit" variante="secundario" disabled={pendente}>
         Cadastrar instrumento
       </Botao>
-      <div className="sm:col-span-3">
+      <div className="sm:col-span-2">
         <Mensagem aviso={aviso} testid="novo-instrumento-aviso" />
       </div>
     </form>
