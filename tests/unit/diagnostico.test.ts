@@ -3,7 +3,10 @@ import {
   configSchema,
   faltaResponder,
   lerConfig,
+  mapaDeTemas,
+  planoNoventaDias,
   type FormularioPublico,
+  type Leitura,
 } from "@/modules/diagnostico/schema";
 import { diagnosticoFicticio } from "../fixtures/diagnostico-ficticio";
 
@@ -69,5 +72,47 @@ describe("validação antes de enviar", () => {
     expect(faltaResponder(f, { papel: ["a"], prazo: ["curto"], riscos: ["r1", "r2", "r3"] })).toBe(
       "Pergunta fictícia sobre riscos",
     );
+  });
+});
+
+describe("leitura do resultado", () => {
+  const l = (dimensao: string, nivel: Leitura["nivel"], fazer: string): Leitura => ({
+    chave: dimensao.toLowerCase(),
+    dimensao,
+    resposta: "x",
+    nivel,
+    porque: "p",
+    fazer,
+  });
+
+  it("recusa leitura com nível desconhecido", () => {
+    const c = copia();
+    (c.perguntas[1]!.opcoes![0] as { leitura: { nivel: string } }).leitura.nivel = "otimo";
+    expect(lerConfig(JSON.stringify(c)).ok).toBe(false);
+  });
+
+  it("mapa usa o nível mais sensível de cada tema, na ordem das perguntas", () => {
+    expect(
+      mapaDeTemas([
+        l("Prazo", "construcao", "a"),
+        l("Riscos", "estruturado", "b"),
+        l("Riscos", "atencao", "c"),
+      ]),
+    ).toEqual([
+      { dimensao: "Prazo", nivel: "construcao" },
+      { dimensao: "Riscos", nivel: "atencao" },
+    ]);
+  });
+
+  it("plano de 90 dias prioriza o que pede atenção, sem repetir e sem o que já está estruturado", () => {
+    const plano = planoNoventaDias([
+      l("A", "construcao", "fazer A"),
+      l("B", "estruturado", "fazer B"),
+      l("C", "atencao", "fazer C"),
+      l("D", "atencao", "fazer C"),
+      l("E", "construcao", "fazer E"),
+      l("F", "construcao", "fazer F"),
+    ]);
+    expect(plano.map((p) => p.fazer)).toEqual(["fazer C", "fazer A", "fazer E"]);
   });
 });

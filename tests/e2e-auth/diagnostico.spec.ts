@@ -85,6 +85,16 @@ test("uma pessoa responde no site e recebe a leitura, sem a classificação", as
     await expect(resultado).toContainText("obrigada por responder");
     await expect(resultado).toContainText("Abertura fictícia A.");
     await expect(resultado).toContainText("Faria algo fictício sobre o risco 1.");
+    // Leitura completa: mapa por tema, por que importa, o que fazer e plano de 90 dias.
+    await expect(page.getByTestId("diagnostico-mapa")).toContainText("Tema fictício de prazo");
+    await expect(page.getByTestId("diagnostico-mapa")).toContainText("Pede atenção");
+    await expect(page.getByTestId("diagnostico-leituras")).toContainText(
+      "Por que fictício: prazo curto.",
+    );
+    await expect(page.getByTestId("diagnostico-plano")).toContainText(
+      "Fazer fictício: prazo curto.",
+    );
+    await expect(page.getByTestId("diagnostico-plano")).toContainText("Fazer fictício: risco 1.");
     await expect(resultado).toContainText("Próximo passo fictício: conversa imediata.");
     await expect(resultado).toContainText("Tema fictício para os próximos 90 dias.");
     await expect(resultado).not.toContainText("Motivo fictício");

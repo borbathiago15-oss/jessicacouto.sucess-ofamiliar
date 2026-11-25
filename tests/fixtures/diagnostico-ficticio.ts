@@ -18,11 +18,36 @@ export const diagnosticoFicticio = {
     {
       chave: "prazo",
       texto: "Pergunta fictícia sobre o prazo",
+      dimensao: "Tema fictício de prazo",
       tipo: "escolha",
       opcoes: [
-        { valor: "curto", rotulo: "Prazo fictício curto" },
-        { valor: "medio", rotulo: "Prazo fictício médio" },
-        { valor: "longo", rotulo: "Prazo fictício longo" },
+        {
+          valor: "curto",
+          rotulo: "Prazo fictício curto",
+          leitura: {
+            nivel: "atencao",
+            porque: "Por que fictício: prazo curto.",
+            fazer: "Fazer fictício: prazo curto.",
+          },
+        },
+        {
+          valor: "medio",
+          rotulo: "Prazo fictício médio",
+          leitura: {
+            nivel: "construcao",
+            porque: "Por que fictício: prazo médio.",
+            fazer: "Fazer fictício: prazo médio.",
+          },
+        },
+        {
+          valor: "longo",
+          rotulo: "Prazo fictício longo",
+          leitura: {
+            nivel: "estruturado",
+            porque: "Por que fictício: prazo longo.",
+            fazer: "Fazer fictício: prazo longo.",
+          },
+        },
       ],
     },
     {
@@ -32,7 +57,15 @@ export const diagnosticoFicticio = {
       tipo: "multipla",
       max: 2,
       opcoes: [
-        { valor: "r1", rotulo: "Risco fictício 1" },
+        {
+          valor: "r1",
+          rotulo: "Risco fictício 1",
+          leitura: {
+            nivel: "construcao",
+            porque: "Por que fictício: risco 1.",
+            fazer: "Fazer fictício: risco 1.",
+          },
+        },
         { valor: "r2", rotulo: "Risco fictício 2" },
         { valor: "r3", rotulo: "Risco fictício 3" },
       ],

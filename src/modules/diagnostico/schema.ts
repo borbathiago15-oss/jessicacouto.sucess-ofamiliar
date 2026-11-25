@@ -22,16 +22,30 @@ const chave = z.string().regex(/^[a-z][a-z0-9_]{0,39}$/, "Chave: letras minúscu
 const valor = z.string().regex(/^[a-z0-9_]{1,40}$/, "Valor: letras minúsculas, números e _.");
 const texto = (max: number) => z.string().trim().min(1).max(max);
 
+/** Leitura de uma resposta: onde a família está, por que importa e o que fazer. */
+export const NIVEIS_LEITURA = ["atencao", "construcao", "estruturado"] as const;
+export type NivelLeitura = (typeof NIVEIS_LEITURA)[number];
+export const ROTULO_LEITURA: Record<NivelLeitura, string> = {
+  atencao: "Pede atenção",
+  construcao: "Em construção",
+  estruturado: "Estruturado",
+};
+
 const opcaoSchema = z.object({
   valor,
   rotulo: texto(200),
   papel_crm: z.enum(["founder", "successor", "heir", "manager", "consultant", "other"]).optional(),
+  leitura: z
+    .object({ nivel: z.enum(NIVEIS_LEITURA), porque: texto(800), fazer: texto(800) })
+    .optional(),
 });
 
 const perguntaSchema = z
   .object({
     chave,
     texto: texto(300),
+    /** Tema da pergunta na leitura (ex.: "Formalização"). */
+    dimensao: texto(60).optional(),
     ajuda: texto(300).optional(),
     tipo: z.enum(["escolha", "multipla", "aberta"]),
     max: z.number().int().min(1).max(12).optional(),
@@ -167,6 +181,18 @@ export const resultadoSchema = z.object({
   riscos: z.array(z.object({ rotulo: z.string(), texto: z.string() })),
   tema: z.string().nullable(),
   proximo_passo: z.string().nullable(),
+  leituras: z
+    .array(
+      z.object({
+        chave: z.string(),
+        dimensao: z.string(),
+        resposta: z.string(),
+        nivel: z.enum(NIVEIS_LEITURA),
+        porque: z.string(),
+        fazer: z.string(),
+      }),
+    )
+    .default([]),
 });
 export type ResultadoDiagnostico = z.infer<typeof resultadoSchema>;
 
@@ -183,6 +209,33 @@ export function faltaResponder(f: FormularioPublico, r: Respostas): string | nul
     if (p.tipo === "multipla" && p.max && v.length > p.max) return p.texto;
   }
   return null;
+}
+
+export type Leitura = ResultadoDiagnostico["leituras"][number];
+
+const PESO: Record<NivelLeitura, number> = { atencao: 0, construcao: 1, estruturado: 2 };
+
+/**
+ * Temas da leitura na ordem das perguntas, cada um com o nível mais sensível entre
+ * as respostas dele (uma múltipla escolha pode ter mais de uma leitura).
+ */
+export function mapaDeTemas(leituras: Leitura[]): { dimensao: string; nivel: NivelLeitura }[] {
+  const mapa = new Map<string, NivelLeitura>();
+  for (const l of leituras) {
+    const atual = mapa.get(l.dimensao);
+    if (!atual || PESO[l.nivel] < PESO[atual]) mapa.set(l.dimensao, l.nivel);
+  }
+  return [...mapa].map(([dimensao, nivel]) => ({ dimensao, nivel }));
+}
+
+/** Até 3 ações para os próximos 90 dias: primeiro o que pede atenção, sem repetir. */
+export function planoNoventaDias(leituras: Leitura[], limite = 3): Leitura[] {
+  const vistas = new Set<string>();
+  return [...leituras]
+    .filter((l) => l.nivel !== "estruturado")
+    .sort((a, b) => PESO[a.nivel] - PESO[b.nivel])
+    .filter((l) => (vistas.has(l.fazer) ? false : (vistas.add(l.fazer), true)))
+    .slice(0, limite);
 }
 
 /** Tempo mínimo (ms) entre abrir o formulário e enviar: quem responde de verdade leva mais. */

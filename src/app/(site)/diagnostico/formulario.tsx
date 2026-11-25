@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { useActionState, useState } from "react";
-import { Botao, campoClasses, FioContinuidade } from "@/components/ui";
+import { Botao, campoClasses } from "@/components/ui";
 import {
   faltaResponder,
   type FormularioPublico,
   type Respostas,
-  type ResultadoDiagnostico,
 } from "@/modules/diagnostico/schema";
 import { enviarDiagnostico, type EstadoDiagnostico } from "./actions";
+import { Resultado } from "./resultado";
 
 const rotulo = "grid gap-1 text-[14px] font-semibold";
 
@@ -236,82 +236,5 @@ export function FormularioDiagnostico({ f }: { f: FormularioPublico }) {
         </form>
       )}
     </div>
-  );
-}
-
-function Resultado({ r }: { r: ResultadoDiagnostico }) {
-  return (
-    <article className="grid max-w-[48rem] gap-8" data-testid="diagnostico-resultado">
-      <header className="grid gap-3">
-        <span className="text-terra-texto text-sm font-semibold">Seu ponto de partida</span>
-        <h2 className="font-display m-0 text-[clamp(2rem,4.6vw,3.2rem)] leading-none font-medium">
-          {r.nome}, obrigada por responder.
-        </h2>
-        {r.abertura ? <p className="m-0 text-lg">{r.abertura}</p> : null}
-        <FioContinuidade className="max-w-[22rem]" />
-      </header>
-
-      <section aria-labelledby="retrato" className="grid gap-3">
-        <h3 id="retrato" className="font-display m-0 text-2xl">
-          Onde a sua família está
-        </h3>
-        <dl className="border-linho m-0 grid border-t">
-          {r.retrato.map((i) => (
-            <div
-              key={i.pergunta}
-              className="border-linho grid gap-1 border-b py-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] sm:gap-6"
-            >
-              <dt className="text-mudo text-sm">{i.pergunta}</dt>
-              <dd className="m-0 font-semibold">{i.resposta}</dd>
-            </div>
-          ))}
-        </dl>
-      </section>
-
-      {r.riscos.length ? (
-        <section aria-labelledby="riscos" className="grid gap-3">
-          <h3 id="riscos" className="font-display m-0 text-2xl">
-            O que eu faria no seu lugar
-          </h3>
-          <ul className="m-0 grid list-none gap-3 p-0">
-            {r.riscos.map((x) => (
-              <li
-                key={x.rotulo}
-                className="bg-papel border-linho grid gap-1 rounded-2xl border px-5 py-4"
-              >
-                <b>{x.rotulo}</b>
-                <span>{x.texto}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
-
-      {r.tema ? (
-        <blockquote className="border-terra m-0 border-l-4 pl-4 text-lg italic">
-          “{r.tema}”
-        </blockquote>
-      ) : null}
-
-      {r.proximo_passo ? (
-        <section className="bg-blush grid gap-2 rounded-2xl px-6 py-5" aria-labelledby="proximo">
-          <h3 id="proximo" className="font-display m-0 text-2xl">
-            Próximo passo
-          </h3>
-          <p className="m-0">{r.proximo_passo}</p>
-          <span className="font-display text-terra-texto text-xl italic">Jéssica Couto</span>
-        </section>
-      ) : null}
-
-      <div className="flex flex-wrap gap-3 print:hidden">
-        <Botao type="button" variante="secundario" onClick={() => window.print()}>
-          Salvar em PDF ou imprimir
-        </Botao>
-      </div>
-      <p className="text-mudo m-0 text-[13px]">
-        Esta leitura é baseada nas suas respostas e não é uma avaliação de maturidade, nem
-        psicológica, jurídica ou contábil.
-      </p>
-    </article>
   );
 }
