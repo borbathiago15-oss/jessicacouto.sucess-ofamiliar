@@ -17,7 +17,8 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
     ...paginas.filter((p) => p.chave === "contato"),
   ];
   return (
-    <>
+    // A página ocupa sempre a tela inteira: o rodapé fica no pé da tela mesmo com pouco conteúdo.
+    <div className="flex min-h-dvh flex-col">
       <a
         href="#conteudo"
         className="bg-papel sr-only z-50 rounded-lg px-3 py-2 focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
@@ -51,7 +52,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
       </header>
       <main
         id="conteudo"
-        className="mx-auto max-w-[1240px] px-[max(16px,env(safe-area-inset-left,0px))] pt-10 pb-28"
+        className="mx-auto w-full max-w-[1240px] flex-1 px-[max(16px,env(safe-area-inset-left,0px))] pt-10 pb-28"
       >
         {children}
       </main>
@@ -72,6 +73,6 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
         </div>
       </footer>
       <BannerCookies />
-    </>
+    </div>
   );
 }
