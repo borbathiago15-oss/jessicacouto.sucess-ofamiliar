@@ -5,7 +5,9 @@ import { Blocos, urlMidia } from "@/components/site/blocos";
 import { ROTULO_TEMA, TEMAS, type ArtigoMeta, type Tema } from "@/modules/cms/artigos";
 import { Botao, Cartao, Selo, campoClasses } from "@/components/ui";
 import {
+  ICONES_PERFIL,
   ROTULO_BLOCO,
+  ROTULO_ICONE_PERFIL,
   blocoVazio,
   type Bloco,
   type Conteudo,
@@ -856,6 +858,197 @@ function CamposBloco({
             valor={b.legenda ?? ""}
             onChange={(v) => onChange({ ...b, legenda: opcional(v) })}
           />
+        </div>
+      );
+    case "numeros":
+      return (
+        <div className="grid gap-3">
+          <Texto
+            id={`${id}-titulo`}
+            rotulo="Título (opcional)"
+            valor={b.titulo ?? ""}
+            onChange={(v) => onChange({ ...b, titulo: opcional(v) })}
+          />
+          {b.itens.map((it, k) => {
+            const muda = (campo: Partial<typeof it>) =>
+              onChange({ ...b, itens: b.itens.map((x, j) => (j === k ? { ...x, ...campo } : x)) });
+            return (
+              <div
+                key={k}
+                className="grid gap-2 sm:grid-cols-[minmax(0,.5fr)_minmax(0,1.5fr)_minmax(0,1fr)]"
+              >
+                <Texto
+                  id={`${id}-v${k}`}
+                  rotulo={`Número ${k + 1}`}
+                  valor={it.valor}
+                  onChange={(v) => muda({ valor: v })}
+                />
+                <Texto
+                  id={`${id}-r${k}`}
+                  rotulo="O que mostra"
+                  valor={it.rotulo}
+                  onChange={(v) => muda({ rotulo: v })}
+                />
+                <Texto
+                  id={`${id}-f${k}`}
+                  rotulo="Fonte (opcional)"
+                  valor={it.fonte ?? ""}
+                  onChange={(v) => muda({ fonte: opcional(v) })}
+                />
+              </div>
+            );
+          })}
+          <div className="flex gap-2">
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              variante="secundario"
+              onClick={() =>
+                onChange({ ...b, itens: [...b.itens, { valor: "0", rotulo: "Descrição" }] })
+              }
+              disabled={b.itens.length >= 4}
+            >
+              Adicionar número
+            </Botao>
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              variante="secundario"
+              onClick={() => onChange({ ...b, itens: b.itens.slice(0, -1) })}
+              disabled={b.itens.length <= 2}
+            >
+              Remover último
+            </Botao>
+          </div>
+        </div>
+      );
+    case "perfis":
+      return (
+        <div className="grid gap-3">
+          <Texto
+            id={`${id}-titulo`}
+            rotulo="Título"
+            valor={b.titulo}
+            onChange={(v) => onChange({ ...b, titulo: v })}
+          />
+          <Texto
+            id={`${id}-texto`}
+            rotulo="Texto (opcional)"
+            valor={b.texto ?? ""}
+            onChange={(v) => onChange({ ...b, texto: opcional(v) })}
+          />
+          {b.itens.map((it, k) => {
+            const muda = (campo: Partial<typeof it>) =>
+              onChange({ ...b, itens: b.itens.map((x, j) => (j === k ? { ...x, ...campo } : x)) });
+            return (
+              <div key={k} className="border-linho grid gap-2 rounded-xl border p-3 sm:grid-cols-2">
+                <label htmlFor={`${id}-i${k}`} className={rotuloCampo}>
+                  Ícone
+                  <select
+                    id={`${id}-i${k}`}
+                    className={campoClasses}
+                    value={it.icone}
+                    onChange={(e) => muda({ icone: e.target.value as typeof it.icone })}
+                  >
+                    {ICONES_PERFIL.map((ic) => (
+                      <option key={ic} value={ic}>
+                        {ROTULO_ICONE_PERFIL[ic]}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <Texto
+                  id={`${id}-n${k}`}
+                  rotulo={`Cartão ${k + 1}: nome`}
+                  valor={it.nome}
+                  onChange={(v) => muda({ nome: v })}
+                />
+                <Texto
+                  id={`${id}-d${k}`}
+                  rotulo="Descrição"
+                  longo
+                  valor={it.descricao}
+                  onChange={(v) => muda({ descricao: v })}
+                />
+                <div className="grid gap-2">
+                  <Texto
+                    id={`${id}-h${k}`}
+                    rotulo="Link (opcional)"
+                    valor={it.href ?? ""}
+                    onChange={(v) => muda({ href: opcional(v) })}
+                  />
+                  <Texto
+                    id={`${id}-l${k}`}
+                    rotulo="Texto do link (opcional)"
+                    valor={it.rotulo ?? ""}
+                    onChange={(v) => muda({ rotulo: opcional(v) })}
+                  />
+                </div>
+              </div>
+            );
+          })}
+          <div className="flex gap-2">
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              variante="secundario"
+              onClick={() =>
+                onChange({
+                  ...b,
+                  itens: [...b.itens, { icone: "familia", nome: "Novo", descricao: "Descrição" }],
+                })
+              }
+              disabled={b.itens.length >= 4}
+            >
+              Adicionar cartão
+            </Botao>
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              variante="secundario"
+              onClick={() => onChange({ ...b, itens: b.itens.slice(0, -1) })}
+              disabled={b.itens.length <= 2}
+            >
+              Remover último
+            </Botao>
+          </div>
+        </div>
+      );
+    case "circulos":
+      return (
+        <div className="grid gap-3">
+          <Texto
+            id={`${id}-titulo`}
+            rotulo="Título"
+            valor={b.titulo}
+            onChange={(v) => onChange({ ...b, titulo: v })}
+          />
+          <Texto
+            id={`${id}-texto`}
+            rotulo="Texto (opcional)"
+            valor={b.texto ?? ""}
+            onChange={(v) => onChange({ ...b, texto: opcional(v) })}
+          />
+          {b.itens.map((it, k) => {
+            const muda = (campo: Partial<typeof it>) =>
+              onChange({ ...b, itens: b.itens.map((x, j) => (j === k ? { ...x, ...campo } : x)) });
+            return (
+              <div key={k} className="grid gap-2 sm:grid-cols-[minmax(0,.6fr)_minmax(0,1.4fr)]">
+                <Texto
+                  id={`${id}-n${k}`}
+                  rotulo={`Círculo ${k + 1}`}
+                  valor={it.nome}
+                  onChange={(v) => muda({ nome: v })}
+                />
+                <Texto
+                  id={`${id}-d${k}`}
+                  rotulo="Descrição"
+                  valor={it.descricao}
+                  onChange={(v) => muda({ descricao: v })}
+                />
+              </div>
+            );
+          })}
         </div>
       );
   }

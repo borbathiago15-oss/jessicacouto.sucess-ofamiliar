@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Barras, Medidor, Radar } from "@/components/charts";
+import { Blocos } from "@/components/site/blocos";
 import {
   Botao,
   Cartao,
@@ -202,6 +203,76 @@ export default function DesignSystemPage() {
             comparacao={[25, 15, 25, 25, 25]}
           />
         </Cartao>
+      </section>
+
+      <section aria-labelledby="blocos-site" className="grid gap-6">
+        <h2 id="blocos-site" className="font-display m-0 text-2xl">
+          Blocos visuais do site
+        </h2>
+        <Blocos
+          blocos={[
+            {
+              tipo: "numeros",
+              titulo: "Título de exemplo da faixa de números",
+              itens: [
+                {
+                  valor: "24%",
+                  rotulo: "Rótulo de exemplo do primeiro número",
+                  fonte: "Fonte fictícia",
+                },
+                {
+                  valor: "65%",
+                  rotulo: "Rótulo de exemplo do segundo número",
+                  fonte: "Fonte fictícia",
+                },
+                { valor: "5 anos", rotulo: "Rótulo de exemplo do terceiro número" },
+              ],
+            },
+            {
+              tipo: "perfis",
+              titulo: "Para quem é (exemplo)",
+              texto: "Texto de apoio fictício.",
+              itens: [
+                { icone: "construiu", nome: "Quem construiu", descricao: "Descrição fictícia." },
+                { icone: "assume", nome: "Quem vai assumir", descricao: "Descrição fictícia." },
+                {
+                  icone: "familia",
+                  nome: "Família",
+                  descricao: "Descrição fictícia.",
+                  href: "/diagnostico",
+                  rotulo: "Link de exemplo",
+                },
+              ],
+            },
+            {
+              tipo: "circulos",
+              titulo: "Três círculos (exemplo)",
+              texto: "Texto de apoio fictício.",
+              itens: [
+                { nome: "Família", descricao: "Descrição fictícia." },
+                { nome: "Propriedade", descricao: "Descrição fictícia." },
+                { nome: "Gestão", descricao: "Descrição fictícia." },
+              ],
+            },
+            {
+              tipo: "movimentos",
+              titulo: "Movimentos (exemplo)",
+              itens: ["Um", "Dois", "Três", "Quatro", "Cinco"].map((n) => ({
+                nome: n,
+                descricao: "Descrição fictícia.",
+              })),
+            },
+            {
+              tipo: "caminhos",
+              titulo: "Caminhos (exemplo)",
+              itens: [
+                { titulo: "Caminho A", descricao: "Descrição fictícia.", href: "/diagnostico" },
+                { titulo: "Caminho B", descricao: "Descrição fictícia.", href: "/guias" },
+                { titulo: "Caminho C", descricao: "Descrição fictícia.", href: "/contato" },
+              ],
+            },
+          ]}
+        />
       </section>
     </main>
   );
