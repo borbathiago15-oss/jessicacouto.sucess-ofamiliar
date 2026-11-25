@@ -85,7 +85,41 @@ export type Oportunidade = {
   next_action: string | null;
   next_action_at: string | null;
   closed_reason: string | null;
+  /** Empresa vinculada (sem ela, a oportunidade é de uma pessoa que veio do site). */
+  organization_id?: string | null;
+  participant_id?: string | null;
+  pessoa?: string | null;
+  email?: string | null;
 };
+
+/**
+ * Próxima etapa para o botão "Avançar": a seguinte na ordem, pulando as de
+ * encerramento sem ganho ("Não avançou" se escolhe pelo formulário, com motivo).
+ */
+export function proximaEtapa(etapas: Etapa[], atual: string): Etapa | null {
+  const ordem = [...etapas].sort((a, b) => a.position - b.position);
+  const i = ordem.findIndex((e) => e.id === atual);
+  if (i < 0 || ordem[i]!.is_closed) return null;
+  return ordem.slice(i + 1).find((e) => !e.is_closed || e.is_won) ?? null;
+}
+
+/** O que fazer em cada etapa (orientação de processo, pelo nome da etapa). */
+export function dicaDaEtapa(nome: string): string | null {
+  const n = nome.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  if (n.includes("novo")) return "Faça o primeiro contato e marque a conversa.";
+  if (n.includes("conversa")) return "Registre a conversa. Se seguir, converta em cliente.";
+  if (n.includes("diagnost")) return "Na empresa: Raio-X, questionários e organograma.";
+  if (n.includes("proposta")) return "Acompanhe em Propostas comerciais.";
+  if (n.includes("negocia")) return "Ajuste escopo e valor; registre a próxima ação.";
+  if (n.includes("fechado") || n.includes("ganho"))
+    return "Na empresa: relatório, prioridades e portal do cliente.";
+  return null;
+}
+
+export const clienteSchema = z.object({
+  trade_name: z.string().trim().min(2, "Informe o nome da empresa.").max(200),
+  role_in_org: opcional(120),
+});
 
 export function montarQuadro(etapas: Etapa[], oportunidades: Oportunidade[]) {
   const colunas = [...etapas]
