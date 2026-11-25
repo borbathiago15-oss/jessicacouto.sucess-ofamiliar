@@ -99,6 +99,17 @@ test("uma pessoa se cadastra e baixa o guia; a JC vê o pedido", async ({ browse
     await jc.page.goto("/admin/materiais");
     await expect(jc.page.getByTestId("materiais-pedidos")).toContainText(nome);
     await expect(jc.page.getByTestId("materiais-pedidos")).toContainText(titulo);
+
+    // Sem empresa informada no cadastro, a JC converte no funil.
+    await jc.page.goto("/admin/funil");
+    const cartao = jc.page.getByRole("listitem").filter({ hasText: nome }).first();
+    await cartao.getByText("Converter em cliente").click();
+    await cartao.getByLabel("Nome da empresa").fill(`Empresa do guia ${sufixo}`);
+    await cartao.getByRole("button", { name: "Criar cliente" }).click();
+    await cartao.getByRole("link", { name: "Abrir empresa e ferramentas" }).click();
+    await expect(jc.page.getByRole("heading", { level: 1 })).toHaveText(
+      `Empresa do guia ${sufixo}`,
+    );
   } finally {
     await jc.contexto.close();
   }

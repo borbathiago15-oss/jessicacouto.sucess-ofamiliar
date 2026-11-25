@@ -76,6 +76,7 @@ test("uma pessoa responde no site e recebe a leitura, sem a classificação", as
 
     await page.getByLabel("Seu nome").fill(nome);
     await page.getByLabel("E-mail").fill(email);
+    await page.getByLabel("Nome da empresa da família").fill(`Empresa Fictícia ${sufixo}`);
     await semViolacoes(page);
     // Quem responde de verdade leva alguns segundos.
     await page.waitForTimeout(8500);
@@ -125,8 +126,12 @@ test("a JC vê a resposta no CRM com o nível e os motivos", async ({ browser })
     // O funil mostra o título no cartão e no resumo da etapa.
     await expect(page.getByText(`Diagnóstico de Sucessão: ${nome}`).first()).toBeVisible();
 
-    // Quem veio do site avança no funil com um clique e vira cliente (empresa).
+    // O cadastro do site já criou a empresa: o cartão avança com um clique e
+    // leva direto às ferramentas, sem conversão manual.
     const novoContato = page.getByRole("region", { name: "Novo contato" });
+    await expect(novoContato.getByRole("listitem").filter({ hasText: nome })).toContainText(
+      `Empresa Fictícia ${sufixo}`,
+    );
     await novoContato
       .getByRole("listitem")
       .filter({ hasText: nome })
@@ -134,10 +139,7 @@ test("a JC vê a resposta no CRM com o nível e os motivos", async ({ browser })
       .click();
     await expect(novoContato.getByRole("listitem").filter({ hasText: nome })).toHaveCount(0);
     const cartao = page.getByRole("listitem").filter({ hasText: nome }).first();
-    await cartao.getByText("Converter em cliente").click();
-    await cartao.getByLabel("Nome da empresa").fill(`Empresa Fictícia ${sufixo}`);
-    await cartao.getByRole("button", { name: "Criar cliente" }).click();
-    // Convertido, o cartão troca o formulário pelo link da empresa.
+    await expect(cartao.getByText("Converter em cliente")).toHaveCount(0);
     await cartao.getByRole("link", { name: "Abrir empresa e ferramentas" }).click();
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(`Empresa Fictícia ${sufixo}`);
 

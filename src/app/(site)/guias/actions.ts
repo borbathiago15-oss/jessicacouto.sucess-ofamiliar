@@ -21,6 +21,7 @@ export async function pedirMaterial(
     nome: form.get("nome"),
     email: form.get("email"),
     papel: form.get("papel"),
+    empresa: String(form.get("empresa") ?? ""),
     novidades: form.get("novidades") === "on",
     duracao: form.get("duracao"),
     site: String(form.get("site") ?? ""),
@@ -45,6 +46,7 @@ export async function pedirMaterial(
     p_email: dados.data.email,
     p_role: dados.data.papel,
     p_marketing: dados.data.novidades,
+    p_company: dados.data.empresa || null,
   });
   if (error) {
     if (["22023", "54000", "55000"].includes(error.code ?? "") && error.message)

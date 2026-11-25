@@ -18,6 +18,7 @@ const entrada = z.object({
   respostas: z.record(z.string().max(40), z.array(z.string().max(40)).max(12)),
   aberta: z.string().trim().max(500, "A resposta aberta pode ter até 500 caracteres."),
   nome: z.string().trim().min(2, "Informe o seu nome.").max(200),
+  empresa: z.string().trim().min(2, "Informe o nome da empresa.").max(200),
   email: z.email("Informe um e-mail válido.").max(254),
   telefone: z.string().trim().max(40),
   contato: z.boolean(),
@@ -42,6 +43,7 @@ export async function enviarDiagnostico(
     respostas,
     aberta: String(form.get("aberta") ?? ""),
     nome: form.get("nome"),
+    empresa: String(form.get("empresa") ?? ""),
     email: form.get("email"),
     telefone: String(form.get("telefone") ?? ""),
     contato: form.get("contato") === "on",
@@ -70,6 +72,7 @@ export async function enviarDiagnostico(
     p_phone: dados.data.telefone || null,
     p_contact: dados.data.contato,
     p_marketing: dados.data.novidades,
+    p_company: dados.data.empresa,
   });
   if (error) {
     if (["22023", "54000", "55000"].includes(error.code ?? "") && error.message)
