@@ -79,13 +79,15 @@ export function ExcluirDocumento({
   empresaId,
   documentoId,
   nome,
+  motivoInicial = "",
 }: {
   empresaId: string;
   documentoId: string;
   nome: string;
+  motivoInicial?: string;
 }) {
   const [aberto, setAberto] = useState(false);
-  const [motivo, setMotivo] = useState("");
+  const [motivo, setMotivo] = useState(motivoInicial);
   const [confirmacao, setConfirmacao] = useState("");
   const [aviso, setAviso] = useState<Aviso>(null);
   const [pendente, iniciar] = useTransition();

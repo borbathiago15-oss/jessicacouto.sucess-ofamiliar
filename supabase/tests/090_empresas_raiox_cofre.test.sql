@@ -81,6 +81,7 @@ select throws_ok(format($$ insert into storage.objects (bucket_id, name) values 
                  '42501', null, 'não sobe arquivo sem registro');
 select lives_ok($$ insert into storage.objects (bucket_id, name) values ('vault', (select v from t where k = 'path')) $$,
                 'sobe o arquivo registrado');
+select public.vault_set_encryption((select id from r where k = 'doc'), 1, repeat('A', 80), repeat('B', 16), repeat('C', 24));
 select lives_ok($$ select public.vault_confirm_upload((select id from r where k = 'doc')) $$, 'confirma o envio');
 
 -- Leitura só depois de um acesso registrado.

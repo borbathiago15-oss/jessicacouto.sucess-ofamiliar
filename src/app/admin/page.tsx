@@ -49,6 +49,16 @@ export default async function AdminHomePage({
     if (Array.isArray(empresas) && empresas.length > 0) redirect(PORTAL_HOME);
   }
 
+  // Alertas de segurança do cofre (só para quem vê o cofre).
+  const alertas = permissions.includes("vault.read")
+    ? ((
+        await supabase
+          .from("security_alerts")
+          .select("id", { count: "exact", head: true })
+          .is("seen_at", null)
+      ).count ?? 0)
+    : null;
+
   return (
     <main className="mx-auto flex min-h-dvh max-w-3xl flex-col gap-8 px-6 py-16">
       <header className="flex items-start justify-between gap-4">
@@ -118,6 +128,16 @@ export default async function AdminHomePage({
         <h2 id="seguranca" className="font-display text-xl">
           Segurança
         </h2>
+        {alertas !== null ? (
+          <p className="m-0" data-testid="alertas-resumo">
+            {alertas
+              ? `${alertas === 1 ? "1 alerta" : `${alertas} alertas`} de segurança em aberto. `
+              : "Nenhum alerta de segurança em aberto. "}
+            <Link href="/admin/seguranca" className="text-terra-texto underline">
+              Ver segurança do cofre
+            </Link>
+          </p>
+        ) : null}
         <form action={revokeOtherSessions}>
           <button type="submit" className={buttonClass}>
             Encerrar minhas outras sessões

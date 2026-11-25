@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { nomeParaDownload } from "@/modules/cofre/tipos";
+import { entregarArquivo } from "@/lib/cofre/arquivo";
 
 /**
  * Download de documento do cofre. O banco confere sessão, MFA, permissão e acesso
@@ -26,16 +26,5 @@ export async function GET(
     .single<{ storage_path: string; file_name: string; mime_type: string }>();
   if (error || !data) return negado;
 
-  const arquivo = await supabase.storage.from("vault").download(data.storage_path);
-  if (arquivo.error || !arquivo.data) return negado;
-
-  return new NextResponse(arquivo.data, {
-    headers: {
-      "Content-Type": "application/octet-stream",
-      "Content-Disposition": nomeParaDownload(data.file_name),
-      "Content-Length": String(arquivo.data.size),
-      "Cache-Control": "no-store, private",
-      "X-Content-Type-Options": "nosniff",
-    },
-  });
+  return entregarArquivo(supabase, doc, data, negado);
 }

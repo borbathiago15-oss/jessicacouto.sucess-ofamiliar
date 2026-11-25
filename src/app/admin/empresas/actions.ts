@@ -8,6 +8,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { arquivoOfflineSchema, periodoSchema, periodosDoArquivo } from "@/modules/raiox/calculo";
 import { CATEGORIAS_COFRE, LIMITE_COFRE, TIPOS_COFRE } from "@/modules/cofre/tipos";
 import { novoPedidoSchema } from "@/modules/cofre/pedidos";
+import { guardarCifrado } from "@/lib/cofre/arquivo";
 
 export type Aviso = { ok: boolean; mensagem: string } | null;
 
@@ -204,14 +205,13 @@ export async function enviarDocumento(empresaId: string, form: FormData): Promis
       mensagem: mensagemDoBanco(error ?? {}, "Não foi possível registrar o envio."),
     };
 
-  const envio = await supabase.storage
-    .from("vault")
-    .upload(registro.storage_path, bytes, { contentType: arquivo.type, upsert: false });
-  if (envio.error) {
+  const guardado = await guardarCifrado(supabase, registro, bytes, arquivo.type);
+  if (!guardado.ok) {
     // Desfaz o registro pendente para não deixar documento "fantasma".
     await supabase.rpc("vault_start_delete", { p_id: registro.id, p_reason: "Falha no envio" });
+    await supabase.storage.from("vault").remove([registro.storage_path]);
     await supabase.rpc("vault_finish_delete", { p_id: registro.id });
-    return { ok: false, mensagem: "O envio falhou. Tente de novo." };
+    return { ok: false, mensagem: guardado.mensagem };
   }
   const confirmacao = await supabase.rpc("vault_confirm_upload", { p_id: registro.id });
   if (confirmacao.error) return { ok: false, mensagem: "O envio não pôde ser confirmado." };

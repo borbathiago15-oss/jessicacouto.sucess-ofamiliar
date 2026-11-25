@@ -57,6 +57,18 @@ export default async function CofrePage({ params }: { params: Promise<{ id: stri
   const emailDe = (u: string | null) => pessoas.find((p) => p.user_id === u)?.email ?? null;
   const tituloPedido = (pid: string | null) => pedidos.find((q) => q.id === pid)?.title ?? null;
 
+  const { data: vencendoDados } = await supabase.rpc("vault_expiring", {
+    p_org: id,
+    p_horizon_days: 15,
+  });
+  const vencendo = (vencendoDados ?? []) as {
+    id: string;
+    file_name: string;
+    request_title: string;
+    expires_on: string;
+  }[];
+  const hoje = new Date().toISOString().slice(0, 10);
+
   const ativos = (data ?? []).filter((d) => d.status === "active");
   const excluidos = (data ?? []).filter((d) => d.status === "deleted");
 
@@ -74,6 +86,45 @@ export default async function CofrePage({ params }: { params: Promise<{ id: stri
           arquivo de verdade, deixando só o comprovante.
         </p>
       </header>
+
+      {vencendo.length > 0 ? (
+        <section
+          aria-labelledby="prazo"
+          className="bg-atencao-fundo grid gap-3 rounded-2xl p-4"
+          data-testid="prazo-guarda"
+        >
+          <h2 id="prazo" className="font-display text-xl">
+            Prazo de guarda
+          </h2>
+          <p className="m-0 text-sm">
+            Documentos enviados pela família cuja análise terminou. Depois do prazo, apague: o que
+            não existe mais não vaza.{" "}
+            <Link href="/admin/seguranca" className="text-terra-texto underline">
+              Ajustar o prazo
+            </Link>
+          </p>
+          <ul className="m-0 grid list-none gap-3 p-0">
+            {vencendo.map((v) => (
+              <li key={v.id} className="grid gap-2">
+                <span>
+                  <b>{v.file_name}</b> · pedido: {v.request_title} ·{" "}
+                  {v.expires_on <= hoje
+                    ? `venceu em ${v.expires_on.split("-").reverse().join("/")}`
+                    : `vence em ${v.expires_on.split("-").reverse().join("/")}`}
+                </span>
+                {acesso.pode("vault.delete") ? (
+                  <ExcluirDocumento
+                    empresaId={id}
+                    documentoId={v.id}
+                    nome={v.file_name}
+                    motivoInicial="Prazo de guarda vencido"
+                  />
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <section aria-labelledby="pedidos" className="grid gap-3">
         <h2 id="pedidos" className="font-display text-xl">
