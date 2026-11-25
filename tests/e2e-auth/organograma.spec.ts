@@ -37,8 +37,7 @@ async function incluir(
 ) {
   await form.getByLabel("Cargo", { exact: true }).fill(c.cargo);
   await form.getByLabel("Quem ocupa (vazio = vago)").fill(c.quem ?? "");
-  if (c.superior)
-    await form.getByLabel("Responde a", { exact: true }).selectOption({ label: c.superior });
+  if (c.superior) await form.getByLabel(/^Responde a/).selectOption({ label: c.superior });
   if (c.socio) await form.getByLabel("É sócio(a)").check();
   if (c.familia) await form.getByLabel("É da família").check();
   await form.getByRole("button", { name: "Incluir cargo" }).click();
@@ -71,9 +70,7 @@ test("a JC registra a estrutura atual e vê os pontos de atenção", async () =>
   // Ciclo recusado pelo banco, com mensagem clara.
   const diretoria = arvore.locator('[data-cargo="Diretoria"]').first();
   await diretoria.getByText("Editar", { exact: true }).click();
-  await diretoria
-    .getByLabel("Responde a", { exact: true })
-    .selectOption({ label: "Compras (Fundador Fictício)" });
+  await diretoria.getByLabel(/^Responde a/).selectOption({ label: "Compras (Fundador Fictício)" });
   await diretoria.getByRole("button", { name: "Salvar" }).click();
   await expect(diretoria.getByTestId("cargo-edicao-aviso")).toHaveText(
     "Essa subordinação criaria um ciclo na estrutura.",
