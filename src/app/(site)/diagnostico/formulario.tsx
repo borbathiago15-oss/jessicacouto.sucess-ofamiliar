@@ -195,6 +195,18 @@ export function FormularioDiagnostico({ f }: { f: FormularioPublico }) {
               autoComplete="email"
             />
           </label>
+          <label htmlFor="d-empresa" className={rotulo}>
+            Nome da empresa da família
+            <input
+              id="d-empresa"
+              name="empresa"
+              className={campoClasses}
+              required
+              minLength={2}
+              maxLength={200}
+              autoComplete="organization"
+            />
+          </label>
           <label htmlFor="d-fone" className={rotulo}>
             Telefone ou WhatsApp (opcional)
             <input

@@ -113,6 +113,16 @@ export function FormularioMaterial({
           />
         </label>
       </div>
+      <label htmlFor="g-empresa" className={rotulo}>
+        Empresa da família (opcional)
+        <input
+          id="g-empresa"
+          name="empresa"
+          className={campoClasses}
+          maxLength={200}
+          autoComplete="organization"
+        />
+      </label>
       <label htmlFor="g-papel" className={rotulo}>
         Seu papel na empresa familiar
         <select id="g-papel" name="papel" className={campoClasses} required defaultValue="">
