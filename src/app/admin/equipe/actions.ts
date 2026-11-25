@@ -8,7 +8,7 @@ import { publicEnv } from "@/lib/env/public";
 import { serverEnv } from "@/lib/env/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export type Aviso = { ok: boolean; mensagem: string } | null;
+export type Aviso = { ok: boolean; mensagem: string; link?: string } | null;
 const uuid = z.uuid();
 const PAPEIS = ["admin", "relationship", "methodology_analyst", "executive_viewer"] as const;
 
@@ -57,9 +57,25 @@ export async function convidarPessoa(_: Aviso, form: FormData): Promise<Aviso> {
     return { ok: false, mensagem: "Convites indisponíveis neste ambiente (use o site principal)." };
   const servico = createClient(url, chave, { auth: { persistSession: false } });
 
+  const porLink = form.get("modo") === "link";
   let { data: userId } = await servico.rpc("auth_user_id_by_email", { p_email: dados.data.email });
   let convidado = false;
-  if (!userId) {
+  let link: string | undefined;
+  if (porLink) {
+    // Link para você enviar (WhatsApp, e-mail próprio): nenhum e-mail sai do Supabase.
+    // Conta nova recebe convite; conta existente recebe link para (re)definir a senha.
+    const tipo = userId ? "recovery" : "invite";
+    const gerado = await servico.auth.admin.generateLink({ type: tipo, email: dados.data.email });
+    const hash = gerado.data?.properties?.hashed_token;
+    if (gerado.error || !hash || !gerado.data.user)
+      return { ok: false, mensagem: "Não foi possível gerar o link de convite." };
+    userId = gerado.data.user.id;
+    convidado = tipo === "invite";
+    const destino = new URL("/admin/convite", publicEnv.NEXT_PUBLIC_SITE_URL);
+    destino.searchParams.set("t", hash);
+    destino.searchParams.set("tipo", tipo);
+    link = destino.toString();
+  } else if (!userId) {
     const retorno = new URL("/admin/auth/callback", publicEnv.NEXT_PUBLIC_SITE_URL);
     retorno.searchParams.set("next", "/admin/redefinir-senha");
     const convite = await servico.auth.admin.inviteUserByEmail(dados.data.email, {
@@ -69,7 +85,7 @@ export async function convidarPessoa(_: Aviso, form: FormData): Promise<Aviso> {
       return {
         ok: false,
         mensagem:
-          "Não foi possível enviar o convite. O limite de e-mails do Supabase pode ter sido atingido; tente em uma hora.",
+          "Não foi possível enviar o convite por e-mail (o Supabase limita os envios por hora). Use “Gerar link de convite”.",
       };
     userId = convite.data.user.id;
     convidado = true;
@@ -89,10 +105,18 @@ export async function convidarPessoa(_: Aviso, form: FormData): Promise<Aviso> {
     );
   if (papel.error) return erro(papel.error, "Conta criada, mas o papel não foi atribuído.");
   revalidatePath("/admin/equipe");
+  if (link)
+    return {
+      ok: true,
+      link,
+      mensagem: convidado
+        ? "Link de convite pronto. Copie e envie para a pessoa: ela cria a senha e a verificação em duas etapas."
+        : "Esta conta já existia: o papel foi atribuído e o link abaixo permite definir uma nova senha.",
+    };
   return {
     ok: true,
     mensagem: convidado
-      ? "Convite enviado. A pessoa define a senha e a verificação em duas etapas no primeiro acesso."
+      ? "Convite enviado por e-mail. A pessoa define a senha e a verificação em duas etapas no primeiro acesso."
       : "Esta conta já existia: o papel foi atribuído.",
   };
 }

@@ -55,13 +55,61 @@ export function ConvidarPessoa() {
           ))}
         </select>
       </label>
-      <Botao type="submit" disabled={pendente}>
-        {pendente ? "Enviando..." : "Enviar convite"}
-      </Botao>
-      <div className="md:col-span-4">
+      <span aria-hidden="true" />
+      <div className="flex flex-wrap gap-2 md:col-span-4">
+        <Botao type="submit" name="modo" value="link" disabled={pendente}>
+          {pendente ? "Gerando..." : "Gerar link de convite"}
+        </Botao>
+        <Botao type="submit" name="modo" value="email" variante="secundario" disabled={pendente}>
+          Enviar por e-mail
+        </Botao>
+      </div>
+      <div className="grid gap-2 md:col-span-4">
         <Mensagem aviso={aviso} testid="equipe-convite-aviso" />
+        {aviso?.link ? <LinkConvite link={aviso.link} /> : null}
       </div>
     </form>
+  );
+}
+
+/** Link pronto para copiar ou mandar pelo WhatsApp. */
+function LinkConvite({ link }: { link: string }) {
+  const [copiado, setCopiado] = useState(false);
+  const mensagem = `Olá! Este é o seu convite para acessar a área da JC | Sucessão de Sucesso: ${link}`;
+  return (
+    <div className="border-linho bg-porcelana grid gap-2 rounded-xl border p-3">
+      <label htmlFor="eq-link" className="text-[13px] font-semibold">
+        Link de convite (uso único)
+      </label>
+      <input
+        id="eq-link"
+        readOnly
+        value={link}
+        className={`${campoClasses} text-[13px]`}
+        onFocus={(e) => e.currentTarget.select()}
+        data-testid="equipe-convite-link"
+      />
+      <div className="flex flex-wrap gap-2">
+        <Botao
+          type="button"
+          tamanho="pequeno"
+          onClick={async () => {
+            await navigator.clipboard.writeText(link);
+            setCopiado(true);
+          }}
+        >
+          {copiado ? "Copiado" : "Copiar link"}
+        </Botao>
+        <a
+          href={`https://wa.me/?text=${encodeURIComponent(mensagem)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-terra-texto self-center text-[14px] font-semibold underline"
+        >
+          Enviar pelo WhatsApp
+        </a>
+      </div>
+    </div>
   );
 }
 

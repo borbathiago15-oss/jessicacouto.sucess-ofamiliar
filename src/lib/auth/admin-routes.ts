@@ -13,6 +13,8 @@ export const ADMIN_PASSWORD_RESET = "/admin/redefinir-senha";
 export const ADMIN_PASSWORD_RECOVERY = "/admin/recuperar-senha";
 export const ADMIN_AUTH_CALLBACK = "/admin/auth/callback";
 export const ADMIN_SIGN_OUT = "/admin/sair";
+/** Página do link de convite (o convite só é usado no clique, não na prévia do link). */
+export const ADMIN_INVITE = "/admin/convite";
 
 /** Rotas acessíveis sem sessão. */
 const PUBLIC_ADMIN_ROUTES = new Set([
@@ -20,6 +22,7 @@ const PUBLIC_ADMIN_ROUTES = new Set([
   ADMIN_PASSWORD_RECOVERY,
   ADMIN_AUTH_CALLBACK,
   ADMIN_SIGN_OUT,
+  ADMIN_INVITE,
 ]);
 
 export type AssuranceLevel = "aal1" | "aal2" | null;
