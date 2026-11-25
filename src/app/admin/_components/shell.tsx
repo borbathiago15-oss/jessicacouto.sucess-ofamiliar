@@ -206,7 +206,7 @@ export function ShellAdmin({
                         href={i.href}
                         aria-current={atual ? "page" : undefined}
                         onClick={() => setAberto(false)}
-                        className={`flex items-center gap-3 rounded-lg px-3 py-2 text-[14.5px] no-underline transition-colors ${
+                        className={`flex items-center gap-3 rounded-lg px-3 py-2 text-[14.5px] no-underline ${
                           atual
                             ? "bg-papel text-cacau font-semibold"
                             : "text-papel/85 hover:text-papel hover:bg-white/8"

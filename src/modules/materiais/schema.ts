@@ -25,6 +25,7 @@ export const pedidoSchema = z.object({
   slug: z.string().regex(/^[a-z0-9][a-z0-9-]{1,59}$/, "Escolha um material."),
   nome: z.string().trim().min(2, "Informe o seu nome.").max(200),
   email: z.email("Informe um e-mail válido.").max(254),
+  empresa: z.string().trim().max(200, "Nome da empresa muito longo."),
   papel: z.enum(PAPEIS_MATERIAL.map((p) => p.valor) as [PapelMaterial, ...PapelMaterial[]]),
   novidades: z.boolean(),
   duracao: z.coerce.number(),

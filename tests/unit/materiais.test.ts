@@ -19,6 +19,7 @@ describe("materiais", () => {
     nome: "Pessoa Fictícia",
     email: "pessoa@exemplo.test",
     papel: "founder",
+    empresa: "",
     novidades: false,
     duracao: "4000",
     site: "",
