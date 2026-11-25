@@ -62,8 +62,9 @@ select is_empty(
   $$ select p.proname from pg_proc p join pg_namespace n on n.oid = p.pronamespace
      where n.nspname = 'public' and has_function_privilege('anon', p.oid, 'execute')
        and p.proname not in ('cms_get_published_page', 'cms_list_published_articles', 'registrar_solicitacao_titular',
-                             'triage_public_form', 'triage_submit') $$,
-  'anon executa apenas: conteúdo publicado, pedido do titular e Diagnóstico de Sucessão'
+                             'triage_public_form', 'triage_submit',
+                             'material_public_list', 'material_request', 'material_download') $$,
+  'anon executa apenas: conteúdo publicado, pedido do titular, Diagnóstico de Sucessão e materiais'
 );
 
 -- 9. No schema private, anon executa SOMENTE a checagem de mídia publicada
@@ -71,8 +72,8 @@ select is_empty(
 select is_empty(
   $$ select p.proname from pg_proc p join pg_namespace n on n.oid = p.pronamespace
      where n.nspname = 'private' and has_function_privilege('anon', p.oid, 'execute')
-       and p.proname not in ('cms_midia_publicada') $$,
-  'anon executa apenas cms_midia_publicada no schema private'
+       and p.proname not in ('cms_midia_publicada', 'material_disponivel') $$,
+  'anon executa apenas as checagens de mídia publicada e material ativo no schema private'
 );
 
 -- 10. Na prática: anon não lê nenhuma tabela.
