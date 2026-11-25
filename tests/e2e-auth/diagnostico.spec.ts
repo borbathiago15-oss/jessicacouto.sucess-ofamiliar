@@ -112,7 +112,8 @@ test("a JC vê a resposta no CRM com o nível e os motivos", async ({ browser })
     await semViolacoes(page);
 
     await page.goto("/admin/funil");
-    await expect(page.getByText(`Diagnóstico de Sucessão: ${nome}`)).toBeVisible();
+    // O funil mostra o título no cartão e no resumo da etapa.
+    await expect(page.getByText(`Diagnóstico de Sucessão: ${nome}`).first()).toBeVisible();
 
     await page.goto("/admin/diagnostico?ver=conteudo");
     await expect(page.getByTestId("diag-versoes")).toContainText("Publicada");
