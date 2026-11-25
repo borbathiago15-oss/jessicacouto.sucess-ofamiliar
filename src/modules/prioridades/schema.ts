@@ -21,13 +21,14 @@ export const AJUDA_FASE: Record<Fase, string> = {
   discarded: "Fora do plano, por decisão registrada.",
 };
 
-export const ORIGENS = ["manual", "raio_x", "familia", "diagnostico"] as const;
+export const ORIGENS = ["manual", "raio_x", "familia", "diagnostico", "organograma"] as const;
 export type Origem = (typeof ORIGENS)[number];
 export const ROTULO_ORIGEM: Record<Origem, string> = {
   manual: "Registrado pela consultora",
   raio_x: "Raio-X Financeiro",
   familia: "Família e pessoas",
   diagnostico: "Diagnóstico",
+  organograma: "Organograma",
 };
 
 export const QUADRANTES = ["agora", "planejar", "rapido", "acompanhar"] as const;

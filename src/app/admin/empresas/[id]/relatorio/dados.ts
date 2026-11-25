@@ -3,6 +3,7 @@ import { umDe } from "@/lib/supabase/relacao";
 import type { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { Papel, SituacaoSucessao } from "@/modules/familia/schema";
 import { diaDe } from "@/modules/funil/schema";
+import { COLUNAS_CARGO, type Cargo } from "@/modules/organograma/schema";
 import type { ItemPrioridade } from "@/modules/prioridades/schema";
 import { valoresSchema } from "@/modules/raiox/calculo";
 import type { EntradaRelatorio } from "@/modules/relatorio/relatorio";
@@ -19,7 +20,7 @@ export async function carregarEntradaRelatorio(
   empresaNome: string,
   podeVerPessoas: boolean,
 ): Promise<EntradaRelatorio> {
-  const [periodosR, familiaR, itensR, notasR, configR] = await Promise.all([
+  const [periodosR, familiaR, itensR, notasR, configR, cargosR] = await Promise.all([
     supabase
       .from("financial_periods")
       .select("label, months, values, position")
@@ -48,7 +49,17 @@ export async function carregarEntradaRelatorio(
       .from("report_settings")
       .select("consultant_name, consultant_title, credentials, methodology, limitations")
       .maybeSingle(),
+    supabase
+      .from("org_positions")
+      .select(`${COLUNAS_CARGO}, scenario`)
+      .eq("organization_id", empresaId),
   ]);
+  const cargos = (cargosR.data ?? []) as (Cargo & { scenario: string })[];
+  const semCenario = (c: Cargo & { scenario: string }): Cargo => {
+    const { scenario, ...cargo } = c;
+    void scenario;
+    return cargo;
+  };
 
   const membros = (familiaR.data ?? []).map((v) => {
     const p = umDe(v.participants);
@@ -76,6 +87,10 @@ export async function carregarEntradaRelatorio(
     mensagensSalvas: (notasR.data?.key_messages as string[] | undefined) ?? [],
     decisoes: (notasR.data?.decisions as string[] | undefined) ?? [],
     config: configR.data,
+    organograma: {
+      atual: cargos.filter((c) => c.scenario === "current").map(semCenario),
+      proposta: cargos.filter((c) => c.scenario === "proposed").map(semCenario),
+    },
     hoje: diaDe(new Date()),
     emissao: new Date(),
   };

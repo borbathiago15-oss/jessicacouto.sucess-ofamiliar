@@ -7,6 +7,7 @@ import {
   type Papel,
   type SituacaoSucessao,
 } from "@/modules/familia/schema";
+import type { Cargo } from "@/modules/organograma/schema";
 import type { ItemPrioridade } from "@/modules/prioridades/schema";
 import { brl, calcular, type Valores } from "@/modules/raiox/calculo";
 import { INDICADORES } from "@/modules/raiox/leitura";
@@ -20,6 +21,7 @@ import {
 import { GraficoCenario } from "./grafico-cenario";
 import {
   achadosDaFamilia,
+  achadosDoOrganograma,
   achadosDoPlano,
   achadosFinanceiros,
   mensagensSugeridas,
@@ -66,6 +68,8 @@ export type EntradaRelatorio = {
   mensagensSalvas: string[];
   decisoes: string[];
   config: ConfiguracaoRelatorio;
+  /** Organograma atual e proposta JC (ausente em relatórios publicados antes do M15). */
+  organograma?: { atual: Cargo[]; proposta: Cargo[] };
   /** Dia de hoje (AAAA-MM-DD) e data de emissão. */
   hoje: string;
   emissao: Date;
@@ -81,6 +85,7 @@ export function prepararRelatorio(e: EntradaRelatorio) {
   const achados = [
     ...(r && cenario ? achadosFinanceiros(r, cenario) : []),
     ...achadosDaFamilia(familia),
+    ...achadosDoOrganograma(e.organograma?.atual ?? [], e.organograma?.proposta ?? []),
     ...achadosDoPlano(e.itens, e.hoje),
   ];
   const sugestoes = mensagensSugeridas(achados);

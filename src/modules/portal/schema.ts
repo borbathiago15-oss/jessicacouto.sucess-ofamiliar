@@ -29,6 +29,24 @@ export const visaoPortalSchema = z.object({
   encontros: z.array(
     z.object({ kind: z.string(), summary: z.string(), occurred_at: z.string().nullable() }),
   ),
+  /** Proposta de organograma, só quando a JC a publicou. */
+  organograma: z
+    .object({
+      resumo: z.string().nullable(),
+      compartilhado_em: z.string().nullable(),
+      cargos: z.array(
+        z.object({
+          id: z.uuid(),
+          title: z.string(),
+          area: z.string().nullable(),
+          holder_name: z.string().nullable(),
+          reports_to: z.uuid().nullable(),
+          change_note: z.string().nullable(),
+        }),
+      ),
+    })
+    .nullable()
+    .optional(),
 });
 export type VisaoPortal = z.infer<typeof visaoPortalSchema>;
 
@@ -39,6 +57,19 @@ export const empresasPortalSchema = z.array(z.object({ id: z.uuid(), trade_name:
  * entradas que montam o relatório, gravadas no momento da publicação.
  */
 const valores = z.record(z.string(), z.number());
+const cargoCongelado = z.object({
+  id: z.string(),
+  title: z.string(),
+  area: z.string().nullable(),
+  holder_name: z.string().nullable(),
+  is_family: z.boolean(),
+  is_owner: z.boolean(),
+  defined_role: z.boolean(),
+  has_backup: z.boolean(),
+  reports_to: z.string().nullable(),
+  also_reports_to: z.string().nullable(),
+  change_note: z.string().nullable(),
+});
 export const publicacaoRelatorioSchema = z.object({
   empresaNome: z.string(),
   periodos: z.array(z.object({ rotulo: z.string(), meses: z.number(), valores })),
@@ -66,6 +97,9 @@ export const publicacaoRelatorioSchema = z.object({
       limitations: z.string(),
     })
     .nullable(),
+  organograma: z
+    .object({ atual: z.array(cargoCongelado), proposta: z.array(cargoCongelado) })
+    .optional(),
   hoje: z.string(),
   emissao: z.string(),
 });
