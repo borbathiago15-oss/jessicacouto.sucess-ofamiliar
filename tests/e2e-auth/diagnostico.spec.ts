@@ -125,6 +125,22 @@ test("a JC vê a resposta no CRM com o nível e os motivos", async ({ browser })
     // O funil mostra o título no cartão e no resumo da etapa.
     await expect(page.getByText(`Diagnóstico de Sucessão: ${nome}`).first()).toBeVisible();
 
+    // Quem veio do site avança no funil com um clique e vira cliente (empresa).
+    const novoContato = page.getByRole("region", { name: "Novo contato" });
+    await novoContato
+      .getByRole("listitem")
+      .filter({ hasText: nome })
+      .getByRole("button", { name: /^Avançar para / })
+      .click();
+    await expect(novoContato.getByRole("listitem").filter({ hasText: nome })).toHaveCount(0);
+    const cartao = page.getByRole("listitem").filter({ hasText: nome }).first();
+    await cartao.getByText("Converter em cliente").click();
+    await cartao.getByLabel("Nome da empresa").fill(`Empresa Fictícia ${sufixo}`);
+    await cartao.getByRole("button", { name: "Criar cliente" }).click();
+    await expect(cartao.getByTestId("converter-aviso")).toContainText("Cliente criado");
+    await cartao.getByRole("link", { name: "Abrir empresa e ferramentas" }).click();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(`Empresa Fictícia ${sufixo}`);
+
     await page.goto("/admin/diagnostico?ver=conteudo");
     await expect(page.getByTestId("diag-versoes")).toContainText("Publicada");
     await page.getByRole("button", { name: "Conferir" }).click();

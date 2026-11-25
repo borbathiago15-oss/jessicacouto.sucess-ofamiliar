@@ -4,7 +4,9 @@ import {
   comoInstante,
   diaDe,
   montarQuadro,
+  dicaDaEtapa,
   novaOportunidadeSchema,
+  proximaEtapa,
   oportunidadeSchema,
   tarefaSchema,
   type Etapa,
@@ -139,5 +141,34 @@ describe("agenda", () => {
   it("virada de mês", () => {
     const g = agruparAgenda([item("x", "2026-02-03")], "2026-01-28");
     expect(g.semana).toHaveLength(1);
+  });
+});
+
+describe("avançar no funil", () => {
+  const e = (id: string, position: number, is_closed = false, is_won = false): Etapa => ({
+    id,
+    name: id,
+    position,
+    is_closed,
+    is_won,
+  });
+  const etapas = [
+    e("novo", 10),
+    e("conversa", 20),
+    e("ganho", 60, true, true),
+    e("perdido", 70, true),
+  ];
+
+  it("vai para a etapa seguinte e chega ao ganho, nunca ao encerramento sem ganho", () => {
+    expect(proximaEtapa(etapas, "novo")?.id).toBe("conversa");
+    expect(proximaEtapa(etapas, "conversa")?.id).toBe("ganho");
+    expect(proximaEtapa(etapas, "ganho")).toBeNull();
+    expect(proximaEtapa(etapas, "inexistente")).toBeNull();
+  });
+
+  it("orienta o que fazer em cada etapa conhecida", () => {
+    expect(dicaDaEtapa("Diagnóstico")).toContain("Raio-X");
+    expect(dicaDaEtapa("Contrato fechado")).toContain("portal");
+    expect(dicaDaEtapa("Etapa inventada")).toBeNull();
   });
 });

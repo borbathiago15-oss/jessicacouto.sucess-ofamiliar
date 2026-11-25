@@ -5,8 +5,21 @@ import { meuAcesso } from "@/lib/auth/access";
 import { enforceAdminRoute } from "@/lib/auth/guard";
 import { umDe } from "@/lib/supabase/relacao";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { brl, diaDe, montarQuadro, type Etapa, type Oportunidade } from "@/modules/funil/schema";
-import { EditarOportunidade, NovaOportunidade } from "./formularios";
+import {
+  brl,
+  diaDe,
+  dicaDaEtapa,
+  montarQuadro,
+  proximaEtapa,
+  type Etapa,
+  type Oportunidade,
+} from "@/modules/funil/schema";
+import {
+  AvancarEtapa,
+  ConverterEmCliente,
+  EditarOportunidade,
+  NovaOportunidade,
+} from "./formularios";
 
 export const metadata = { title: "Funil comercial" };
 
@@ -36,7 +49,7 @@ export default async function FunilPage() {
     supabase
       .from("opportunities")
       .select(
-        "id, title, stage_id, estimated_value, next_action, next_action_at, closed_reason, organizations(trade_name)",
+        "id, title, stage_id, estimated_value, next_action, next_action_at, closed_reason, organization_id, participant_id, organizations(trade_name), participants(full_name, email)",
       )
       .order("updated_at", { ascending: false })
       .limit(500),
@@ -51,6 +64,10 @@ export default async function FunilPage() {
     title: o.title,
     stage_id: o.stage_id,
     empresa: umDe(o.organizations)?.trade_name ?? "Sem empresa",
+    organization_id: o.organization_id,
+    participant_id: o.participant_id,
+    pessoa: umDe(o.participants)?.full_name ?? null,
+    email: umDe(o.participants)?.email ?? null,
     estimated_value: o.estimated_value === null ? null : Number(o.estimated_value),
     next_action: o.next_action,
     next_action_at: o.next_action_at,
@@ -110,18 +127,30 @@ export default async function FunilPage() {
                 <span className="text-mudo text-xs">
                   {itens.length} · {brl(total)}
                 </span>
+                {dicaDaEtapa(etapa.name) ? (
+                  <span className="text-terra-texto mt-1 text-[12px]">
+                    {dicaDaEtapa(etapa.name)}
+                  </span>
+                ) : null}
               </header>
               {itens.length === 0 ? <p className="text-mudo m-0 text-[13px]">Vazia.</p> : null}
               <ul className="m-0 grid list-none gap-2 p-0">
                 {itens.map((o) => {
                   const dia = o.next_action_at ? diaDe(o.next_action_at) : null;
                   const atrasada = dia !== null && dia < hoje && !etapa.is_closed;
+                  const seguinte = proximaEtapa(etapas, o.stage_id);
                   return (
                     <li
                       key={o.id}
                       className="border-linho bg-porcelana grid gap-1.5 rounded-xl border p-2.5"
                     >
                       <span className="font-semibold">{o.title}</span>
+                      {o.pessoa ? (
+                        <span className="text-[13px]">
+                          {o.pessoa}
+                          {o.email ? <span className="text-mudo"> · {o.email}</span> : null}
+                        </span>
+                      ) : null}
                       <span className="text-mudo text-[13px]">
                         {o.empresa}
                         {o.estimated_value !== null ? ` · ${brl(o.estimated_value)}` : ""}
@@ -137,6 +166,20 @@ export default async function FunilPage() {
                       ) : null}
                       {etapa.is_closed && o.closed_reason ? (
                         <span className="text-mudo text-[13px]">Motivo: {o.closed_reason}</span>
+                      ) : null}
+                      {o.organization_id ? (
+                        <Link
+                          href={`/admin/empresas/${o.organization_id}`}
+                          className="text-terra-texto text-[13px] font-semibold underline"
+                        >
+                          Abrir empresa e ferramentas
+                        </Link>
+                      ) : null}
+                      {podeEditar && seguinte ? (
+                        <AvancarEtapa id={o.id} etapa={{ id: seguinte.id, name: seguinte.name }} />
+                      ) : null}
+                      {podeEditar && !o.organization_id && acesso.pode("organizations.create") ? (
+                        <ConverterEmCliente id={o.id} sugestao="" />
                       ) : null}
                       {podeEditar ? <EditarOportunidade o={o} etapas={etapas} /> : null}
                     </li>

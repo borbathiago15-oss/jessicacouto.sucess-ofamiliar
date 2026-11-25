@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
+  clienteSchema,
   comoInstante,
   novaOportunidadeSchema,
   oportunidadeSchema,
@@ -113,4 +114,69 @@ export async function concluirTarefa(id: string): Promise<Aviso> {
     return { ok: false, mensagem: mensagemDoBanco(error ?? {}, "Não foi possível concluir.") };
   revalidar();
   return { ok: true, mensagem: "Tarefa concluída." };
+}
+
+/** Botão "Avançar": muda só a etapa (o banco registra no histórico). */
+export async function avancarEtapa(id: string, etapaId: string): Promise<Aviso> {
+  if (!uuid.safeParse(id).success || !uuid.safeParse(etapaId).success)
+    return { ok: false, mensagem: "Inválido." };
+  const supabase = await cliente();
+  const { data, error } = await supabase
+    .from("opportunities")
+    .update({ stage_id: etapaId })
+    .eq("id", id)
+    .select("id");
+  if (error) return { ok: false, mensagem: mensagemDoBanco(error, "Não foi possível avançar.") };
+  if (!data?.length) return { ok: false, mensagem: "Sem permissão para mover esta oportunidade." };
+  revalidar();
+  return { ok: true, mensagem: "Etapa atualizada." };
+}
+
+/**
+ * Converte quem veio do site em cliente: cria a empresa, vincula a pessoa e a
+ * oportunidade. A partir daí as ferramentas de análise e relatórios ficam na empresa.
+ */
+export async function converterEmCliente(id: string, _: Aviso, form: FormData): Promise<Aviso> {
+  if (!uuid.safeParse(id).success) return { ok: false, mensagem: "Inválido." };
+  const dados = clienteSchema.safeParse({
+    trade_name: form.get("trade_name"),
+    role_in_org: String(form.get("role_in_org") ?? ""),
+  });
+  if (!dados.success) return { ok: false, mensagem: dados.error.issues[0]!.message };
+  const supabase = await cliente();
+  const { data: o } = await supabase
+    .from("opportunities")
+    .select("participant_id, organization_id")
+    .eq("id", id)
+    .maybeSingle();
+  if (!o) return { ok: false, mensagem: "Oportunidade não encontrada." };
+  if (o.organization_id) return { ok: false, mensagem: "Esta oportunidade já tem empresa." };
+
+  const { data: empresa, error: e1 } = await supabase
+    .from("organizations")
+    .insert({ trade_name: dados.data.trade_name })
+    .select("id")
+    .single();
+  if (e1 || !empresa)
+    return { ok: false, mensagem: mensagemDoBanco(e1 ?? {}, "Não foi possível criar a empresa.") };
+
+  if (o.participant_id) {
+    const { error: e2 } = await supabase.from("organization_participants").insert({
+      organization_id: empresa.id,
+      participant_id: o.participant_id,
+      role_in_org: dados.data.role_in_org,
+    });
+    if (e2) {
+      await supabase.from("organizations").delete().eq("id", empresa.id);
+      return { ok: false, mensagem: mensagemDoBanco(e2, "Não foi possível vincular a pessoa.") };
+    }
+  }
+  const { error: e3 } = await supabase
+    .from("opportunities")
+    .update({ organization_id: empresa.id })
+    .eq("id", id);
+  if (e3) return { ok: false, mensagem: mensagemDoBanco(e3, "Empresa criada, mas não vinculada.") };
+  revalidar();
+  revalidatePath("/admin/empresas");
+  return { ok: true, mensagem: "Cliente criado. As ferramentas estão na página da empresa." };
 }

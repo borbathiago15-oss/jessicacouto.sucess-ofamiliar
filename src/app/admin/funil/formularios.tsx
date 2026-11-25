@@ -4,7 +4,9 @@ import { useActionState, useState, useTransition } from "react";
 import { Botao, campoClasses } from "@/components/ui";
 import { diaDe, type Etapa, type Oportunidade } from "@/modules/funil/schema";
 import {
+  avancarEtapa,
   concluirTarefa,
+  converterEmCliente,
   criarOportunidade,
   criarTarefa,
   salvarOportunidade,
@@ -214,5 +216,68 @@ export function ConcluirTarefa({ id, texto }: { id: string; texto: string }) {
       </Botao>
       {aviso && !aviso.ok ? <Mensagem aviso={aviso} testid="tarefa-aviso" /> : null}
     </span>
+  );
+}
+
+export function AvancarEtapa({ id, etapa }: { id: string; etapa: { id: string; name: string } }) {
+  const [aviso, setAviso] = useState<Aviso>(null);
+  const [pendente, iniciar] = useTransition();
+  return (
+    <span className="grid gap-1">
+      <Botao
+        type="button"
+        tamanho="pequeno"
+        disabled={pendente}
+        onClick={() => iniciar(async () => setAviso(await avancarEtapa(id, etapa.id)))}
+      >
+        {pendente ? "Movendo..." : `Avançar para ${etapa.name}`}
+      </Botao>
+      {aviso && !aviso.ok ? <Mensagem aviso={aviso} testid="avancar-aviso" /> : null}
+    </span>
+  );
+}
+
+export function ConverterEmCliente({ id, sugestao }: { id: string; sugestao: string }) {
+  const [aviso, acao, pendente] = useActionState(converterEmCliente.bind(null, id), null);
+  const p = `cli-${id}`;
+  return (
+    <details className="border-terra/40 bg-papel rounded-[var(--radius-campo)] border px-2.5 py-1.5">
+      <summary className="text-terra-texto cursor-pointer text-[13px] font-semibold">
+        Converter em cliente
+      </summary>
+      <form action={acao} className="mt-2 grid gap-2">
+        <p className="text-mudo m-0 text-[12.5px]">
+          Cria a empresa e libera Raio-X, relatórios, organograma e portal.
+        </p>
+        <label htmlFor={`${p}-empresa`} className={rotulo}>
+          Nome da empresa
+          <input
+            id={`${p}-empresa`}
+            name="trade_name"
+            className={campoClasses}
+            defaultValue={sugestao}
+            required
+            minLength={2}
+            maxLength={200}
+          />
+        </label>
+        <label htmlFor={`${p}-papel`} className={rotulo}>
+          Papel da pessoa na empresa (opcional)
+          <input
+            id={`${p}-papel`}
+            name="role_in_org"
+            className={campoClasses}
+            maxLength={120}
+            placeholder="Ex.: Sucessora, sócia"
+          />
+        </label>
+        <div>
+          <Botao type="submit" tamanho="pequeno" disabled={pendente}>
+            Criar cliente
+          </Botao>
+        </div>
+        <Mensagem aviso={aviso} testid="converter-aviso" />
+      </form>
+    </details>
   );
 }
