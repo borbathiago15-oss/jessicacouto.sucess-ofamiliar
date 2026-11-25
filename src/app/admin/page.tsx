@@ -107,6 +107,9 @@ export default async function AdminHomePage({
         <Link href="/admin/empresas" className="text-terra-texto underline">
           Empresas
         </Link>
+        <Link href="/admin/diagnostico" className="text-terra-texto underline">
+          Diagnóstico de Sucessão
+        </Link>
         <Link href="/admin/funil" className="text-terra-texto underline">
           Funil comercial
         </Link>
