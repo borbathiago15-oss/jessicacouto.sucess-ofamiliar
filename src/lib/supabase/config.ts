@@ -9,3 +9,10 @@ export function getSupabasePublicConfig(): SupabasePublicConfig | null {
   if (!url || !anonKey) return null;
   return { url, anonKey };
 }
+
+/** Cookies de sessão fora do alcance de scripts da página; "secure" quando o site é https. */
+export const cookiesDeSessao = {
+  httpOnly: true,
+  sameSite: "lax" as const,
+  secure: publicEnv.NEXT_PUBLIC_SITE_URL.startsWith("https://"),
+};

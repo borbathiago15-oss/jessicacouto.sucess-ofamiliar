@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { decideAdminRoute, type AssuranceLevel } from "@/lib/auth/admin-routes";
-import { getSupabasePublicConfig } from "@/lib/supabase/config";
+import { cookiesDeSessao, getSupabasePublicConfig } from "@/lib/supabase/config";
 
 /**
  * Proxy do /admin e do /portal: renova a sessão e aplica as regras de navegação
@@ -17,6 +17,7 @@ export async function proxy(request: NextRequest) {
 
   if (config) {
     const supabase = createServerClient(config.url, config.anonKey, {
+      cookieOptions: cookiesDeSessao,
       cookies: {
         getAll() {
           return request.cookies.getAll();

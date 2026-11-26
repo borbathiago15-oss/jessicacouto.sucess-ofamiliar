@@ -1,7 +1,7 @@
 import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import { getSupabasePublicConfig } from "./config";
+import { cookiesDeSessao, getSupabasePublicConfig } from "./config";
 
 /**
  * Cliente Supabase para Server Components, Server Actions e Route Handlers.
@@ -15,6 +15,7 @@ export async function createSupabaseServerClient() {
   const cookieStore = await cookies();
 
   return createServerClient(config.url, config.anonKey, {
+    cookieOptions: cookiesDeSessao,
     cookies: {
       getAll() {
         return cookieStore.getAll();
