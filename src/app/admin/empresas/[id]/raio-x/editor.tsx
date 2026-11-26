@@ -20,8 +20,10 @@ import {
   PontosDeAtencao,
   TabelaIndicadores,
 } from "@/modules/raiox/visao";
+import type { Colagem } from "@/modules/raiox/colagem";
 import { excluirPeriodo, importarArquivoOffline, salvarPeriodo, type Aviso } from "../../actions";
 import { levarAlertaParaMatriz } from "../prioridades/actions";
+import { AjudaIA } from "./ajuda-ia";
 
 export type PeriodoTela = {
   id: string | null;
@@ -81,6 +83,19 @@ export function EditorRaioX({
     if (n) values[k] = n;
     else delete values[k];
     mudar({ values });
+  };
+
+  // Resposta da IA colada: preenche o período atual para conferência (não salva).
+  const preencherDaColagem = (c: Colagem) => {
+    if (!p) return;
+    const values = { ...p.values };
+    for (const k of c.lidos) {
+      const n = c.valores[k];
+      if (n) values[k] = n;
+      else delete values[k];
+    }
+    setTextos((lista) => lista.map((t, i) => (i === atual ? textoInicial(values) : t)));
+    mudar({ values, ...(c.meses ? { months: c.meses } : {}) });
   };
 
   const adicionar = () => {
@@ -163,7 +178,10 @@ export function EditorRaioX({
             </button>
           ))}
           {periodos.length === 0 ? (
-            <span className="text-mudo text-sm">Nenhum período ainda.</span>
+            <span className="text-mudo text-sm" data-testid="raiox-vazio">
+              Nenhum período ainda. Crie o período abaixo (ex.: 2025) e depois digite os números ou
+              cole a resposta de uma IA que leu o PDF.
+            </span>
           ) : null}
         </div>
         {podeEditar ? (
@@ -182,22 +200,27 @@ export function EditorRaioX({
             <Botao type="button" variante="secundario" onClick={adicionar}>
               Adicionar período
             </Botao>
-            <form action={importar} className="flex flex-wrap items-end gap-2">
-              <label htmlFor="arquivo-offline" className="grid gap-1 text-[13px] font-semibold">
-                Importar arquivo do Raio-X offline (.json)
-                <input
-                  id="arquivo-offline"
-                  name="arquivo"
-                  type="file"
-                  accept="application/json,.json"
-                  className="text-sm"
-                  required
-                />
-              </label>
-              <Botao type="submit" variante="secundario" disabled={pendente}>
-                Importar
-              </Botao>
-            </form>
+            <details className="basis-full">
+              <summary className="text-terra-texto cursor-pointer text-[13px] font-semibold">
+                Tenho o arquivo do Raio-X offline (.json)
+              </summary>
+              <form action={importar} className="mt-2 flex flex-wrap items-end gap-2">
+                <label htmlFor="arquivo-offline" className="grid gap-1 text-[13px] font-semibold">
+                  Arquivo exportado pela planilha offline
+                  <input
+                    id="arquivo-offline"
+                    name="arquivo"
+                    type="file"
+                    accept="application/json,.json"
+                    className="text-sm"
+                    required
+                  />
+                </label>
+                <Botao type="submit" variante="secundario" disabled={pendente}>
+                  Importar
+                </Botao>
+              </form>
+            </details>
           </div>
         ) : null}
         {aviso ? (
@@ -242,8 +265,10 @@ export function EditorRaioX({
                 />
               </label>
             </div>
+            {podeEditar ? <AjudaIA key={atual} aoPreencher={preencherDaColagem} /> : null}
             <p className="text-mudo m-0 text-[13px]">
-              Valores do período, em reais. Pode digitar 1.234.567,89 ou 1234567.
+              Ou digite os valores do período, em reais. Pode digitar 1.234.567,89 ou 1234567. O que
+              não existir no documento fica em branco.
             </p>
 
             <fieldset disabled={!podeEditar} className="m-0 grid min-w-0 gap-5 border-0 p-0">
