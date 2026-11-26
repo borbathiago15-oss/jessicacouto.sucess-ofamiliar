@@ -304,6 +304,16 @@ export default function DesignSystemPage() {
               })),
             },
             {
+              tipo: "contatos",
+              titulo: "Contatos (exemplo)",
+              itens: [
+                { canal: "whatsapp", rotulo: "WhatsApp", href: "https://wa.me/550000000000" },
+                { canal: "linkedin", rotulo: "LinkedIn", href: "https://www.linkedin.com/" },
+                { canal: "instagram", rotulo: "Instagram", href: "https://www.instagram.com/" },
+                { canal: "email", rotulo: "E-mail", href: "mailto:pessoa@exemplo.test" },
+              ],
+            },
+            {
               tipo: "caminhos",
               titulo: "Caminhos (exemplo)",
               itens: [
