@@ -636,7 +636,7 @@ function CamposBloco({
             onChange={(v) => onChange({ ...b, texto: opcional(v) })}
           />
           {b.itens.map((it, k) => (
-            <div key={k} className="grid gap-2 sm:grid-cols-3">
+            <div key={k} className="grid gap-2 sm:grid-cols-4">
               <Texto
                 id={`${id}-t${k}`}
                 rotulo={`Caminho ${k + 1}`}
@@ -667,6 +667,17 @@ function CamposBloco({
                   onChange({
                     ...b,
                     itens: b.itens.map((x, j) => (j === k ? { ...x, href: v } : x)),
+                  })
+                }
+              />
+              <Texto
+                id={`${id}-l${k}`}
+                rotulo="Texto do link (opcional)"
+                valor={it.rotulo ?? ""}
+                onChange={(v) =>
+                  onChange({
+                    ...b,
+                    itens: b.itens.map((x, j) => (j === k ? { ...x, rotulo: opcional(v) } : x)),
                   })
                 }
               />

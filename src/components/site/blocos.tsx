@@ -291,6 +291,9 @@ function BlocoUnico({
               <li key={i} className="grid">
                 <Link
                   href={it.href}
+                  {...(it.href.startsWith("https://")
+                    ? { target: "_blank", rel: "noopener noreferrer" }
+                    : {})}
                   className="bg-papel border-linho hover:border-terra group grid content-start gap-3 rounded-[var(--radius-cartao)] border p-6 no-underline transition-colors"
                 >
                   <h3 className="font-display text-cacau m-0 text-[1.55rem] leading-tight font-semibold">
@@ -298,7 +301,7 @@ function BlocoUnico({
                   </h3>
                   <p className="text-mudo m-0 text-[15px]">{it.descricao}</p>
                   <span className="text-terra-texto mt-1 text-[14px] font-semibold underline decoration-1 underline-offset-4 group-hover:decoration-2">
-                    Começar
+                    {it.rotulo ?? "Começar"}
                   </span>
                 </Link>
               </li>

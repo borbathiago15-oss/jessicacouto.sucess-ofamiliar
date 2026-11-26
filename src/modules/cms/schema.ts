@@ -61,7 +61,15 @@ export const blocoSchema = z.discriminatedUnion("tipo", [
     titulo: texto(160),
     texto: texto(400).optional(),
     itens: z
-      .array(z.object({ titulo: texto(80), descricao: texto(300), href: linkSchema }))
+      .array(
+        z.object({
+          titulo: texto(80),
+          descricao: texto(300),
+          href: linkSchema,
+          // Texto do link no cartão (padrão: "Começar").
+          rotulo: texto(40).optional(),
+        }),
+      )
       .min(1)
       .max(4),
   }),
