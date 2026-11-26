@@ -156,11 +156,9 @@ export function ShellAdmin({
   return (
     <div className="bg-porcelana min-h-dvh lg:grid lg:grid-cols-[256px_minmax(0,1fr)]">
       {/* Barra superior no celular */}
-      <div className="bg-cacau text-papel sticky top-0 z-30 flex items-center justify-between px-4 py-3 lg:hidden print:hidden">
+      <div className="bg-terra-texto text-papel sticky top-0 z-30 flex items-center justify-between px-4 py-3 lg:hidden print:hidden">
         <Link href="/admin" className="text-papel flex items-center gap-2.5 no-underline">
-          <span className="bg-papel grid size-8 place-items-center rounded-full">
-            <Monograma tamanho={28} />
-          </span>
+          <Monograma tamanho={28} claro />
           <b className="font-display text-[15px] font-semibold">Sucessão de Sucesso</b>
         </Link>
         <button
@@ -176,15 +174,13 @@ export function ShellAdmin({
 
       <aside
         id="menu-admin"
-        className={`bg-cacau text-papel/85 print:hidden ${aberto ? "block" : "hidden"} lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col`}
+        className={`bg-terra-texto text-papel/85 print:hidden ${aberto ? "block" : "hidden"} lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col`}
       >
         <Link
           href="/admin"
           className="text-papel hidden items-center gap-3 px-5 pt-6 pb-5 no-underline lg:flex"
         >
-          <span className="bg-papel grid size-10 place-items-center rounded-full">
-            <Monograma tamanho={34} />
-          </span>
+          <Monograma tamanho={38} claro />
           <span className="grid leading-tight">
             <b className="font-display text-[17px] font-semibold">Sucessão de Sucesso</b>
             <span className="text-champanhe text-[12px]">Ambiente da equipe JC</span>
@@ -194,7 +190,7 @@ export function ShellAdmin({
         <nav aria-label="Áreas do sistema" className="flex-1 overflow-y-auto px-3 pb-4">
           {grupos.map((g) => (
             <div key={g.titulo} className="mt-4 first:mt-1">
-              <p className="text-champanhe/80 m-0 px-3 pb-1.5 text-[11.5px] font-semibold">
+              <p className="text-champanhe m-0 px-3 pb-1.5 text-[11.5px] font-semibold">
                 {g.titulo}
               </p>
               <ul className="m-0 grid list-none gap-0.5 p-0">
