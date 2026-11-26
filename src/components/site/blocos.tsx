@@ -28,6 +28,63 @@ function Acao({
   );
 }
 
+const TRACO_CANAL: Record<string, ReactNode> = {
+  whatsapp: (
+    <>
+      <path d="M4.5 19.5 5.6 16A8 8 0 1 1 8.3 18.6z" />
+      <path d="M9.2 8.8c.2 2.4 1.9 4.6 4.5 5.4l1.1-1.1 1.8.9-.4 1.5c-3.6.2-7-3.2-6.9-6.9l1.5-.4.9 1.8z" />
+    </>
+  ),
+  linkedin: (
+    <>
+      <rect x="3.5" y="3.5" width="17" height="17" rx="3" />
+      <path d="M8 10.5v6M8 7.6v.1M11.5 16.5v-6M11.5 13c0-1.6 1-2.6 2.4-2.6s2.1.9 2.1 2.6v3.5" />
+    </>
+  ),
+  instagram: (
+    <>
+      <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+      <circle cx="12" cy="12" r="3.8" />
+      <path d="M17 7v.1" />
+    </>
+  ),
+  email: (
+    <>
+      <rect x="3.5" y="5.5" width="17" height="13" rx="2" />
+      <path d="m4 7 8 6 8-6" />
+    </>
+  ),
+  agenda: (
+    <>
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2" />
+      <path d="M3.5 10h17M8 3v4M16 3v4" />
+    </>
+  ),
+  site: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M3.5 12h17M12 3.5c2.5 2.6 2.5 14.4 0 17M12 3.5c-2.5 2.6-2.5 14.4 0 17" />
+    </>
+  ),
+};
+
+function IconeCanal({ canal }: { canal: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className="size-[18px] shrink-0"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {TRACO_CANAL[canal]}
+    </svg>
+  );
+}
+
 const TRACO_PERFIL: Record<string, ReactNode> = {
   construiu: (
     <>
@@ -443,6 +500,34 @@ function BlocoUnico({
               <Acao {...b.cta} />
             </div>
           ) : null}
+        </section>
+      );
+    case "contatos":
+      return (
+        <section
+          aria-label={b.titulo ?? "Contatos"}
+          className="border-linho grid gap-3 border-y py-6"
+        >
+          {b.titulo ? (
+            <h2 className="font-display m-0 text-[1.35rem] font-semibold">{b.titulo}</h2>
+          ) : null}
+          {b.texto ? <p className="text-mudo m-0 max-w-[62ch] text-[15px]">{b.texto}</p> : null}
+          <ul className="m-0 flex list-none flex-wrap gap-x-7 gap-y-3 p-0">
+            {b.itens.map((it, i) => (
+              <li key={i}>
+                <a
+                  href={it.href}
+                  {...(it.href.startsWith("https://")
+                    ? { target: "_blank", rel: "noopener noreferrer" }
+                    : {})}
+                  className="text-terra-texto inline-flex items-center gap-2 text-[15px] font-semibold no-underline hover:underline"
+                >
+                  <IconeCanal canal={it.canal} />
+                  {it.rotulo}
+                </a>
+              </li>
+            ))}
+          </ul>
         </section>
       );
     case "checklist":

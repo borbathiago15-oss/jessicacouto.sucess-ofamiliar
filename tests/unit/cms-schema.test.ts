@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import {
+  blocoSchema,
   blocoVazio,
   conteudoSchema,
   linkSchema,
@@ -107,6 +108,28 @@ describe("blocos da fase 1 do site", () => {
     expect(
       conteudoSchema.safeParse({
         blocos: [{ tipo: "faq", titulo: "P", itens: [{ pergunta: "P?", resposta: "" }] }],
+      }).success,
+    ).toBe(false);
+  });
+});
+
+describe("bloco de contatos", () => {
+  const bloco = (href: string) => ({
+    tipo: "contatos",
+    itens: [{ canal: "email", rotulo: "E-mail", href }],
+  });
+  it("aceita https, caminho interno e mailto", () => {
+    for (const href of ["https://wa.me/550000000000", "/contato", "mailto:pessoa@exemplo.test"]) {
+      expect(blocoSchema.safeParse(bloco(href)).success).toBe(true);
+    }
+  });
+  it("recusa javascript:, mailto vazio e canal desconhecido", () => {
+    expect(blocoSchema.safeParse(bloco("javascript:alert(1)")).success).toBe(false);
+    expect(blocoSchema.safeParse(bloco("mailto:")).success).toBe(false);
+    expect(
+      blocoSchema.safeParse({
+        tipo: "contatos",
+        itens: [{ canal: "fax", rotulo: "Fax", href: "/contato" }],
       }).success,
     ).toBe(false);
   });

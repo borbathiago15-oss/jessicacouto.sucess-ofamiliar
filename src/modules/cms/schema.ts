@@ -18,6 +18,33 @@ export const linkSchema = z
 const texto = (max: number) => z.string().trim().min(1).max(max);
 const cta = z.object({ rotulo: texto(60), href: linkSchema });
 
+/** Link de contato: os mesmos do site ou um e-mail (mailto:). */
+const hrefContato = linkSchema.or(
+  z
+    .string()
+    .trim()
+    .max(300)
+    .regex(/^mailto:[^\s<>"'@]+@[^\s<>"'@]+$/, "Use mailto:endereco@dominio."),
+);
+
+/** Canais do bloco "Contatos" (o ícone é desenhado no site). */
+export const CANAIS_CONTATO = [
+  "whatsapp",
+  "linkedin",
+  "instagram",
+  "email",
+  "agenda",
+  "site",
+] as const;
+export const ROTULO_CANAL: Record<(typeof CANAIS_CONTATO)[number], string> = {
+  whatsapp: "WhatsApp",
+  linkedin: "LinkedIn",
+  instagram: "Instagram",
+  email: "E-mail",
+  agenda: "Agenda",
+  site: "Site",
+};
+
 /** Ícones disponíveis no bloco "Para quem é" (desenhados no site, não enviados). */
 export const ICONES_PERFIL = ["construiu", "assume", "familia", "socio"] as const;
 export const ROTULO_ICONE_PERFIL: Record<(typeof ICONES_PERFIL)[number], string> = {
@@ -168,6 +195,22 @@ export const blocoSchema = z.discriminatedUnion("tipo", [
       .max(8),
     cta: cta.optional(),
   }),
+  // Contatos diretos, discretos: uma linha com ícone e link por canal.
+  z.object({
+    tipo: z.literal("contatos"),
+    titulo: texto(160).optional(),
+    texto: texto(400).optional(),
+    itens: z
+      .array(
+        z.object({
+          canal: z.enum(CANAIS_CONTATO),
+          rotulo: texto(80),
+          href: hrefContato,
+        }),
+      )
+      .min(1)
+      .max(6),
+  }),
   // Checklist de autodiagnóstico (marcável na tela; nada é enviado).
   z.object({
     tipo: z.literal("checklist"),
@@ -221,6 +264,7 @@ export const ROTULO_BLOCO: Record<TipoBloco, string> = {
   faq: "Perguntas frequentes",
   situacoes: "Quando procurar",
   checklist: "Checklist",
+  contatos: "Contatos",
 };
 
 /** Bloco novo, vazio mas válido como rascunho editável. */
@@ -290,6 +334,11 @@ export function blocoVazio(tipo: TipoBloco): Bloco {
           { situacao: "Situação", resposta: "O que fazer" },
           { situacao: "Situação", resposta: "O que fazer" },
         ],
+      };
+    case "contatos":
+      return {
+        tipo,
+        itens: [{ canal: "whatsapp", rotulo: "WhatsApp", href: "https://wa.me/" }],
       };
     case "checklist":
       return { tipo, titulo: "Checklist", grupos: [{ nome: "Grupo", itens: ["Item"] }] };

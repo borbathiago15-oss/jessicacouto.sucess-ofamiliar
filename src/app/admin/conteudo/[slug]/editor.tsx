@@ -5,8 +5,10 @@ import { Blocos, urlMidia } from "@/components/site/blocos";
 import { ROTULO_TEMA, TEMAS, type ArtigoMeta, type Tema } from "@/modules/cms/artigos";
 import { Botao, Cartao, Selo, campoClasses } from "@/components/ui";
 import {
+  CANAIS_CONTATO,
   ICONES_PERFIL,
   ROTULO_BLOCO,
+  ROTULO_CANAL,
   ROTULO_ICONE_PERFIL,
   blocoVazio,
   type Bloco,
@@ -1279,6 +1281,89 @@ function CamposBloco({
                 onChange({ ...b, cta: { rotulo: b.cta?.rotulo ?? "Fazer o diagnóstico", href: v } })
               }
             />
+          </div>
+        </div>
+      );
+    case "contatos":
+      return (
+        <div className="grid gap-3">
+          <Texto
+            id={`${id}-titulo`}
+            rotulo="Título (opcional)"
+            valor={b.titulo ?? ""}
+            onChange={(v) => onChange({ ...b, titulo: opcional(v) })}
+          />
+          <Texto
+            id={`${id}-texto`}
+            rotulo="Texto (opcional)"
+            valor={b.texto ?? ""}
+            onChange={(v) => onChange({ ...b, texto: opcional(v) })}
+          />
+          {b.itens.map((it, k) => {
+            const muda = (campo: Partial<typeof it>) =>
+              onChange({ ...b, itens: b.itens.map((x, j) => (j === k ? { ...x, ...campo } : x)) });
+            return (
+              <div
+                key={k}
+                className="grid gap-2 sm:grid-cols-[10rem_minmax(0,1fr)_minmax(0,1.4fr)]"
+              >
+                <label htmlFor={`${id}-c${k}`} className={rotuloCampo}>
+                  Canal
+                  <select
+                    id={`${id}-c${k}`}
+                    className={campoClasses}
+                    value={it.canal}
+                    onChange={(e) => muda({ canal: e.target.value as typeof it.canal })}
+                  >
+                    {CANAIS_CONTATO.map((c) => (
+                      <option key={c} value={c}>
+                        {ROTULO_CANAL[c]}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <Texto
+                  id={`${id}-r${k}`}
+                  rotulo="Texto do link"
+                  valor={it.rotulo}
+                  onChange={(v) => muda({ rotulo: v })}
+                />
+                <Texto
+                  id={`${id}-h${k}`}
+                  rotulo="Link"
+                  valor={it.href}
+                  onChange={(v) => muda({ href: v })}
+                />
+              </div>
+            );
+          })}
+          <div className="flex gap-2">
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              variante="secundario"
+              onClick={() =>
+                onChange({
+                  ...b,
+                  itens: [
+                    ...b.itens,
+                    { canal: "email", rotulo: "E-mail", href: "mailto:nome@exemplo.com" },
+                  ],
+                })
+              }
+              disabled={b.itens.length >= 6}
+            >
+              Adicionar canal
+            </Botao>
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              variante="secundario"
+              onClick={() => onChange({ ...b, itens: b.itens.slice(0, -1) })}
+              disabled={b.itens.length <= 1}
+            >
+              Remover último
+            </Botao>
           </div>
         </div>
       );
