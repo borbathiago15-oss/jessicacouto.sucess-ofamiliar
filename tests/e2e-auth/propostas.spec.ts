@@ -125,7 +125,7 @@ test("envio congela, aceite fecha o funil", async () => {
   await expect(page.getByTestId("proposta-aviso")).toHaveText(
     "Proposta marcada como enviada. Valores e validade congelados.",
   );
-  await expect(page.getByText("Enviada", { exact: true })).toBeVisible();
+  await expect(page.getByText("Aguardando retorno", { exact: true })).toBeVisible();
   await expect(page.locator("#pr-titulo")).toBeDisabled();
   await expect(page.getByTestId("proposta-resumo")).toContainText("Total (congelado no envio)");
 

@@ -143,13 +143,16 @@ export default async function EmpresaPage({ params }: { params: Promise<{ id: st
         ) : null}
         {podeAnalises ? (
           <Cartao className="grid content-start gap-3">
-            <h2 className="font-display text-xl">Matriz de Prioridades</h2>
-            <p className="text-[15px]">O que atacar primeiro, com o ciclo PDCA de cada item.</p>
+            <h2 className="font-display text-xl">Plano de ação (PDCA)</h2>
+            <p className="text-[15px]">
+              Abra as ações do cliente, priorize por impacto e urgência e acompanhe cada uma no
+              ciclo PDCA.
+            </p>
             <Link
               href={`/admin/empresas/${id}/prioridades`}
               className="text-terra-texto font-semibold underline"
             >
-              Abrir a matriz
+              Abrir o PDCA
             </Link>
           </Cartao>
         ) : null}

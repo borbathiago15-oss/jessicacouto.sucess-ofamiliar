@@ -105,6 +105,31 @@ select ok(exists (select 1 from public.activities where organization_id = (selec
                        and summary like 'Proposta % aceita.'),
           'envio e aceite no histórico');
 
+-- Status intermediários: só cotação e negociação; cancelar exige motivo e é final.
+insert into r values ('p4', gen_random_uuid());
+select lives_ok(format($$ insert into public.proposals (id, organization_id, title) values (%L, %L, 'Só cotação') $$,
+                       (select id from r where k = 'p4'), (select id from r where k = 'orgA')), 'proposta para cotação');
+select lives_ok(format($$ insert into public.proposal_items (proposal_id, name, hours, position) values (%L, 'Etapa', 10, 1) $$,
+                       (select id from r where k = 'p4')), 'etapa da cotação');
+select throws_ok(format($$ select public.proposal_set_status(%L, 'negotiating') $$, (select id from r where k = 'p4')),
+                 '55000', null, 'rascunho não vai direto para negociação');
+select lives_ok(format($$ select public.proposal_set_status(%L, 'quote') $$, (select id from r where k = 'p4')), 'registra só cotação');
+select ok((select total_value is not null and valid_until is not null from public.proposals where id = (select id from r where k = 'p4')),
+          'só cotação também congela valores e validade');
+select lives_ok(format($$ select public.proposal_set_status(%L, 'negotiating') $$, (select id from r where k = 'p4')), 'cotação vira negociação');
+select lives_ok(format($$ select public.proposal_set_status(%L, 'sent') $$, (select id from r where k = 'p4')), 'negociação volta a aguardar retorno');
+select throws_ok(format($$ select public.proposal_set_status(%L, 'draft') $$, (select id from r where k = 'p4')),
+                 '55000', null, 'não volta a rascunho');
+select throws_ok(format($$ select public.proposal_set_status(%L, 'cancelled') $$, (select id from r where k = 'p4')),
+                 '22023', null, 'cancelar exige motivo');
+select lives_ok(format($$ select public.proposal_set_status(%L, 'cancelled', 'Substituída por outra') $$, (select id from r where k = 'p4')),
+                'cancela com motivo');
+select throws_ok(format($$ select public.proposal_set_status(%L, 'accepted') $$, (select id from r where k = 'p4')),
+                 '55000', null, 'cancelada é final');
+select ok(exists (select 1 from public.activities where organization_id = (select id from r where k = 'orgA')
+                   and summary like 'Proposta % cancelada. Motivo: Substituída por outra'),
+          'cancelamento no histórico');
+
 -- Segunda proposta recebe o número seguinte.
 select lives_ok(format($$ insert into public.proposals (id, organization_id, title) values (%L, %L, 'Outra proposta') $$,
                        (select id from r where k = 'p2'), (select id from r where k = 'orgA')), 'segunda proposta');

@@ -108,3 +108,19 @@ describe("rascunho", () => {
     expect(rascunhoSchema.safeParse({ ...base, ...parcial }).success).toBe(false);
   });
 });
+
+describe("status e vencimento", () => {
+  it("só proposta em aberto vence", async () => {
+    const { vencida, rotuloDaProposta, filtroDaProposta } =
+      await import("@/modules/propostas/calculo");
+    expect(vencida("sent", "2026-11-01", "2026-11-02")).toBe(true);
+    expect(vencida("sent", "2026-11-02", "2026-11-02")).toBe(false);
+    expect(vencida("negotiating", "2026-11-01", "2026-12-01")).toBe(true);
+    expect(vencida("accepted", "2026-11-01", "2026-12-01")).toBe(false);
+    expect(vencida("draft", null, "2026-12-01")).toBe(false);
+    expect(rotuloDaProposta("quote", "2026-11-01", "2026-12-01")[0]).toBe("Vencida");
+    expect(rotuloDaProposta("quote", "2026-12-31", "2026-12-01")[0]).toBe("Só cotação");
+    expect(filtroDaProposta("sent", "2026-11-01", "2026-12-01")).toBe("expired");
+    expect(filtroDaProposta("cancelled", "2026-11-01", "2026-12-01")).toBe("cancelled");
+  });
+});

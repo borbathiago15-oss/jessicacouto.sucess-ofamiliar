@@ -48,12 +48,25 @@ export default async function PrioridadesPage({ params }: { params: Promise<{ id
             {empresa.trade_name}
           </Link>
         </Chamada>
-        <Titulo>Matriz de Prioridades</Titulo>
+        <Titulo>Plano de ação e PDCA</Titulo>
         <p className="text-mudo max-w-[70ch]">
           Os achados das ferramentas e das conversas, priorizados por impacto e urgência. Cada
           prioridade segue o ciclo PDCA: planejar, executar, verificar e agir.
         </p>
       </header>
+
+      {podeEditar ? (
+        <Cartao className="grid gap-4" superficie="borda">
+          <div className="grid gap-1">
+            <h2 className="font-display text-xl">Abrir uma ação no PDCA</h2>
+            <p className="text-mudo m-0 text-[14.5px]">
+              Toda ação começa em Planejar. Depois de criada, ela aparece na matriz e no ciclo
+              abaixo, onde você define responsável, prazo e indicador.
+            </p>
+          </div>
+          <NovoItem empresaId={id} />
+        </Cartao>
+      ) : null}
 
       <section aria-labelledby="matriz" className="grid gap-3">
         <h2 id="matriz" className="font-display text-xl">
@@ -61,7 +74,7 @@ export default async function PrioridadesPage({ params }: { params: Promise<{ id
         </h2>
         {itens.length === 0 ? (
           <p className="text-mudo">
-            Nenhuma prioridade ainda. Inclua abaixo ou leve um ponto de atenção do{" "}
+            Nenhuma ação ainda. Abra a primeira acima ou leve um ponto de atenção do{" "}
             <Link href={`/admin/empresas/${id}/raio-x`} className="text-terra-texto underline">
               Raio-X Financeiro
             </Link>
@@ -163,13 +176,6 @@ export default async function PrioridadesPage({ params }: { params: Promise<{ id
             </div>
           </div>
         </section>
-      ) : null}
-
-      {podeEditar ? (
-        <Cartao className="grid gap-4">
-          <h2 className="font-display text-xl">Nova prioridade</h2>
-          <NovoItem empresaId={id} />
-        </Cartao>
       ) : null}
     </main>
   );

@@ -103,15 +103,15 @@ export async function salvarRascunho(id: string, json: string): Promise<Aviso> {
 
 const MENSAGEM_STATUS = {
   sent: "Proposta marcada como enviada. Valores e validade congelados.",
+  quote: "Registrada como só cotação. Valores e validade congelados.",
+  negotiating: "Proposta em negociação.",
   accepted: "Aceite registrado. A oportunidade foi para Contrato fechado.",
   declined: "Recusa registrada. A oportunidade foi encerrada com o motivo.",
+  cancelled: "Proposta cancelada, com o motivo registrado.",
 } as const;
+export type NovoStatus = keyof typeof MENSAGEM_STATUS;
 
-export async function mudarStatus(
-  id: string,
-  status: "sent" | "accepted" | "declined",
-  motivo?: string,
-): Promise<Aviso> {
+export async function mudarStatus(id: string, status: NovoStatus, motivo?: string): Promise<Aviso> {
   if (!uuid.safeParse(id).success || !(status in MENSAGEM_STATUS))
     return { ok: false, mensagem: "Ação inválida." };
   const supabase = await cliente();
