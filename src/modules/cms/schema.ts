@@ -95,10 +95,12 @@ export const blocoSchema = z.discriminatedUnion("tipo", [
           href: linkSchema,
           // Texto do link no cartão (padrão: "Começar").
           rotulo: texto(40).optional(),
+          // Cartão em verde, para o caminho principal.
+          destaque: z.boolean().optional(),
         }),
       )
       .min(1)
-      .max(4),
+      .max(6),
   }),
   z.object({
     tipo: z.literal("destaque"),

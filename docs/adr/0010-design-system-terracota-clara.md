@@ -29,3 +29,18 @@ A pedido do proprietário, a paleta passou a ser **creme, marrom e mostarda**, p
 - **Cremes** nas superfícies (`porcelana`, `papel`, `blush`, `linho`), **marrons** no texto e na marca (`cacau`, `terra-texto`, `terra-escuro`) e **mostarda** nos destaques (`terra`): linhas, marcadores, barras e gráficos. `champanhe` virou areia, para séries secundárias.
 - Os **nomes dos tokens foram mantidos** para a troca valer na plataforma inteira sem mexer em cada tela; o significado de cada um está no cabeçalho de `src/styles/tokens.css`.
 - **Mostarda nunca é usada em texto:** sobre o creme ela não atinge o contraste de leitura. Como elemento gráfico, atinge 3:1 (WCAG 1.4.11), verificado em `tests/unit/design-tokens.test.ts`. Todos os pares de texto seguem com WCAG AA (≥ 4,5:1).
+
+## Revisão de 2026-11-25: identidade institucional em verde e dourado
+
+Por decisão de marca, a paleta passa a ser verde profundo `#0F3B2E`, dourado champanhe
+`#C8A565`, bege `#EADCC9`, off-white `#F8F5EE` e grafite `#302D29`. Os nomes dos tokens
+foram mantidos (ver o cabeçalho de `src/styles/tokens.css`) para a troca valer em todas
+as telas de uma vez.
+
+- O dourado oficial tem contraste 2,1:1 sobre o off-white: fica só em detalhes decorativos
+  e sobre o verde (5,4:1). Barras e marcadores sobre fundo claro usam um dourado escurecido
+  (`terra`, `#A07E36`, 3,5:1). Texto nunca usa dourado sobre fundo claro.
+- Monograma: arquivo fornecido pela marca, em `public/brand/` (versão para fundo claro e
+  versão para fundo escuro, com as letras em off-white). Não é redesenhado no código.
+- Títulos em Playfair Display; texto, botões e navegação em Inter.
+- Áreas de conversão (faixa de números, newsletter e rodapé) em verde profundo.

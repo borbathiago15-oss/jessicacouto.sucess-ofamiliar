@@ -57,6 +57,9 @@ test("banner de cookies: só necessários por padrão, escolha registrada com ve
 
 test("menu principal leva às páginas do site", async ({ page }) => {
   await page.goto("/");
+  // No celular, a navegação fica atrás do botão de menu.
+  const abrir = page.getByRole("button", { name: "Abrir menu" });
+  if (await abrir.isVisible()) await abrir.click();
   await page
     .getByRole("navigation", { name: "Principal" })
     .getByRole("link", { name: "Metodologia" })

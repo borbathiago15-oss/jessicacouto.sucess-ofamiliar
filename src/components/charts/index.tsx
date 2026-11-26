@@ -24,7 +24,7 @@ const corDaFaixa: Record<Faixa, string> = {
   neutro: cores.champanhe,
 };
 
-const FONTE = "var(--font-figtree), system-ui, sans-serif";
+const FONTE = "var(--font-texto), system-ui, sans-serif";
 
 export function Radar({
   dados,
