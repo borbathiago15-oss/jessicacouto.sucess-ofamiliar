@@ -68,9 +68,11 @@ test.beforeAll(async ({ browser }) => {
       {
         id: p2,
         version_id: versao,
+        dimension_id: null,
         key: "p2",
         prompt: "Comentário fictício",
         kind: "long_text",
+        is_required: false,
         position: 2,
       },
     ]),
