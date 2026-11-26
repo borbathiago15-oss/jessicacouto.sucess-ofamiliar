@@ -79,10 +79,12 @@ test("Raio-X: calcula ao digitar, salva e mantém ao recarregar", async () => {
   await expect(page.getByTestId("ia-instrucoes")).toHaveValue(/receitaBruta:/);
   await page
     .getByLabel("2. Cole aqui a resposta da IA")
-    .fill("- **estoques:** R$ 350.000,00
-caixa: 100000
-meses: 12
-observacoes: teste fictício");
+    .fill(
+      ["- **estoques:** R$ 350.000,00", "caixa: 100000", "meses: 12", "observacoes: teste fictício"].join(
+        "
+",
+      ),
+    );
   await page.getByRole("button", { name: "Preencher os campos" }).click();
   await expect(page.getByTestId("ia-resultado")).toContainText("2 de 23 campos preenchidos");
   await expect(page.locator("#c-estoques")).toHaveValue("350.000,00");
