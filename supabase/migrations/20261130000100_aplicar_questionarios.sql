@@ -185,7 +185,8 @@ begin
       end if;
       v_txt := btrim(v #>> '{}');
       continue when v_txt = '';
-      if length(v_txt) > case when q.kind = 'short_text' then 300 else 5000 end then
+      -- (um CASE aqui confundiria o IF do plpgsql, que lê até o primeiro THEN)
+      if (q.kind = 'short_text' and length(v_txt) > 300) or length(v_txt) > 5000 then
         raise exception 'Resposta longa demais.' using errcode = '22023';
       end if;
       insert into public.answers (session_id, version_id, question_id, value_text)
