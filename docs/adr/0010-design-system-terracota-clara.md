@@ -10,7 +10,7 @@ O Documento Mestre (§3.2) previa bordô, dourado, bege, grafite e verde profund
 
 - **Cores:** porcelana, papel, blush, linho e sálvia clara (superfícies); terracota, terracota-texto, champanhe e sálvia (marca); cacau e mudo (texto); ok, atenção e crítico (estados).
 - **Fonte da verdade:** `src/styles/tokens.css` (tema do Tailwind 4). O espelho `src/styles/tokens.ts` é usado em gráficos SVG. Um teste exige paridade entre os dois e contraste **WCAG AA (≥ 4,5:1)** em todos os pares de texto declarados.
-- **Tipografia:** Bodoni Moda (títulos) e Figtree (texto), via `next/font`. As fontes são baixadas no build e servidas pelo próprio site: nenhuma chamada a terceiros em tempo de execução, e a CSP continua com `font-src 'self'`.
+- **Tipografia:** Newsreader (títulos) e Figtree (texto), via `next/font`. A Bodoni Moda original foi trocada em 2026-11-29: o contraste extremo entre traços dificultava a leitura em tamanhos médios. As fontes são baixadas no build e servidas pelo próprio site: nenhuma chamada a terceiros em tempo de execução, e a CSP continua com `font-src 'self'`.
 - **Elemento de marca:** o "fio da continuidade", uma linha contínua com um ponto em terracota (`FioContinuidade`), e o monograma JC.
 - **Componentes base:** em `src/components/ui`; gráficos (radar, medidor, barras) em `src/components/charts`, em SVG puro, para uso no site, no PDF e no CRM. "Dados insuficientes" nunca é desenhado como zero.
 - **Referência visual:** `/design`, indisponível em produção.

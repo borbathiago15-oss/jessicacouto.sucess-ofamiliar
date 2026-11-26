@@ -119,16 +119,17 @@ export default async function ArtigoPage({ params }: Props) {
               key="livro"
               className="bg-blush grid grid-cols-[6.5rem_minmax(0,1fr)] items-center gap-5 rounded-3xl p-6"
             >
-              <CapaDesenhada titulo="O legado não se sustenta sozinho" pequena />
+              <CapaDesenhada titulo="O livro da Jéssica" pequena />
               <div className="grid gap-2">
-                <b className="font-display text-xl leading-tight">Leve a conversa para casa</b>
+                <b className="font-display text-xl leading-tight">
+                  O livro da Jéssica está chegando
+                </b>
                 <p className="m-0 text-[15px]">
-                  O livro gratuito traz os sinais de que a sucessão já começou e os primeiros 90
-                  dias.
+                  Assine a reflexão mensal e receba o aviso do lançamento.
                 </p>
                 <div>
-                  <BotaoLink href="/guias#receber" tamanho="pequeno">
-                    Baixar o livro
+                  <BotaoLink href="#newsletter" tamanho="pequeno">
+                    Avise-me no lançamento
                   </BotaoLink>
                 </div>
               </div>

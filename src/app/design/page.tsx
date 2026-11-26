@@ -111,7 +111,7 @@ export default function DesignSystemPage() {
           <p className="font-display text-[clamp(2.5rem,6vw,4.5rem)] leading-none font-medium tracking-[-0.02em]">
             Sua empresa está preparada para a próxima geração?
           </p>
-          <Titulo>Título de página em Bodoni Moda</Titulo>
+          <Titulo>Título de página em Newsreader</Titulo>
           <Titulo nivel={2}>Título de seção</Titulo>
           <Titulo nivel={3}>Título de cartão</Titulo>
           <p className="max-w-[65ch]">

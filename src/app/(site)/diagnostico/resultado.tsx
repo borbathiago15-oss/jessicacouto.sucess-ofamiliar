@@ -205,8 +205,8 @@ export function Resultado({ r }: { r: ResultadoDiagnostico }) {
             <Link href="/contato" className={botaoClasses()}>
               Conversar com a Jéssica
             </Link>
-            <Link href="/guias#receber" className={botaoClasses("secundario")}>
-              Receber o guia gratuito
+            <Link href="/artigos" className={botaoClasses("secundario")}>
+              Ler os artigos da Jéssica
             </Link>
           </div>
           <span className="font-display text-terra-texto text-xl italic">Jéssica Couto</span>
