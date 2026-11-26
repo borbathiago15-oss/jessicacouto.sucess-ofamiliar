@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { MovimentosVivos, TresCirculosVivos } from "./animados";
 import { BotaoLink, Cartao, Chamada, FioContinuidade, Titulo } from "@/components/ui";
 import type { Bloco } from "@/modules/cms/schema";
 
@@ -24,55 +25,6 @@ function Acao({
     >
       {rotulo}
     </BotaoLink>
-  );
-}
-
-const COR_CIRCULO = [
-  { preenche: "var(--color-terra)", ponto: "bg-terra" },
-  { preenche: "var(--color-champanhe)", ponto: "bg-champanhe" },
-  { preenche: "var(--color-salvia)", ponto: "bg-salvia" },
-];
-
-/** Modelo dos três círculos: três esferas que se sobrepõem na empresa familiar. */
-function TresCirculos({ nomes }: { nomes: [string, string, string] }) {
-  const centros = [
-    { cx: 140, cy: 135, tx: 92, ty: 92 },
-    { cx: 240, cy: 135, tx: 288, ty: 92 },
-    { cx: 190, cy: 222, tx: 190, ty: 300 },
-  ];
-  return (
-    <svg
-      viewBox="0 0 380 350"
-      role="img"
-      aria-label={`Três círculos que se sobrepõem: ${nomes.join(", ")}`}
-      className="mx-auto w-full max-w-[420px]"
-    >
-      {centros.map((c, i) => (
-        <circle
-          key={i}
-          cx={c.cx}
-          cy={c.cy}
-          r="100"
-          fill={COR_CIRCULO[i]!.preenche}
-          fillOpacity="0.28"
-          stroke={COR_CIRCULO[i]!.preenche}
-          strokeWidth="1.5"
-        />
-      ))}
-      {centros.map((c, i) => (
-        <text
-          key={i}
-          x={c.tx}
-          y={c.ty}
-          textAnchor="middle"
-          className="font-display fill-cacau"
-          style={{ fontSize: 19, fontWeight: 600 }}
-        >
-          {nomes[i]}
-        </text>
-      ))}
-      <circle cx="190" cy="165" r="4" fill="var(--color-terra-texto)" />
-    </svg>
   );
 }
 
@@ -252,33 +204,7 @@ function BlocoUnico({
         </section>
       );
     case "movimentos":
-      return (
-        <section className="grid gap-8">
-          <Titulo nivel={2}>{b.titulo}</Titulo>
-          <ol className="relative m-0 grid list-none gap-8 p-0 sm:grid-cols-2 lg:auto-cols-fr lg:grid-flow-col lg:gap-6">
-            {/* O fio da continuidade liga os movimentos, na ordem. */}
-            <span
-              aria-hidden="true"
-              className="from-champanhe via-terra to-terra-texto absolute top-7 right-8 left-8 hidden h-[1.5px] bg-gradient-to-r lg:block"
-            />
-            {b.itens.map((it, i) => (
-              <li key={i} className="relative grid content-start gap-2">
-                <span
-                  aria-hidden="true"
-                  className="border-terra bg-papel font-display text-terra-texto relative grid size-14 place-items-center rounded-full border-[1.5px] text-[1.6rem] font-semibold"
-                >
-                  {i + 1}
-                </span>
-                <span className="sr-only">{i + 1}º movimento:</span>
-                <b className="font-display mt-1 text-[1.45rem] leading-tight font-semibold">
-                  {it.nome}
-                </b>
-                <span className="text-mudo text-[14.5px]">{it.descricao}</span>
-              </li>
-            ))}
-          </ol>
-        </section>
-      );
+      return <MovimentosVivos titulo={<Titulo nivel={2}>{b.titulo}</Titulo>} itens={b.itens} />;
     case "caminhos":
       return (
         <section className="grid gap-5">
@@ -373,29 +299,16 @@ function BlocoUnico({
       );
     case "circulos":
       return (
-        <section className="grid items-center gap-8 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] md:gap-12">
-          <TresCirculos nomes={b.itens.map((i) => i.nome) as [string, string, string]} />
-          <div className="grid gap-5">
+        <TresCirculosVivos
+          titulo={b.titulo}
+          itens={b.itens}
+          cabecalho={
             <div className="grid gap-2">
               <Titulo nivel={2}>{b.titulo}</Titulo>
               {b.texto ? <p className="text-mudo m-0 max-w-[58ch]">{b.texto}</p> : null}
             </div>
-            <ul className="m-0 grid list-none gap-4 p-0">
-              {b.itens.map((it, i) => (
-                <li key={i} className="grid grid-cols-[0.9rem_minmax(0,1fr)] items-start gap-3">
-                  <span
-                    aria-hidden="true"
-                    className={`mt-[7px] size-3 rounded-full ${COR_CIRCULO[i]!.ponto}`}
-                  />
-                  <span className="grid gap-0.5">
-                    <b className="font-display text-[1.2rem] font-semibold">{it.nome}</b>
-                    <span className="text-mudo text-[15px]">{it.descricao}</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
+          }
+        />
       );
     case "servicos":
       return (

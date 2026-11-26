@@ -38,32 +38,35 @@ export default async function GuiasPage({
         <ConteudoEmPreparacao />
       )}
 
-      <section id="receber" aria-labelledby="receber-titulo" className="scroll-mt-28">
-        <Cartao className="grid gap-6 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] md:gap-10">
-          <div className="grid content-start gap-3">
-            <h2
-              id="receber-titulo"
-              className="font-display m-0 text-[clamp(1.8rem,3.6vw,2.6rem)] leading-tight font-medium"
-            >
-              Receba o guia
-            </h2>
-            {materiais.length === 1 && materiais[0]!.descricao ? (
-              <p className="text-mudo m-0">{materiais[0]!.descricao}</p>
+      {/* Sem material disponível (ex.: livro ainda não lançado), a seção de download não aparece. */}
+      {materiais.length ? (
+        <section id="receber" aria-labelledby="receber-titulo" className="scroll-mt-28">
+          <Cartao className="grid gap-6 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] md:gap-10">
+            <div className="grid content-start gap-3">
+              <h2
+                id="receber-titulo"
+                className="font-display m-0 text-[clamp(1.8rem,3.6vw,2.6rem)] leading-tight font-medium"
+              >
+                Receba o guia
+              </h2>
+              {materiais.length === 1 && materiais[0]!.descricao ? (
+                <p className="text-mudo m-0">{materiais[0]!.descricao}</p>
+              ) : (
+                <p className="text-mudo m-0">
+                  Um cadastro simples e o download sai na hora. Receber novidades é opcional.
+                </p>
+              )}
+            </div>
+            {materiais.length ? (
+              <FormularioMaterial materiais={materiais} linkExpirado={link === "expirado"} />
             ) : (
-              <p className="text-mudo m-0">
-                Um cadastro simples e o download sai na hora. Receber novidades é opcional.
+              <p className="text-mudo m-0" data-testid="material-indisponivel">
+                O guia está sendo finalizado. Volte em breve.
               </p>
             )}
-          </div>
-          {materiais.length ? (
-            <FormularioMaterial materiais={materiais} linkExpirado={link === "expirado"} />
-          ) : (
-            <p className="text-mudo m-0" data-testid="material-indisponivel">
-              O guia está sendo finalizado. Volte em breve.
-            </p>
-          )}
-        </Cartao>
-      </section>
+          </Cartao>
+        </section>
+      ) : null}
     </div>
   );
 }
