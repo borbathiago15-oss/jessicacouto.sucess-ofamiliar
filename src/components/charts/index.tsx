@@ -19,7 +19,7 @@ export function faixaDeLeitura(valor: number | null): Faixa {
 
 const corDaFaixa: Record<Faixa, string> = {
   critico: cores.critico,
-  atencao: "#c98a3c",
+  atencao: cores.terra,
   ok: cores.salvia,
   neutro: cores.champanhe,
 };
@@ -86,7 +86,7 @@ export function Radar({
       {comparacao ? (
         <polygon
           points={poligono(comparacao)}
-          fill="rgba(214,196,160,.25)"
+          fill="rgba(200,165,101,.22)"
           stroke={cores.champanhe}
           strokeWidth="1.8"
           strokeLinejoin="round"

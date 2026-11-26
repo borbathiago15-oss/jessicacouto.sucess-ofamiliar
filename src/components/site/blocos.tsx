@@ -440,7 +440,7 @@ function BlocoUnico({
             <img
               src={urlMidia(b.capa.path, midiaBase)}
               alt={b.capa.alt}
-              className="mx-auto w-full max-w-[15rem] rounded-md shadow-[0_18px_40px_-18px_rgba(46,33,24,0.55)]"
+              className="mx-auto w-full max-w-[15rem] rounded-md shadow-[0_18px_40px_-18px_rgba(10,42,32,0.6)]"
             />
           ) : (
             <CapaDesenhada titulo={b.titulo} subtitulo={b.subtitulo} />

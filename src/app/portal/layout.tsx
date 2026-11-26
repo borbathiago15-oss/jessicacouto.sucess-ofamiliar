@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { Monograma } from "@/components/ui";
+import { AssinaturaMarca } from "@/components/ui";
 
 // Tudo no portal depende da sessão de quem acessa: nunca pré-renderizar nem guardar em cache.
 export const dynamic = "force-dynamic";
@@ -14,14 +14,10 @@ export const metadata: Metadata = {
 export default function PortalLayout({ children }: { children: ReactNode }) {
   return (
     <>
-      <header className="border-linho bg-papel border-b">
+      <header className="border-linho bg-porcelana border-b print:hidden">
         <div className="mx-auto flex max-w-[1100px] flex-wrap items-center justify-between gap-3 px-6 py-3">
           <Link href="/portal" className="text-cacau flex items-center gap-2.5 no-underline">
-            <Monograma />
-            <span className="leading-tight">
-              <b className="font-display block text-lg font-semibold">Portal do cliente</b>
-              <span className="text-mudo text-xs">Jéssica Couto · Sucessão de Sucesso</span>
-            </span>
+            <AssinaturaMarca tamanho={44} complemento="Portal do cliente" />
           </Link>
           {/* Sem pré-carregamento: abrir o endereço de saída encerra a sessão. */}
           <Link href="/admin/sair" prefetch={false} className="text-terra-texto text-sm underline">

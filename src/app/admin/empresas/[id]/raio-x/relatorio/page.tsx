@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Monograma } from "@/components/ui";
+import { FaixaDocumento } from "@/components/ui";
 import { calcular, valoresSchema } from "@/modules/raiox/calculo";
 import {
   FamiliaECaixa,
@@ -46,20 +46,13 @@ export default async function RelatorioPage({ params }: { params: Promise<{ id: 
         <BotaoImprimir />
       </div>
 
-      <header className="border-terra flex items-start justify-between gap-4 border-b pb-3">
-        <div>
-          <p className="text-mudo m-0 text-sm">Raio-X Financeiro</p>
-          <h1 className="font-display text-3xl font-semibold">{empresa.trade_name}</h1>
-          {empresa.segment ? <p className="text-mudo m-0 text-sm">{empresa.segment}</p> : null}
-        </div>
-        <div className="grid justify-items-end gap-1 text-right">
-          <Monograma />
-          <p className="text-mudo m-0 text-xs">
-            Jéssica Couto · Sucessão de Sucesso
-            <br />
-            {hoje}
-          </p>
-        </div>
+      <FaixaDocumento>
+        <b className="text-porcelana text-[14px]">Raio-X Financeiro</b>
+        <span>{hoje}</span>
+      </FaixaDocumento>
+      <header className="border-champanhe grid gap-1 border-b pb-3">
+        <h1 className="font-display text-3xl font-semibold">{empresa.trade_name}</h1>
+        {empresa.segment ? <p className="text-mudo m-0 text-sm">{empresa.segment}</p> : null}
       </header>
 
       {!ultimo ? (

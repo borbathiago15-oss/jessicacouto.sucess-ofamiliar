@@ -15,7 +15,7 @@ export default async function DiagnosticoPage() {
 
   return (
     <div className="grid gap-8">
-      <header className="grid max-w-[46rem] gap-3">
+      <header className="grid max-w-[46rem] gap-3 print:hidden">
         <Chamada>Diagnóstico gratuito</Chamada>
         <Titulo>{f.success && f.data.titulo ? f.data.titulo : "Diagnóstico de Sucessão"}</Titulo>
         <p className="text-mudo m-0 text-lg">
