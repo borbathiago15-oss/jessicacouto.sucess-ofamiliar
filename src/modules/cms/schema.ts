@@ -129,6 +129,48 @@ export const blocoSchema = z.discriminatedUnion("tipo", [
     texto: texto(400).optional(),
     itens: z.array(z.object({ nome: texto(40), descricao: texto(240) })).length(3),
   }),
+  // Livro ou e-book em destaque: capa (imagem ou desenhada), tópicos e chamada.
+  z.object({
+    tipo: z.literal("livro"),
+    chamada: texto(80).optional(),
+    titulo: texto(160),
+    subtitulo: texto(160).optional(),
+    texto: texto(600),
+    capa: imagem.optional(),
+    topicos: z.array(texto(160)).max(10).default([]),
+    cta: cta.optional(),
+  }),
+  // Perguntas frequentes (abrem e fecham).
+  z.object({
+    tipo: z.literal("faq"),
+    titulo: texto(160),
+    itens: z
+      .array(z.object({ pergunta: texto(200), resposta: texto(1200) }))
+      .min(1)
+      .max(12),
+  }),
+  // "Quando procurar": situações em que a pessoa se reconhece, com o que fazer.
+  z.object({
+    tipo: z.literal("situacoes"),
+    titulo: texto(160),
+    texto: texto(400).optional(),
+    itens: z
+      .array(z.object({ situacao: texto(160), resposta: texto(400) }))
+      .min(2)
+      .max(8),
+    cta: cta.optional(),
+  }),
+  // Checklist de autodiagnóstico (marcável na tela; nada é enviado).
+  z.object({
+    tipo: z.literal("checklist"),
+    titulo: texto(160),
+    texto: texto(400).optional(),
+    grupos: z
+      .array(z.object({ nome: texto(80), itens: z.array(texto(240)).min(1).max(8) }))
+      .min(1)
+      .max(4),
+    nota: texto(400).optional(),
+  }),
 ]);
 
 export const conteudoSchema = z.object({ blocos: z.array(blocoSchema).max(40) });
@@ -144,7 +186,7 @@ export const PAGINAS_SITE = [
   { slug: "metodologia", rota: "/metodologia", nome: "Metodologia", menu: true },
   { slug: "diagnosticos", rota: "/diagnosticos", nome: "Diagnósticos", menu: true },
   { slug: "servicos", rota: "/servicos", nome: "Serviços", menu: true },
-  { slug: "guias", rota: "/guias", nome: "Guias", menu: true },
+  { slug: "guias", rota: "/guias", nome: "Livro", menu: true },
   { slug: "contato", rota: "/contato", nome: "Vamos conversar", menu: true },
   { slug: "privacidade", rota: "/privacidade", nome: "Política de Privacidade", menu: false },
 ] as const;
@@ -167,6 +209,10 @@ export const ROTULO_BLOCO: Record<TipoBloco, string> = {
   numeros: "Números",
   perfis: "Para quem é",
   circulos: "Três círculos",
+  livro: "Livro",
+  faq: "Perguntas frequentes",
+  situacoes: "Quando procurar",
+  checklist: "Checklist",
 };
 
 /** Bloco novo, vazio mas válido como rascunho editável. */
@@ -215,6 +261,30 @@ export function blocoVazio(tipo: TipoBloco): Bloco {
           { icone: "assume", nome: "Quem vai assumir", descricao: "Descrição" },
         ],
       };
+    case "livro":
+      return {
+        tipo,
+        titulo: "Título do livro",
+        texto: "Para quem é e o que a pessoa vai encontrar.",
+        topicos: [],
+      };
+    case "faq":
+      return {
+        tipo,
+        titulo: "Perguntas frequentes",
+        itens: [{ pergunta: "Pergunta", resposta: "Resposta" }],
+      };
+    case "situacoes":
+      return {
+        tipo,
+        titulo: "Quando procurar",
+        itens: [
+          { situacao: "Situação", resposta: "O que fazer" },
+          { situacao: "Situação", resposta: "O que fazer" },
+        ],
+      };
+    case "checklist":
+      return { tipo, titulo: "Checklist", grupos: [{ nome: "Grupo", itens: ["Item"] }] };
     case "circulos":
       return {
         tipo,

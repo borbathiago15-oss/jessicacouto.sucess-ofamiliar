@@ -88,6 +88,16 @@ function textoDosBlocos(blocos: Bloco[]): string {
         case "perfis":
         case "circulos":
           return [b.titulo, b.texto, ...b.itens.map((i) => `${i.nome} ${i.descricao}`)].join(" ");
+        case "livro":
+          return [b.titulo, b.texto, ...b.topicos].join(" ");
+        case "faq":
+          return [b.titulo, ...b.itens.map((i) => `${i.pergunta} ${i.resposta}`)].join(" ");
+        case "situacoes":
+          return [b.titulo, b.texto, ...b.itens.map((i) => `${i.situacao} ${i.resposta}`)].join(
+            " ",
+          );
+        case "checklist":
+          return [b.titulo, b.texto, ...b.grupos.flatMap((g) => g.itens)].join(" ");
         default:
           return "";
       }

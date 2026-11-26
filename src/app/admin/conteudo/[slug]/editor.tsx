@@ -1051,5 +1051,302 @@ function CamposBloco({
           })}
         </div>
       );
+    case "livro":
+      return (
+        <div className="grid gap-3">
+          <Texto
+            id={`${id}-chamada`}
+            rotulo="Chamada (opcional)"
+            valor={b.chamada ?? ""}
+            onChange={(v) => onChange({ ...b, chamada: opcional(v) })}
+          />
+          <Texto
+            id={`${id}-titulo`}
+            rotulo="Título do livro"
+            valor={b.titulo}
+            onChange={(v) => onChange({ ...b, titulo: v })}
+          />
+          <Texto
+            id={`${id}-sub`}
+            rotulo="Subtítulo na capa (opcional)"
+            valor={b.subtitulo ?? ""}
+            onChange={(v) => onChange({ ...b, subtitulo: opcional(v) })}
+          />
+          <Texto
+            id={`${id}-texto`}
+            rotulo="Para quem é e o que encontra"
+            longo
+            valor={b.texto}
+            onChange={(v) => onChange({ ...b, texto: v })}
+          />
+          <Texto
+            id={`${id}-topicos`}
+            rotulo="Tópicos (um por linha)"
+            longo
+            valor={b.topicos.join("\n")}
+            onChange={(v) =>
+              onChange({
+                ...b,
+                topicos: v
+                  .split("\n")
+                  .map((t) => t.trim())
+                  .filter(Boolean)
+                  .slice(0, 10),
+              })
+            }
+          />
+          {imagemInput("Capa (opcional; sem imagem, a capa é desenhada)", (path) =>
+            onChange({ ...b, capa: { path, alt: b.capa?.alt ?? `Capa de ${b.titulo}` } }),
+          )}
+          {b.capa ? (
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              variante="secundario"
+              onClick={() => onChange({ ...b, capa: undefined })}
+            >
+              Usar capa desenhada
+            </Botao>
+          ) : null}
+          <div className="grid gap-2 sm:grid-cols-2">
+            <Texto
+              id={`${id}-ctar`}
+              rotulo="Botão: texto (opcional)"
+              valor={b.cta?.rotulo ?? ""}
+              onChange={(v) =>
+                onChange({
+                  ...b,
+                  cta: v ? { rotulo: v, href: b.cta?.href ?? "/guias#receber" } : undefined,
+                })
+              }
+            />
+            <Texto
+              id={`${id}-ctah`}
+              rotulo="Botão: link"
+              valor={b.cta?.href ?? ""}
+              onChange={(v) =>
+                onChange({ ...b, cta: { rotulo: b.cta?.rotulo ?? "Baixar o livro", href: v } })
+              }
+            />
+          </div>
+        </div>
+      );
+    case "faq":
+      return (
+        <div className="grid gap-3">
+          <Texto
+            id={`${id}-titulo`}
+            rotulo="Título"
+            valor={b.titulo}
+            onChange={(v) => onChange({ ...b, titulo: v })}
+          />
+          {b.itens.map((it, k) => {
+            const muda = (campo: Partial<typeof it>) =>
+              onChange({ ...b, itens: b.itens.map((x, j) => (j === k ? { ...x, ...campo } : x)) });
+            return (
+              <div key={k} className="border-linho grid gap-2 rounded-xl border p-3">
+                <Texto
+                  id={`${id}-p${k}`}
+                  rotulo={`Pergunta ${k + 1}`}
+                  valor={it.pergunta}
+                  onChange={(v) => muda({ pergunta: v })}
+                />
+                <Texto
+                  id={`${id}-r${k}`}
+                  rotulo="Resposta"
+                  longo
+                  valor={it.resposta}
+                  onChange={(v) => muda({ resposta: v })}
+                />
+              </div>
+            );
+          })}
+          <div className="flex gap-2">
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              variante="secundario"
+              onClick={() =>
+                onChange({
+                  ...b,
+                  itens: [...b.itens, { pergunta: "Nova pergunta", resposta: "Resposta" }],
+                })
+              }
+              disabled={b.itens.length >= 12}
+            >
+              Adicionar pergunta
+            </Botao>
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              variante="secundario"
+              onClick={() => onChange({ ...b, itens: b.itens.slice(0, -1) })}
+              disabled={b.itens.length <= 1}
+            >
+              Remover última
+            </Botao>
+          </div>
+        </div>
+      );
+    case "situacoes":
+      return (
+        <div className="grid gap-3">
+          <Texto
+            id={`${id}-titulo`}
+            rotulo="Título"
+            valor={b.titulo}
+            onChange={(v) => onChange({ ...b, titulo: v })}
+          />
+          <Texto
+            id={`${id}-texto`}
+            rotulo="Texto (opcional)"
+            valor={b.texto ?? ""}
+            onChange={(v) => onChange({ ...b, texto: opcional(v) })}
+          />
+          {b.itens.map((it, k) => {
+            const muda = (campo: Partial<typeof it>) =>
+              onChange({ ...b, itens: b.itens.map((x, j) => (j === k ? { ...x, ...campo } : x)) });
+            return (
+              <div key={k} className="grid gap-2 sm:grid-cols-[minmax(0,.8fr)_minmax(0,1.2fr)]">
+                <Texto
+                  id={`${id}-s${k}`}
+                  rotulo={`Situação ${k + 1}`}
+                  valor={it.situacao}
+                  onChange={(v) => muda({ situacao: v })}
+                />
+                <Texto
+                  id={`${id}-r${k}`}
+                  rotulo="O que fazer"
+                  valor={it.resposta}
+                  onChange={(v) => muda({ resposta: v })}
+                />
+              </div>
+            );
+          })}
+          <div className="flex gap-2">
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              variante="secundario"
+              onClick={() =>
+                onChange({
+                  ...b,
+                  itens: [...b.itens, { situacao: "Situação", resposta: "O que fazer" }],
+                })
+              }
+              disabled={b.itens.length >= 8}
+            >
+              Adicionar situação
+            </Botao>
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              variante="secundario"
+              onClick={() => onChange({ ...b, itens: b.itens.slice(0, -1) })}
+              disabled={b.itens.length <= 2}
+            >
+              Remover última
+            </Botao>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <Texto
+              id={`${id}-ctar`}
+              rotulo="Botão: texto (opcional)"
+              valor={b.cta?.rotulo ?? ""}
+              onChange={(v) =>
+                onChange({
+                  ...b,
+                  cta: v ? { rotulo: v, href: b.cta?.href ?? "/diagnostico" } : undefined,
+                })
+              }
+            />
+            <Texto
+              id={`${id}-ctah`}
+              rotulo="Botão: link"
+              valor={b.cta?.href ?? ""}
+              onChange={(v) =>
+                onChange({ ...b, cta: { rotulo: b.cta?.rotulo ?? "Fazer o diagnóstico", href: v } })
+              }
+            />
+          </div>
+        </div>
+      );
+    case "checklist":
+      return (
+        <div className="grid gap-3">
+          <Texto
+            id={`${id}-titulo`}
+            rotulo="Título"
+            valor={b.titulo}
+            onChange={(v) => onChange({ ...b, titulo: v })}
+          />
+          <Texto
+            id={`${id}-texto`}
+            rotulo="Texto (opcional)"
+            valor={b.texto ?? ""}
+            onChange={(v) => onChange({ ...b, texto: opcional(v) })}
+          />
+          {b.grupos.map((g, k) => {
+            const muda = (campo: Partial<typeof g>) =>
+              onChange({
+                ...b,
+                grupos: b.grupos.map((x, j) => (j === k ? { ...x, ...campo } : x)),
+              });
+            return (
+              <div key={k} className="border-linho grid gap-2 rounded-xl border p-3">
+                <Texto
+                  id={`${id}-g${k}`}
+                  rotulo={`Grupo ${k + 1}`}
+                  valor={g.nome}
+                  onChange={(v) => muda({ nome: v })}
+                />
+                <Texto
+                  id={`${id}-i${k}`}
+                  rotulo="Itens (um por linha)"
+                  longo
+                  valor={g.itens.join("\n")}
+                  onChange={(v) =>
+                    muda({
+                      itens: v
+                        .split("\n")
+                        .map((t) => t.trim())
+                        .filter(Boolean)
+                        .slice(0, 8),
+                    })
+                  }
+                />
+              </div>
+            );
+          })}
+          <div className="flex gap-2">
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              variante="secundario"
+              onClick={() =>
+                onChange({ ...b, grupos: [...b.grupos, { nome: "Novo grupo", itens: ["Item"] }] })
+              }
+              disabled={b.grupos.length >= 4}
+            >
+              Adicionar grupo
+            </Botao>
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              variante="secundario"
+              onClick={() => onChange({ ...b, grupos: b.grupos.slice(0, -1) })}
+              disabled={b.grupos.length <= 1}
+            >
+              Remover último
+            </Botao>
+          </div>
+          <Texto
+            id={`${id}-nota`}
+            rotulo="Nota (opcional)"
+            valor={b.nota ?? ""}
+            onChange={(v) => onChange({ ...b, nota: opcional(v) })}
+          />
+        </div>
+      );
   }
 }

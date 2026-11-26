@@ -212,6 +212,47 @@ export default function DesignSystemPage() {
         <Blocos
           blocos={[
             {
+              tipo: "livro",
+              chamada: "Livro gratuito",
+              titulo: "Livro fictício de exemplo",
+              subtitulo: "Subtítulo fictício",
+              texto: "Texto fictício sobre para quem é o livro e o que a pessoa vai encontrar.",
+              topicos: [
+                "Tópico fictício um",
+                "Tópico fictício dois",
+                "Tópico fictício três",
+                "Tópico fictício quatro",
+              ],
+              cta: { rotulo: "Baixar (exemplo)", href: "/guias#receber" },
+            },
+            {
+              tipo: "situacoes",
+              titulo: "Quando procurar (exemplo)",
+              itens: [
+                { situacao: "Situação fictícia A", resposta: "O que fazer, fictício." },
+                { situacao: "Situação fictícia B", resposta: "O que fazer, fictício." },
+                { situacao: "Situação fictícia C", resposta: "O que fazer, fictício." },
+                { situacao: "Situação fictícia D", resposta: "O que fazer, fictício." },
+              ],
+            },
+            {
+              tipo: "faq",
+              titulo: "Perguntas frequentes (exemplo)",
+              itens: [
+                { pergunta: "Pergunta fictícia um?", resposta: "Resposta fictícia." },
+                { pergunta: "Pergunta fictícia dois?", resposta: "Resposta fictícia." },
+              ],
+            },
+            {
+              tipo: "checklist",
+              titulo: "Checklist (exemplo)",
+              grupos: [
+                { nome: "Grupo fictício A", itens: ["Item fictício 1", "Item fictício 2"] },
+                { nome: "Grupo fictício B", itens: ["Item fictício 3", "Item fictício 4"] },
+              ],
+              nota: "Nota fictícia.",
+            },
+            {
               tipo: "numeros",
               titulo: "Título de exemplo da faixa de números",
               itens: [

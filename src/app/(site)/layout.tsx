@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Newsletter } from "@/components/site/newsletter";
 import type { ReactNode } from "react";
 import { BannerCookies } from "@/components/site/banner-cookies";
 import { Monograma } from "@/components/ui";
@@ -57,6 +58,9 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
         {children}
       </main>
       <footer className="border-linho bg-papel border-t">
+        <div className="border-linho mx-auto max-w-[1240px] border-b px-[max(16px,env(safe-area-inset-left,0px))] py-10">
+          <Newsletter />
+        </div>
         <div className="text-mudo mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-4 px-[max(16px,env(safe-area-inset-left,0px))] py-6 pb-28 text-sm sm:pb-24">
           <span>JC | Sucessão de Sucesso · Jéssica Couto</span>
           <nav aria-label="Privacidade" className="flex flex-wrap gap-4">

@@ -71,7 +71,7 @@ test("uma pessoa responde no site e recebe a leitura, sem a classificação", as
     await page.getByLabel("Risco fictício 3").check();
     await expect(page.getByLabel("Risco fictício 2")).toBeDisabled();
     await page.getByRole("button", { name: "Continuar" }).click();
-    await page.getByRole("textbox").fill("Tema fictício para os próximos 90 dias.");
+    await page.locator("main").getByRole("textbox").fill("Tema fictício para os próximos 90 dias.");
     await page.getByRole("button", { name: "Continuar" }).click();
 
     await page.getByLabel("Seu nome").fill(nome);

@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Blocos, urlMidia } from "@/components/site/blocos";
+import { Blocos, CapaDesenhada, urlMidia } from "@/components/site/blocos";
 import { BotaoLink, Chamada, FioContinuidade, Monograma } from "@/components/ui";
 import { relacionados, ROTULO_TEMA, tempoDeLeitura } from "@/modules/cms/artigos";
 import { buscarArtigoPublicado, listarArtigosPublicados } from "@/modules/cms/queries";
 
 export const revalidate = 300;
+
+// Temas sobre pessoas e família levam primeiro ao livro; os de estrutura, ao diagnóstico.
+const LIVRO_PRIMEIRO = new Set(["familia", "sucessores", "casos"]);
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -96,27 +99,62 @@ export default async function ArtigoPage({ params }: Props) {
         <Monograma tamanho={44} />
         <div className="grid flex-1 gap-1">
           <b className="font-display text-lg">Jéssica Couto</b>
-          <span className="text-mudo text-[15px]">Sucessão de Sucesso</span>
+          <span className="text-mudo text-[15px]">
+            Executiva e diretora do Grupo Trino há mais de 12 anos. Escreve sobre o que está em jogo
+            quando a empresa da família passa de uma geração para a outra.
+          </span>
           <Link href="/conheca-jessica" className="text-terra-texto text-sm underline">
             Conheça a Jéssica
           </Link>
         </div>
       </aside>
 
-      <section
-        aria-label="Próximo passo"
-        className="border-terra bg-blush/40 grid gap-3 rounded-3xl border p-7"
-      >
-        <b className="font-display text-2xl">Como está a sucessão na sua empresa?</b>
-        <p className="m-0">
-          Um diagnóstico rápido mostra onde a família e a empresa estão hoje e o que vem primeiro.
-        </p>
-        <div className="flex flex-wrap gap-3">
-          <BotaoLink href="/diagnosticos">Fazer o diagnóstico</BotaoLink>
-          <BotaoLink href="/contato" variante="secundario">
-            Conversar com a Jéssica
-          </BotaoLink>
-        </div>
+      <section aria-label="Próximo passo" className="grid gap-4 md:grid-cols-2">
+        {(LIVRO_PRIMEIRO.has(meta.tema)
+          ? (["livro", "diagnostico"] as const)
+          : (["diagnostico", "livro"] as const)
+        ).map((tipo) =>
+          tipo === "livro" ? (
+            <div
+              key="livro"
+              className="bg-blush grid grid-cols-[6.5rem_minmax(0,1fr)] items-center gap-5 rounded-3xl p-6"
+            >
+              <CapaDesenhada titulo="O legado não se sustenta sozinho" pequena />
+              <div className="grid gap-2">
+                <b className="font-display text-xl leading-tight">Leve a conversa para casa</b>
+                <p className="m-0 text-[15px]">
+                  O livro gratuito traz os sinais de que a sucessão já começou e os primeiros 90
+                  dias.
+                </p>
+                <div>
+                  <BotaoLink href="/guias#receber" tamanho="pequeno">
+                    Baixar o livro
+                  </BotaoLink>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div
+              key="diagnostico"
+              className="border-terra grid content-center gap-3 rounded-3xl border p-6"
+            >
+              <b className="font-display text-xl leading-tight">
+                Como está a sucessão na sua empresa?
+              </b>
+              <p className="m-0 text-[15px]">
+                Sete perguntas, cerca de três minutos: uma leitura por tema e por onde começar.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <BotaoLink href="/diagnostico" tamanho="pequeno">
+                  Fazer o diagnóstico
+                </BotaoLink>
+                <BotaoLink href="/contato" variante="secundario" tamanho="pequeno">
+                  Conversar com a Jéssica
+                </BotaoLink>
+              </div>
+            </div>
+          ),
+        )}
       </section>
 
       {outros.length ? (
