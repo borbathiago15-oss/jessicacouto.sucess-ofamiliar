@@ -12,8 +12,9 @@ export function Newsletter() {
   });
   return (
     <section
+      id="newsletter"
       aria-labelledby="newsletter-titulo"
-      className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] md:items-center md:gap-10"
+      className="grid scroll-mt-28 gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] md:items-center md:gap-10"
     >
       <div className="grid gap-1">
         <h2
