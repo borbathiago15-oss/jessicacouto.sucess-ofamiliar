@@ -86,6 +86,20 @@ export default async function EmpresaPage({ params }: { params: Promise<{ id: st
         ) : null}
       </div>
       <div className="grid gap-5 sm:grid-cols-2">
+        {acesso.pode("diagnostics.read") ? (
+          <Cartao className="grid content-start gap-3">
+            <h2 className="font-display text-xl">Questionários</h2>
+            <p className="text-[15px]">
+              Links para cada pessoa responder e o resultado por dimensão.
+            </p>
+            <Link
+              href={`/admin/empresas/${id}/questionarios`}
+              className="text-terra-texto font-semibold underline"
+            >
+              Abrir os questionários
+            </Link>
+          </Cartao>
+        ) : null}
         {acesso.pode("participants.read") ? (
           <Cartao className="grid content-start gap-3">
             <h2 className="font-display text-xl">Família e pessoas</h2>
