@@ -45,3 +45,19 @@ a {
 .bg-terra-escuro :focus-visible {
   outline-color: var(--color-champanhe);
 }
+
+/* Documentos em PDF: as cores da marca saem como na tela e o papel é branco. */
+@media print {
+  html {
+    background-color: #fff;
+  }
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* Títulos e valores em serifa usam algarismos alinhados (R$ 38.570,00, 24%). */
+.font-display {
+  font-variant-numeric: lining-nums;
+}

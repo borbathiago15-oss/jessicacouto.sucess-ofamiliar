@@ -23,18 +23,18 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
     <div className="flex min-h-dvh flex-col">
       <a
         href="#conteudo"
-        className="bg-papel sr-only z-50 rounded-lg px-3 py-2 focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+        className="bg-papel sr-only z-50 rounded-lg px-3 py-2 focus:not-sr-only focus:fixed focus:top-3 focus:left-3 print:hidden"
       >
         Pular para o conteúdo
       </a>
       <Cabecalho menu={menu} />
       <main
         id="conteudo"
-        className="mx-auto w-full max-w-[1240px] flex-1 px-[max(16px,env(safe-area-inset-left,0px))] pt-10 pb-28"
+        className="mx-auto w-full max-w-[1240px] flex-1 px-[max(16px,env(safe-area-inset-left,0px))] pt-10 pb-28 print:max-w-none print:p-0"
       >
         {children}
       </main>
-      <footer className="bg-terra-texto text-porcelana">
+      <footer className="bg-terra-texto text-porcelana print:hidden">
         <div className="mx-auto max-w-[1240px] px-[max(16px,env(safe-area-inset-left,0px))] py-14">
           <Newsletter />
         </div>

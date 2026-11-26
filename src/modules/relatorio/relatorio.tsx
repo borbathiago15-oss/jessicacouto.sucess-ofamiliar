@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { FioContinuidade, Monograma } from "@/components/ui";
+import { FaixaDocumento, FioContinuidade } from "@/components/ui";
 import {
   resumoDaFamilia,
   ROTULO_PAPEL,
@@ -222,13 +222,10 @@ export function CorpoRelatorio({ d, apresentacao }: { d: DadosRelatorio; apresen
         }
         aria-label="Capa"
       >
-        <div className="flex items-start justify-between gap-6">
-          <div className="grid gap-1">
-            <Monograma tamanho={56} />
-            <span className="text-mudo text-sm">Jéssica Couto · Sucessão de Sucesso</span>
-          </div>
-          <span className="text-mudo text-sm">Confidencial</span>
-        </div>
+        <FaixaDocumento>
+          <b className="text-porcelana text-[14px]">Relatório Executivo de Sucessão</b>
+          <span>Confidencial</span>
+        </FaixaDocumento>
         <div className="grid gap-4">
           <p className="text-terra-texto m-0 text-sm font-semibold">
             Relatório Executivo de Sucessão

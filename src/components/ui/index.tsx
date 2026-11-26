@@ -145,6 +145,60 @@ export function Monograma({ tamanho = 34, claro = false }: { tamanho?: number; c
   );
 }
 
+/**
+ * Assinatura da marca: monograma, filete dourado e o nome. É a mesma em todos os
+ * documentos e telas do sistema. `claro` é para fundo verde.
+ */
+export function AssinaturaMarca({
+  tamanho = 44,
+  claro = false,
+  complemento,
+}: {
+  tamanho?: number;
+  claro?: boolean;
+  /** Linha extra abaixo do nome (ex.: "Portal do cliente"). */
+  complemento?: string;
+}) {
+  return (
+    <span className="inline-flex items-center gap-3 whitespace-nowrap">
+      <Monograma tamanho={tamanho} claro={claro} />
+      <span className="border-champanhe grid border-l pl-3 leading-tight">
+        <span className={`text-[11.5px] tracking-[0.14em] ${claro ? "text-blush" : "text-mudo"}`}>
+          Jéssica Couto
+        </span>
+        <b
+          className={`font-display font-semibold ${claro ? "text-porcelana" : "text-terra-texto"}`}
+          style={{ fontSize: Math.max(15, tamanho * 0.42) }}
+        >
+          Sucessão de Sucesso
+        </b>
+        {complemento ? (
+          <span className={`text-[12px] ${claro ? "text-champanhe" : "text-mudo"}`}>
+            {complemento}
+          </span>
+        ) : null}
+      </span>
+    </span>
+  );
+}
+
+/**
+ * Faixa de abertura dos documentos (relatórios, proposta, leitura do diagnóstico):
+ * verde profundo com a assinatura e, à direita, a identificação do documento.
+ */
+export function FaixaDocumento({ children }: { children?: ReactNode }) {
+  return (
+    <div className="bg-terra-texto text-porcelana flex flex-wrap items-center justify-between gap-x-8 gap-y-3 rounded-[14px] px-7 py-6">
+      <AssinaturaMarca claro tamanho={52} />
+      {children ? (
+        <div className="text-blush grid justify-items-end gap-0.5 text-right text-[13px]">
+          {children}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 /** "Fio da continuidade": a linha contínua da identidade, com o ponto em terracota. */
 export function FioContinuidade({ className }: { className?: string }) {
   return (

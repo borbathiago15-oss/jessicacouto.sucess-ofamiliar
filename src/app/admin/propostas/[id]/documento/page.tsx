@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FioContinuidade, Monograma } from "@/components/ui";
+import { FaixaDocumento, FioContinuidade } from "@/components/ui";
 import { brl, calcularProposta, horasTexto, parcelar } from "@/modules/propostas/calculo";
 import { BotaoImprimir } from "../../../empresas/[id]/raio-x/relatorio/imprimir";
 import { carregarProposta } from "../carregar";
@@ -59,17 +59,17 @@ export default async function DocumentoPage({ params }: { params: Promise<{ id: 
 
       {/* Capa */}
       <section className="grid min-h-[70vh] content-between gap-10 print:min-h-[250mm] print:break-after-page">
-        <div className="flex items-start justify-between gap-6">
-          <div className="grid gap-1">
-            <Monograma tamanho={52} />
-            <span className="text-mudo text-sm">Jéssica Couto · Sucessão de Sucesso</span>
-          </div>
+        <div className="grid gap-8">
+          <FaixaDocumento>
+            <b className="text-porcelana text-[14px]">Proposta comercial</b>
+            <span>{p.number}</span>
+          </FaixaDocumento>
           {p.client_logo_path ? (
             // eslint-disable-next-line @next/next/no-img-element -- imagem privada servida pela própria rota
             <img
               src={`/admin/propostas/${id}/logo`}
               alt={`Logo de ${p.nomeFantasia}`}
-              className="max-h-20 max-w-[220px] object-contain"
+              className="max-h-20 max-w-[220px] justify-self-end object-contain"
             />
           ) : null}
         </div>

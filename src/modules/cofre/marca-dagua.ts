@@ -29,7 +29,7 @@ async function marcar(pdf: Uint8Array, quem: string, quando: Date): Promise<Uint
   // Fonte padrão (WinAnsi): troca caracteres fora dela para não falhar.
   const texto = `Confidencial · ${quem} · ${data}`.replace(/[^ -~ -ÿ]/g, "?");
   const fonte = await doc.embedFont(StandardFonts.Helvetica);
-  const cor = rgb(0.42, 0.27, 0.14); // marrom da marca
+  const cor = rgb(0.06, 0.23, 0.18); // verde profundo da marca
 
   for (const pagina of doc.getPages()) {
     const { width, height } = pagina.getSize();

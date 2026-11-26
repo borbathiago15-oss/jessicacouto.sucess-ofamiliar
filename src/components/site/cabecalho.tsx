@@ -17,7 +17,7 @@ export function Cabecalho({ menu }: { menu: Item[] }) {
     rota === "/" ? caminho === "/" : caminho === rota || caminho.startsWith(`${rota}/`);
 
   return (
-    <header className="border-linho bg-porcelana sticky top-[env(safe-area-inset-top,0px)] z-20 border-b">
+    <header className="border-linho bg-porcelana sticky top-[env(safe-area-inset-top,0px)] z-20 border-b print:hidden">
       <div className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-x-5 gap-y-2 px-[max(16px,env(safe-area-inset-left,0px))] py-2.5 lg:flex-nowrap">
         <Link
           href="/"

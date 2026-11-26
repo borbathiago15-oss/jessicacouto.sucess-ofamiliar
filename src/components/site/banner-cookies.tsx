@@ -49,7 +49,7 @@ export function BannerCookies() {
     <div
       role="region"
       aria-label="Preferências de cookies"
-      className="border-linho bg-papel fixed inset-x-0 bottom-0 z-30 mx-auto mb-[max(12px,env(safe-area-inset-bottom))] grid w-[min(1100px,calc(100%-32px))] gap-3 rounded-[18px] border p-4 shadow-[0_12px_32px_rgba(78,49,24,.12)] sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
+      className="border-linho bg-papel fixed inset-x-0 bottom-0 z-30 mx-auto mb-[max(12px,env(safe-area-inset-bottom))] grid w-[min(1100px,calc(100%-32px))] gap-3 rounded-[18px] border p-4 shadow-[0_12px_32px_rgba(10,42,32,.14)] sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center print:hidden"
     >
       <p className="text-mudo text-[13.5px]">
         <b className="text-cacau">Cookies.</b> Usamos só os cookies necessários para o site

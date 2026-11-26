@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { FioContinuidade, Monograma, botaoClasses, campoClasses } from "@/components/ui";
+import { AssinaturaMarca, FioContinuidade, botaoClasses, campoClasses } from "@/components/ui";
 
 export function AuthCard({
   title,
@@ -12,13 +12,7 @@ export function AuthCard({
 }) {
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center gap-6 px-6 py-16">
-      <div className="flex items-center gap-3">
-        <Monograma />
-        <div className="leading-tight">
-          <p className="font-display text-lg font-semibold">Sucessão de Sucesso</p>
-          <p className="text-mudo text-[13px]">Ambiente administrativo</p>
-        </div>
-      </div>
+      <AssinaturaMarca tamanho={52} complemento="Ambiente administrativo" />
       <FioContinuidade />
       <h1 className="font-display text-[2rem] leading-tight font-semibold">{title}</h1>
       {description ? <p className="text-mudo leading-relaxed">{description}</p> : null}

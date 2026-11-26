@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Botao, botaoClasses, FioContinuidade } from "@/components/ui";
+import { Botao, botaoClasses, FaixaDocumento, FioContinuidade } from "@/components/ui";
 import {
   mapaDeTemas,
   planoNoventaDias,
@@ -15,6 +15,15 @@ const TOM_LEITURA: Record<NivelLeitura, { cor: string; fundo: string; passos: nu
   construcao: { cor: "bg-atencao", fundo: "bg-atencao-fundo text-atencao", passos: 2 },
   estruturado: { cor: "bg-ok", fundo: "bg-ok-fundo text-ok", passos: 3 },
 };
+
+// Fora do componente: a leitura do relógio não é uma função pura.
+const dataDeHoje = () =>
+  new Date().toLocaleDateString("pt-BR", {
+    timeZone: "America/Sao_Paulo",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
 function SeloLeitura({ nivel }: { nivel: NivelLeitura }) {
   return (
@@ -47,9 +56,21 @@ export function Resultado({ r }: { r: ResultadoDiagnostico }) {
   const temas = mapaDeTemas(r.leituras);
   const plano = planoNoventaDias(r.leituras);
   const temLeituraDeRisco = r.leituras.some((l) => l.chave === "riscos");
+  const hoje = dataDeHoje();
 
   return (
-    <article className="grid max-w-[56rem] gap-12" data-testid="diagnostico-resultado">
+    <article
+      className="grid max-w-[56rem] gap-12 print:max-w-none print:gap-6"
+      data-testid="diagnostico-resultado"
+    >
+      <style>{"@page { size: A4; margin: 14mm 14mm 16mm }"}</style>
+      {/* Só no PDF: o documento abre com a marca e a data. */}
+      <div className="hidden print:block">
+        <FaixaDocumento>
+          <b className="text-porcelana text-[14px]">Diagnóstico de Sucessão</b>
+          <span>Leitura das respostas · {hoje}</span>
+        </FaixaDocumento>
+      </div>
       <header className="grid gap-3">
         <span className="text-terra-texto text-sm font-semibold">
           Leitura do seu Diagnóstico de Sucessão
@@ -115,7 +136,7 @@ export function Resultado({ r }: { r: ResultadoDiagnostico }) {
             {r.leituras.map((l) => (
               <li
                 key={`${l.chave}-${l.resposta}`}
-                className="bg-papel border-linho grid gap-4 rounded-2xl border px-6 py-5"
+                className="bg-papel border-linho grid break-inside-avoid gap-4 rounded-2xl border px-6 py-5"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="grid gap-0.5">
@@ -170,7 +191,10 @@ export function Resultado({ r }: { r: ResultadoDiagnostico }) {
           </div>
           <ol className="m-0 grid list-none gap-3 p-0" data-testid="diagnostico-plano">
             {plano.map((l, i) => (
-              <li key={l.fazer} className="grid grid-cols-[2.5rem_minmax(0,1fr)] items-start gap-3">
+              <li
+                key={l.fazer}
+                className="grid break-inside-avoid grid-cols-[2.5rem_minmax(0,1fr)] items-start gap-3"
+              >
                 <span className="border-terra font-display text-terra-texto grid size-10 place-items-center rounded-full border text-lg">
                   {i + 1}
                 </span>
@@ -196,7 +220,10 @@ export function Resultado({ r }: { r: ResultadoDiagnostico }) {
       ) : null}
 
       {r.proximo_passo ? (
-        <section className="bg-blush grid gap-3 rounded-2xl px-6 py-6" aria-labelledby="proximo">
+        <section
+          className="bg-blush grid break-inside-avoid gap-3 rounded-2xl px-6 py-6"
+          aria-labelledby="proximo"
+        >
           <h3 id="proximo" className="font-display m-0 text-[1.75rem]">
             Próximo passo
           </h3>
@@ -221,6 +248,10 @@ export function Resultado({ r }: { r: ResultadoDiagnostico }) {
       <p className="text-mudo m-0 text-[13px]">
         Esta leitura é baseada nas suas respostas e serve como ponto de partida. Não substitui uma
         avaliação aprofundada, nem psicológica, jurídica ou contábil.
+      </p>
+      <p className="border-linho text-mudo m-0 hidden border-t pt-3 text-[12px] print:block">
+        JC | Sucessão de Sucesso · Jéssica Couto · Documento pessoal, preparado para {r.nome} em{" "}
+        {hoje}.
       </p>
     </article>
   );
