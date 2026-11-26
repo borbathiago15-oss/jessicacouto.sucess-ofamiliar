@@ -41,6 +41,13 @@ test("convite por link: a pessoa abre o link, aceita e cria a senha", async ({ b
     link = await page.getByTestId("equipe-convite-link").inputValue();
     expect(link).toMatch(/\/admin\/convite\?t=[A-Za-z0-9_-]+&tipo=invite$/);
     await expect(page.getByTestId("equipe-lista")).toContainText(`Pessoa Fictícia ${sufixo}`);
+
+    // Conta que já existe nunca recebe link de senha (quem convida poderia usá-lo).
+    await page.getByLabel("Nome").fill(`Pessoa Fictícia ${sufixo}`);
+    await page.getByLabel("E-mail").fill(`convite.${sufixo}@exemplo.test`);
+    await page.getByRole("button", { name: "Gerar link de convite" }).click();
+    await expect(page.getByTestId("equipe-convite-aviso")).toContainText("já existia");
+    await expect(page.getByTestId("equipe-convite-link")).toHaveCount(0);
   } finally {
     await contexto.close();
   }

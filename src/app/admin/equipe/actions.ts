@@ -63,18 +63,23 @@ export async function convidarPessoa(_: Aviso, form: FormData): Promise<Aviso> {
   let link: string | undefined;
   if (porLink) {
     // Link para você enviar (WhatsApp, e-mail próprio): nenhum e-mail sai do Supabase.
-    // Conta nova recebe convite; conta existente recebe link para (re)definir a senha.
-    const tipo = userId ? "recovery" : "invite";
-    const gerado = await servico.auth.admin.generateLink({ type: tipo, email: dados.data.email });
-    const hash = gerado.data?.properties?.hashed_token;
-    if (gerado.error || !hash || !gerado.data.user)
-      return { ok: false, mensagem: "Não foi possível gerar o link de convite." };
-    userId = gerado.data.user.id;
-    convidado = tipo === "invite";
-    const destino = new URL("/admin/convite", publicEnv.NEXT_PUBLIC_SITE_URL);
-    destino.searchParams.set("t", hash);
-    destino.searchParams.set("tipo", tipo);
-    link = destino.toString();
+    // Só conta nova recebe link. Para conta que já existe, nunca devolvemos um link de
+    // senha: quem convida poderia usá-lo para entrar no lugar da outra pessoa.
+    if (!userId) {
+      const gerado = await servico.auth.admin.generateLink({
+        type: "invite",
+        email: dados.data.email,
+      });
+      const hash = gerado.data?.properties?.hashed_token;
+      if (gerado.error || !hash || !gerado.data.user)
+        return { ok: false, mensagem: "Não foi possível gerar o link de convite." };
+      userId = gerado.data.user.id;
+      convidado = true;
+      const destino = new URL("/admin/convite", publicEnv.NEXT_PUBLIC_SITE_URL);
+      destino.searchParams.set("t", hash);
+      destino.searchParams.set("tipo", "invite");
+      link = destino.toString();
+    }
   } else if (!userId) {
     const retorno = new URL("/admin/auth/callback", publicEnv.NEXT_PUBLIC_SITE_URL);
     retorno.searchParams.set("next", "/admin/redefinir-senha");
@@ -109,15 +114,14 @@ export async function convidarPessoa(_: Aviso, form: FormData): Promise<Aviso> {
     return {
       ok: true,
       link,
-      mensagem: convidado
-        ? "Link de convite pronto. Copie e envie para a pessoa: ela cria a senha e a verificação em duas etapas."
-        : "Esta conta já existia: o papel foi atribuído e o link abaixo permite definir uma nova senha.",
+      mensagem:
+        "Link de convite pronto. Copie e envie para a pessoa: ela cria a senha e a verificação em duas etapas.",
     };
   return {
     ok: true,
     mensagem: convidado
       ? "Convite enviado por e-mail. A pessoa define a senha e a verificação em duas etapas no primeiro acesso."
-      : "Esta conta já existia: o papel foi atribuído.",
+      : "Esta conta já existia: o papel foi atribuído. Se a pessoa precisar de nova senha, ela usa “Esqueci minha senha” na tela de entrada.",
   };
 }
 
