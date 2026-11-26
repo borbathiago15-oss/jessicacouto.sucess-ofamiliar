@@ -105,6 +105,14 @@ select ok(exists (select 1 from public.activities where organization_id = (selec
                        and summary like 'Proposta % aceita.'),
           'envio e aceite no histórico');
 
+-- Segunda proposta recebe o número seguinte.
+select lives_ok(format($$ insert into public.proposals (id, organization_id, title) values (%L, %L, 'Outra proposta') $$,
+                       (select id from r where k = 'p2'), (select id from r where k = 'orgA')), 'segunda proposta');
+select is(split_part((select number from public.proposals where id = (select id from r where k = 'p2')), '-', 2)::int,
+          split_part((select number from public.proposals where id = (select id from r where k = 'p1')), '-', 2)::int + 1,
+          'numeração segue em sequência');
+select lives_ok(format($$ delete from public.proposals where id = %L $$, (select id from r where k = 'p2')), 'rascunho pode ser excluído');
+
 -- Status intermediários: só cotação e negociação; cancelar exige motivo e é final.
 insert into r values ('p4', gen_random_uuid());
 select lives_ok(format($$ insert into public.proposals (id, organization_id, title) values (%L, %L, 'Só cotação') $$,
@@ -129,14 +137,6 @@ select throws_ok(format($$ select public.proposal_set_status(%L, 'accepted') $$,
 select ok(exists (select 1 from public.activities where organization_id = (select id from r where k = 'orgA')
                    and summary like 'Proposta % cancelada. Motivo: Substituída por outra'),
           'cancelamento no histórico');
-
--- Segunda proposta recebe o número seguinte.
-select lives_ok(format($$ insert into public.proposals (id, organization_id, title) values (%L, %L, 'Outra proposta') $$,
-                       (select id from r where k = 'p2'), (select id from r where k = 'orgA')), 'segunda proposta');
-select is(split_part((select number from public.proposals where id = (select id from r where k = 'p2')), '-', 2)::int,
-          split_part((select number from public.proposals where id = (select id from r where k = 'p1')), '-', 2)::int + 1,
-          'numeração segue em sequência');
-select lives_ok(format($$ delete from public.proposals where id = %L $$, (select id from r where k = 'p2')), 'rascunho pode ser excluído');
 
 -- Logo do cliente: só no rascunho e só de proposta acessível.
 select lives_ok(format($$ insert into r values ('p3', gen_random_uuid()); insert into public.proposals (id, organization_id, title) values ((select id from r where k = 'p3'), %L, 'Com logo') $$,
