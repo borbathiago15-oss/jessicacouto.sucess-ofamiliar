@@ -23,7 +23,9 @@ set search_path = ''
 as $$
 declare
   v_token text := replace(gen_random_uuid()::text || gen_random_uuid()::text, '-', '');
-  v_id uuid;
+  -- O id nasce aqui: um RETURNING passaria pela política de leitura, que ainda
+  -- não enxerga a linha recém-inserida.
+  v_id uuid := gen_random_uuid();
   v_label text := nullif(btrim(coalesce(p_label, '')), '');
 begin
   if p_org is null or p_version is null then
@@ -42,17 +44,16 @@ begin
   end if;
 
   insert into public.diagnostic_sessions
-    (version_id, organization_id, participant_id, respondent_label, is_anonymous,
+    (id, version_id, organization_id, participant_id, respondent_label, is_anonymous,
      resume_token_hash, expires_at, invited_by)
   values
-    (p_version, p_org,
+    (v_id, p_version, p_org,
      case when coalesce(p_anonymous, false) then null else p_participant end,
      case when coalesce(p_anonymous, false) then null else v_label end,
      coalesce(p_anonymous, false),
      sha256(convert_to(v_token, 'UTF8')),
      now() + make_interval(days => greatest(1, least(coalesce(p_days, 30), 180))),
-     auth.uid())
-  returning id into v_id;
+     auth.uid());
 
   return jsonb_build_object('id', v_id, 'token', v_token);
 end;
