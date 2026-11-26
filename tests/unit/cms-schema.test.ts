@@ -134,3 +134,15 @@ describe("bloco de contatos", () => {
     ).toBe(false);
   });
 });
+
+describe("bloco de apresentação", () => {
+  it("aceita texto com destaques e sem foto; recusa mais de 4 destaques", () => {
+    const base = { tipo: "apresentacao", titulo: "T", paragrafos: ["P"] };
+    const lido = blocoSchema.safeParse(base);
+    expect(lido.success).toBe(true);
+    expect(lido.success && lido.data.tipo === "apresentacao" && lido.data.destaques).toEqual([]);
+    const d = { valor: "V", rotulo: "R" };
+    expect(blocoSchema.safeParse({ ...base, destaques: [d, d, d, d, d] }).success).toBe(false);
+    expect(blocoSchema.safeParse({ ...base, paragrafos: [] }).success).toBe(false);
+  });
+});

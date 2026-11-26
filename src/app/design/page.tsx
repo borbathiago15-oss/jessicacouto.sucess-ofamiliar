@@ -304,6 +304,17 @@ export default function DesignSystemPage() {
               })),
             },
             {
+              tipo: "apresentacao",
+              chamada: "Quem conduz (exemplo)",
+              titulo: "Título fictício de apresentação",
+              paragrafos: ["Primeiro parágrafo fictício.", "Segundo parágrafo fictício."],
+              destaques: [
+                { valor: "10 anos", rotulo: "Complemento fictício" },
+                { valor: "Cargo", rotulo: "Complemento fictício" },
+              ],
+              cta: { rotulo: "Link de exemplo", href: "/conheca-jessica" },
+            },
+            {
               tipo: "contatos",
               titulo: "Contatos (exemplo)",
               itens: [

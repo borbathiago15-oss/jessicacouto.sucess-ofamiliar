@@ -197,6 +197,19 @@ export const blocoSchema = z.discriminatedUnion("tipo", [
       .max(8),
     cta: cta.optional(),
   }),
+  // Apresentação de quem conduz o trabalho: foto, trajetória e destaques.
+  z.object({
+    tipo: z.literal("apresentacao"),
+    chamada: texto(80).optional(),
+    titulo: texto(160),
+    paragrafos: z.array(texto(1200)).min(1).max(4),
+    imagem: imagem.optional(),
+    destaques: z
+      .array(z.object({ valor: texto(40), rotulo: texto(120) }))
+      .max(4)
+      .default([]),
+    cta: cta.optional(),
+  }),
   // Contatos diretos, discretos: uma linha com ícone e link por canal.
   z.object({
     tipo: z.literal("contatos"),
@@ -267,6 +280,7 @@ export const ROTULO_BLOCO: Record<TipoBloco, string> = {
   situacoes: "Quando procurar",
   checklist: "Checklist",
   contatos: "Contatos",
+  apresentacao: "Apresentação (quem conduz)",
 };
 
 /** Bloco novo, vazio mas válido como rascunho editável. */
@@ -336,6 +350,13 @@ export function blocoVazio(tipo: TipoBloco): Bloco {
           { situacao: "Situação", resposta: "O que fazer" },
           { situacao: "Situação", resposta: "O que fazer" },
         ],
+      };
+    case "apresentacao":
+      return {
+        tipo,
+        titulo: "Quem conduz o trabalho",
+        paragrafos: ["Texto de apresentação."],
+        destaques: [],
       };
     case "contatos":
       return {

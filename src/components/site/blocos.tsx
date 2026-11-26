@@ -520,6 +520,54 @@ function BlocoUnico({
           ) : null}
         </section>
       );
+    case "apresentacao":
+      return (
+        <section className="grid items-center gap-[clamp(28px,5vw,72px)] md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+          {b.imagem ? (
+            <figure className="relative m-0 w-full max-w-[26rem] justify-self-center md:justify-self-start">
+              {/* Moldura deslocada em dourado: a foto ganha peso sem efeito sobre a imagem. */}
+              <span
+                aria-hidden="true"
+                className="border-champanhe absolute -right-3 -bottom-3 size-full rounded-[18px] border"
+              />
+              {/* eslint-disable-next-line @next/next/no-img-element -- mídia servida pela rota /midia com políticas do Storage */}
+              <img
+                src={urlMidia(b.imagem.path, midiaBase)}
+                alt={b.imagem.alt}
+                className="bg-blush relative block aspect-[4/5] w-full rounded-[18px] object-cover object-[50%_25%]"
+              />
+            </figure>
+          ) : null}
+          <div className={`grid gap-5 ${b.imagem ? "" : "md:col-span-2"}`}>
+            {b.chamada ? <Chamada>{b.chamada}</Chamada> : null}
+            <Titulo nivel={2}>{b.titulo}</Titulo>
+            <div className="grid max-w-[62ch] gap-3">
+              {b.paragrafos.map((p, i) => (
+                <p key={i} className={i === 0 ? "m-0 text-lg" : "text-mudo m-0"}>
+                  {p}
+                </p>
+              ))}
+            </div>
+            {b.destaques.length ? (
+              <dl className="border-linho m-0 grid gap-x-8 gap-y-4 border-t pt-5 sm:grid-cols-3">
+                {b.destaques.map((d, i) => (
+                  <div key={i} className="grid content-start gap-1">
+                    <dt className="text-mudo order-2 text-[14px] leading-snug">{d.rotulo}</dt>
+                    <dd className="font-display text-terra-texto order-1 m-0 text-[1.45rem] leading-tight font-semibold">
+                      {d.valor}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            ) : null}
+            {b.cta ? (
+              <div>
+                <Acao {...b.cta} variante="secundario" />
+              </div>
+            ) : null}
+          </div>
+        </section>
+      );
     case "contatos":
       return (
         <section

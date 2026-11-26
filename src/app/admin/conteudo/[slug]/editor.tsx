@@ -1304,6 +1304,130 @@ function CamposBloco({
           </div>
         </div>
       );
+    case "apresentacao":
+      return (
+        <div className="grid gap-3">
+          <Texto
+            id={`${id}-chamada`}
+            rotulo="Chamada (opcional)"
+            valor={b.chamada ?? ""}
+            onChange={(v) => onChange({ ...b, chamada: opcional(v) })}
+          />
+          <Texto
+            id={`${id}-titulo`}
+            rotulo="Título"
+            valor={b.titulo}
+            onChange={(v) => onChange({ ...b, titulo: v })}
+          />
+          <Texto
+            id={`${id}-paragrafos`}
+            rotulo="Texto (um parágrafo por linha em branco; até 4)"
+            longo
+            valor={b.paragrafos.join("\n\n")}
+            onChange={(v) => {
+              const ps = v
+                .split(/\n\s*\n/)
+                .map((x) => x.trim())
+                .filter(Boolean)
+                .slice(0, 4);
+              onChange({ ...b, paragrafos: ps.length ? ps : [""] });
+            }}
+          />
+          {imagemInput("Foto (somente fotos reais e autorizadas)", (path) =>
+            onChange({ ...b, imagem: { path, alt: b.imagem?.alt ?? "Jéssica Couto" } }),
+          )}
+          {b.imagem ? (
+            <div className="flex flex-wrap items-end gap-3">
+              <Texto
+                id={`${id}-alt`}
+                rotulo="Descrição da foto"
+                valor={b.imagem.alt}
+                onChange={(v) => onChange({ ...b, imagem: { path: b.imagem!.path, alt: v } })}
+              />
+              <Botao
+                type="button"
+                tamanho="pequeno"
+                variante="secundario"
+                onClick={() => onChange({ ...b, imagem: undefined })}
+              >
+                Remover foto
+              </Botao>
+            </div>
+          ) : null}
+          {b.destaques.map((d, k) => (
+            <div key={k} className="grid gap-2 sm:grid-cols-2">
+              <Texto
+                id={`${id}-dv${k}`}
+                rotulo={`Destaque ${k + 1}`}
+                valor={d.valor}
+                onChange={(v) =>
+                  onChange({
+                    ...b,
+                    destaques: b.destaques.map((x, j) => (j === k ? { ...x, valor: v } : x)),
+                  })
+                }
+              />
+              <Texto
+                id={`${id}-dr${k}`}
+                rotulo="Complemento"
+                valor={d.rotulo}
+                onChange={(v) =>
+                  onChange({
+                    ...b,
+                    destaques: b.destaques.map((x, j) => (j === k ? { ...x, rotulo: v } : x)),
+                  })
+                }
+              />
+            </div>
+          ))}
+          <div className="flex gap-2">
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              variante="secundario"
+              onClick={() =>
+                onChange({
+                  ...b,
+                  destaques: [...b.destaques, { valor: "Destaque", rotulo: "Complemento" }],
+                })
+              }
+              disabled={b.destaques.length >= 4}
+            >
+              Adicionar destaque
+            </Botao>
+            <Botao
+              type="button"
+              tamanho="pequeno"
+              variante="secundario"
+              onClick={() => onChange({ ...b, destaques: b.destaques.slice(0, -1) })}
+              disabled={b.destaques.length === 0}
+            >
+              Remover último
+            </Botao>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Texto
+              id={`${id}-ctar`}
+              rotulo="Botão (opcional)"
+              valor={b.cta?.rotulo ?? ""}
+              onChange={(v) =>
+                onChange({
+                  ...b,
+                  cta: v ? { rotulo: v, href: b.cta?.href ?? "/conheca-jessica" } : undefined,
+                })
+              }
+            />
+            <Texto
+              id={`${id}-ctah`}
+              rotulo="Link do botão"
+              valor={b.cta?.href ?? ""}
+              onChange={(v) =>
+                onChange({ ...b, cta: { rotulo: b.cta?.rotulo ?? "Saiba mais", href: v } })
+              }
+            />
+          </div>
+        </div>
+      );
     case "contatos":
       return (
         <div className="grid gap-3">
