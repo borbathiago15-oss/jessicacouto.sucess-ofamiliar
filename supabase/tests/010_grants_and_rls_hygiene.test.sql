@@ -64,8 +64,8 @@ select is_empty(
        and p.proname not in ('cms_get_published_page', 'cms_list_published_articles', 'registrar_solicitacao_titular',
                              'triage_public_form', 'triage_submit',
                              'material_public_list', 'material_request', 'material_download',
-                             'newsletter_subscribe') $$,
-  'anon executa apenas: conteúdo publicado, pedido do titular, Diagnóstico de Sucessão e materiais'
+                             'newsletter_subscribe', 'survey_open', 'survey_submit') $$,
+  'anon executa apenas: conteúdo publicado, pedido do titular, Diagnóstico de Sucessão, materiais e questionário por link'
 );
 
 -- 9. No schema private, anon executa SOMENTE a checagem de mídia publicada
