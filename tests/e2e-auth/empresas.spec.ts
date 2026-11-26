@@ -73,6 +73,20 @@ test("Raio-X: calcula ao digitar, salva e mantém ao recarregar", async () => {
   await page.goto(`${endereco}/raio-x`);
   await page.locator("#novo-periodo").fill("2025");
   await page.getByRole("button", { name: "Adicionar período" }).click();
+
+  // Resposta de uma IA colada: preenche os campos para conferência, sem salvar.
+  await page.getByText("Tenho um PDF: preencher com a ajuda de uma IA").click();
+  await expect(page.getByTestId("ia-instrucoes")).toHaveValue(/receitaBruta:/);
+  await page
+    .getByLabel("2. Cole aqui a resposta da IA")
+    .fill("- **estoques:** R$ 350.000,00
+caixa: 100000
+meses: 12
+observacoes: teste fictício");
+  await page.getByRole("button", { name: "Preencher os campos" }).click();
+  await expect(page.getByTestId("ia-resultado")).toContainText("2 de 23 campos preenchidos");
+  await expect(page.locator("#c-estoques")).toHaveValue("350.000,00");
+
   const valores: Record<string, string> = {
     receitaBruta: "10.000.000,00",
     deducoes: "1.500.000",
