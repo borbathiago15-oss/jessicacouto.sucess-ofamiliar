@@ -204,3 +204,64 @@ export function MovimentosVivos({
     </section>
   );
 }
+
+/**
+ * Número da faixa de dados: conta de zero até o valor quando aparece na tela e,
+ * nos percentuais, enche uma barra fina na mesma proporção. O valor real fica
+ * disponível para leitores de tela desde o início.
+ */
+export function NumeroVivo({ valor }: { valor: string }) {
+  const { ref, visivel } = useVisivel<HTMLSpanElement>();
+  const partes = /^(\d+(?:[.,]\d+)?)(.*)$/.exec(valor.trim());
+  const alvo = partes ? Number(partes[1]!.replace(",", ".")) : null;
+  const sufixo = partes?.[2] ?? "";
+  const percentual = alvo !== null && sufixo.trim().startsWith("%") && alvo <= 100;
+  // Sem animação (antes de carregar ou com menos movimento), mostra o valor final.
+  const [atual, setAtual] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!visivel || alvo === null) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let quadro = 0;
+    let inicio: number | null = null;
+    const passo = (t: number) => {
+      if (inicio === null) inicio = t;
+      const p = Math.min(1, (t - inicio) / 1400);
+      // Desacelera no fim (ease-out).
+      setAtual(alvo * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) quadro = requestAnimationFrame(passo);
+    };
+    quadro = requestAnimationFrame(passo);
+    return () => cancelAnimationFrame(quadro);
+  }, [visivel, alvo]);
+
+  if (alvo === null) return <>{valor}</>;
+  const casas = partes![1]!.includes(",") || partes![1]!.includes(".") ? 1 : 0;
+  const mostrado = (atual ?? alvo).toLocaleString("pt-BR", {
+    minimumFractionDigits: casas,
+    maximumFractionDigits: casas,
+  });
+  return (
+    <span ref={ref} className="grid gap-3">
+      <span className="sr-only">{valor}</span>
+      <span aria-hidden="true">
+        {mostrado}
+        {sufixo}
+      </span>
+      {percentual ? (
+        <span
+          aria-hidden="true"
+          className="block h-1 w-full max-w-[14rem] rounded-full bg-white/15"
+        >
+          <span
+            className="bg-champanhe block h-full rounded-full"
+            style={{
+              width: visivel ? `${alvo}%` : "0%",
+              transition: "width 1.4s cubic-bezier(.22,.8,.3,1)",
+            }}
+          />
+        </span>
+      ) : null}
+    </span>
+  );
+}

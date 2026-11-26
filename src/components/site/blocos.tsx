@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { MovimentosVivos, TresCirculosVivos } from "./animados";
+import { MovimentosVivos, NumeroVivo, TresCirculosVivos } from "./animados";
 import { BotaoLink, Cartao, Chamada, FioContinuidade, Titulo } from "@/components/ui";
 import type { Bloco } from "@/modules/cms/schema";
 
@@ -254,7 +254,7 @@ function BlocoUnico({
               >
                 <dt className="order-2 text-[15px] leading-snug text-white/85">{it.rotulo}</dt>
                 <dd className="font-display text-champanhe order-1 m-0 text-[clamp(2.8rem,5.5vw,4.2rem)] leading-none font-semibold">
-                  {it.valor}
+                  <NumeroVivo valor={it.valor} />
                 </dd>
                 {it.fonte ? (
                   <dd className="order-3 m-0 text-[12px] text-white/60">Fonte: {it.fonte}</dd>
