@@ -96,6 +96,8 @@ function textoDosBlocos(blocos: Bloco[]): string {
           return [b.titulo, b.texto, ...b.itens.map((i) => `${i.situacao} ${i.resposta}`)].join(
             " ",
           );
+        case "apresentacao":
+          return [b.chamada, b.titulo, ...b.paragrafos].join(" ");
         case "contatos":
           return [b.titulo, b.texto].join(" ");
         case "checklist":
