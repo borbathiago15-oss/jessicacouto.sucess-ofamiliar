@@ -35,7 +35,7 @@ function useVisivel<T extends Element>() {
 }
 
 const COR = [
-  { preenche: "var(--color-terra)", ponto: "bg-terra" },
+  { preenche: "var(--color-terra-texto)", ponto: "bg-terra-texto" },
   { preenche: "var(--color-champanhe)", ponto: "bg-champanhe" },
   { preenche: "var(--color-salvia)", ponto: "bg-salvia" },
 ];
@@ -251,7 +251,7 @@ export function NumeroVivo({ valor }: { valor: string }) {
       {percentual ? (
         <span
           aria-hidden="true"
-          className="block h-1 w-full max-w-[14rem] rounded-full bg-white/15"
+          className="bg-porcelana/15 block h-1 w-full max-w-[14rem] rounded-full"
         >
           <span
             className="bg-champanhe block h-full rounded-full"

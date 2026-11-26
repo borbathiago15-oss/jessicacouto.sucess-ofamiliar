@@ -26,9 +26,9 @@ describe("tokens de cor", () => {
   });
 });
 
-describe("destaque em mostarda", () => {
+describe("destaque em dourado", () => {
   // Elementos gráficos (linhas, marcadores, barras) pedem 3:1 (WCAG 1.4.11). Texto nunca usa "terra".
-  it.each(["porcelana", "papel"] as const)("mostarda sobre %s atinge 3:1", (fundo) => {
+  it.each(["porcelana", "papel"] as const)("dourado gráfico sobre %s atinge 3:1", (fundo) => {
     expect(contraste(cores.terra, cores[fundo])).toBeGreaterThanOrEqual(3);
   });
 });

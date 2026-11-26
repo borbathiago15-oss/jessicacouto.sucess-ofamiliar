@@ -35,6 +35,13 @@ a {
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Áreas em verde profundo: o foco precisa aparecer em dourado. */
+.bg-terra-texto :focus-visible,
+.bg-terra-escuro :focus-visible {
+  outline-color: var(--color-champanhe);
 }

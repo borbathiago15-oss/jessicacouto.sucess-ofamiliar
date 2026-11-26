@@ -683,6 +683,26 @@ function CamposBloco({
                   })
                 }
               />
+              <label
+                htmlFor={`${id}-x${k}`}
+                className="flex items-center gap-2 text-[13px] sm:col-span-4"
+              >
+                <input
+                  id={`${id}-x${k}`}
+                  type="checkbox"
+                  className="accent-terra-texto size-4"
+                  checked={it.destaque ?? false}
+                  onChange={(e) =>
+                    onChange({
+                      ...b,
+                      itens: b.itens.map((x, j) =>
+                        j === k ? { ...x, destaque: e.target.checked || undefined } : x,
+                      ),
+                    })
+                  }
+                />
+                Cartão em destaque (verde)
+              </label>
             </div>
           ))}
           <div className="flex gap-2">
@@ -699,7 +719,7 @@ function CamposBloco({
                   ],
                 })
               }
-              disabled={b.itens.length >= 4}
+              disabled={b.itens.length >= 6}
             >
               Adicionar caminho
             </Botao>

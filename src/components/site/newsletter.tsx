@@ -19,18 +19,18 @@ export function Newsletter() {
       <div className="grid gap-1">
         <h2
           id="newsletter-titulo"
-          className="font-display text-cacau m-0 text-[1.5rem] font-semibold"
+          className="font-display text-porcelana m-0 text-[clamp(1.6rem,3vw,2.1rem)] leading-tight font-semibold"
         >
           Uma reflexão por mês sobre sucessão
         </h2>
-        <p className="m-0 text-[15px]">
+        <p className="text-blush m-0 max-w-[46ch] text-[16px]">
           Escrita pela Jéssica, para quem constrói, para quem vai assumir e para a família.
         </p>
       </div>
       {estado.status === "pronto" ? (
         <p
           role="status"
-          className="text-ok m-0 text-[15px] font-semibold"
+          className="text-champanhe m-0 text-[16px] font-semibold"
           data-testid="newsletter-ok"
         >
           Pronto! Você vai receber a próxima reflexão por e-mail.
@@ -57,19 +57,27 @@ export function Newsletter() {
               placeholder="Seu e-mail"
               className={`${campoClasses} min-w-0 flex-1`}
             />
-            <Botao type="submit" disabled={enviando}>
+            <Botao
+              type="submit"
+              disabled={enviando}
+              className="!bg-champanhe !text-terra-escuro hover:!bg-blush"
+            >
               {enviando ? "Enviando..." : "Assinar"}
             </Botao>
           </div>
-          <p className="m-0 text-[12.5px]">
+          <p className="text-blush m-0 text-[13px]">
             Você pode sair quando quiser. Veja a{" "}
-            <Link href="/privacidade" className="text-terra-texto underline">
+            <Link href="/privacidade" className="text-porcelana underline">
               Política de Privacidade
             </Link>
             .
           </p>
           {estado.status === "erro" ? (
-            <p role="status" className="text-critico m-0 text-sm" data-testid="newsletter-erro">
+            <p
+              role="status"
+              className="text-porcelana m-0 text-sm font-semibold"
+              data-testid="newsletter-erro"
+            >
               {estado.mensagem}
             </p>
           ) : null}

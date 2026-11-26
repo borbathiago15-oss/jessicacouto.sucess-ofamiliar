@@ -126,15 +126,22 @@ export function Titulo({
 // ---------------------------------------------------------------------------
 // Marca
 // ---------------------------------------------------------------------------
-export function Monograma({ tamanho = 34 }: { tamanho?: number }) {
+/**
+ * Monograma JC (arquivo da marca, sem redesenho). `claro` é a versão para fundo
+ * escuro: as letras ficam em off-white e o dourado é o mesmo.
+ */
+export function Monograma({ tamanho = 34, claro = false }: { tamanho?: number; claro?: boolean }) {
   return (
-    <span
+    // eslint-disable-next-line @next/next/no-img-element -- arquivo pequeno e estático da marca
+    <img
+      src={claro ? "/brand/jc-monograma-claro.png" : "/brand/jc-monograma.png"}
+      alt=""
       aria-hidden="true"
-      style={{ width: tamanho, height: tamanho, fontSize: tamanho * 0.42 }}
-      className="border-terra font-display text-terra-texto inline-grid shrink-0 place-items-center rounded-full border font-semibold"
-    >
-      JC
-    </span>
+      width={Math.round((tamanho * 419) / 320)}
+      height={tamanho}
+      className="shrink-0"
+      style={{ height: tamanho, width: "auto" }}
+    />
   );
 }
 

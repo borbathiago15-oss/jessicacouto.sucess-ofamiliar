@@ -43,7 +43,7 @@ export default function DesignSystemPage() {
           <Monograma />
           <Chamada>JC | Sucessão de Sucesso · Design system</Chamada>
         </div>
-        <Titulo>Creme, marrom e mostarda</Titulo>
+        <Titulo>Verde profundo, dourado champanhe e off-white</Titulo>
         <p className="text-mudo max-w-[62ch]">
           Tokens, tipografia, componentes e gráficos da plataforma. Fonte da verdade:{" "}
           <code>src/styles/tokens.css</code>. Dados desta página são fictícios.
@@ -111,12 +111,12 @@ export default function DesignSystemPage() {
           <p className="font-display text-[clamp(2.5rem,6vw,4.5rem)] leading-none font-medium tracking-[-0.02em]">
             Sua empresa está preparada para a próxima geração?
           </p>
-          <Titulo>Título de página em Newsreader</Titulo>
+          <Titulo>Título de página em Playfair Display</Titulo>
           <Titulo nivel={2}>Título de seção</Titulo>
           <Titulo nivel={3}>Título de cartão</Titulo>
           <p className="max-w-[65ch]">
-            Texto corrido em Figtree, 15,5 a 16,5 px, entrelinha 1,6. A comunicação é pessoal,
-            direta e sem filtros, sempre “com base nas respostas informadas”.
+            Texto corrido em Inter, 15,5 a 16,5 px, entrelinha 1,6. A comunicação é pessoal, direta
+            e sem filtros, sempre “com base nas respostas informadas”.
           </p>
           <p className="font-display text-terra-texto text-2xl italic">Jéssica Couto</p>
         </Cartao>

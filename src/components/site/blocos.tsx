@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { MovimentosVivos, NumeroVivo, TresCirculosVivos } from "./animados";
-import { BotaoLink, Cartao, Chamada, FioContinuidade, Titulo } from "@/components/ui";
+import { BotaoLink, Cartao, Chamada, FioContinuidade, Monograma, Titulo } from "@/components/ui";
 import type { Bloco } from "@/modules/cms/schema";
 
 /** URL pública de uma mídia do CMS (servida pela rota /midia, que respeita as políticas). */
@@ -144,13 +144,9 @@ export function CapaDesenhada({
   return (
     <div
       aria-hidden="true"
-      className={`bg-cacau text-papel relative mx-auto grid aspect-[3/4.2] w-full max-w-[15rem] content-between overflow-hidden rounded-md shadow-[0_18px_40px_-18px_rgba(46,33,24,0.55)] ${pequena ? "p-2.5" : "p-6"}`}
+      className={`bg-terra-texto text-porcelana relative mx-auto grid aspect-[3/4.2] w-full max-w-[15rem] content-between overflow-hidden rounded-md shadow-[0_18px_40px_-18px_rgba(10,42,32,0.6)] ${pequena ? "p-2.5" : "p-6"}`}
     >
-      <span
-        className={`border-champanhe/70 font-display text-champanhe grid place-items-center rounded-full border font-semibold ${pequena ? "size-5 text-[8px]" : "size-10 text-[15px]"}`}
-      >
-        JC
-      </span>
+      <Monograma tamanho={pequena ? 16 : 34} claro />
       <svg viewBox="0 0 200 60" className="absolute right-0 bottom-24 left-0 w-full opacity-70">
         <path
           d="M0 44 C 45 44, 60 14, 100 16 S 160 50, 200 14"
@@ -158,7 +154,7 @@ export function CapaDesenhada({
           stroke="var(--color-champanhe)"
           strokeWidth="1.2"
         />
-        <circle cx="100" cy="16" r="3" fill="var(--color-terra)" />
+        <circle cx="100" cy="16" r="3" fill="var(--color-champanhe)" />
       </svg>
       <span className="relative grid gap-2">
         <b
@@ -168,7 +164,7 @@ export function CapaDesenhada({
         </b>
         {subtitulo ? <span className="text-champanhe text-[11.5px]">{subtitulo}</span> : null}
         {pequena ? null : (
-          <span className="text-[11px] tracking-wide text-white/70">Jéssica Couto</span>
+          <span className="text-blush text-[11px] tracking-wide">Jéssica Couto</span>
         )}
       </span>
     </div>
@@ -269,7 +265,11 @@ function BlocoUnico({
             <Titulo nivel={2}>{b.titulo}</Titulo>
             {b.texto ? <p className="text-mudo m-0 max-w-[62ch]">{b.texto}</p> : null}
           </div>
-          <ul className="m-0 grid list-none gap-4 p-0 sm:grid-cols-2 lg:auto-cols-fr lg:grid-flow-col">
+          <ul
+            className={`m-0 grid list-none gap-4 p-0 sm:grid-cols-2 ${
+              b.itens.length > 4 ? "lg:grid-cols-3" : "lg:auto-cols-fr lg:grid-flow-col"
+            }`}
+          >
             {b.itens.map((it, i) => (
               <li key={i} className="grid">
                 <Link
@@ -277,13 +277,31 @@ function BlocoUnico({
                   {...(it.href.startsWith("https://")
                     ? { target: "_blank", rel: "noopener noreferrer" }
                     : {})}
-                  className="bg-papel border-linho hover:border-terra group grid content-start gap-3 rounded-[var(--radius-cartao)] border p-6 no-underline transition-colors"
+                  className={`group grid content-start gap-3 rounded-[var(--radius-cartao)] border p-6 no-underline ${
+                    it.destaque
+                      ? "bg-terra-texto border-terra-texto text-porcelana"
+                      : "bg-papel border-linho hover:border-champanhe"
+                  }`}
                 >
-                  <h3 className="font-display text-cacau m-0 text-[1.55rem] leading-tight font-semibold">
+                  <span
+                    aria-hidden="true"
+                    className={`h-[3px] w-10 rounded-full ${it.destaque ? "bg-champanhe" : "bg-terra"}`}
+                  />
+                  <h3
+                    className={`font-display m-0 text-[1.5rem] leading-tight font-semibold ${
+                      it.destaque ? "text-porcelana" : "text-terra-texto"
+                    }`}
+                  >
                     {it.titulo}
                   </h3>
-                  <p className="text-mudo m-0 text-[15px]">{it.descricao}</p>
-                  <span className="text-terra-texto mt-1 text-[14px] font-semibold underline decoration-1 underline-offset-4 group-hover:decoration-2">
+                  <p className={`m-0 text-[15px] ${it.destaque ? "text-blush" : "text-mudo"}`}>
+                    {it.descricao}
+                  </p>
+                  <span
+                    className={`mt-1 text-[14px] font-semibold underline decoration-1 underline-offset-4 group-hover:decoration-2 ${
+                      it.destaque ? "text-champanhe" : "text-terra-texto"
+                    }`}
+                  >
                     {it.rotulo ?? "Começar"}
                   </span>
                 </Link>
@@ -296,7 +314,7 @@ function BlocoUnico({
       return (
         <section
           aria-label={b.titulo ?? "Números"}
-          className="bg-cacau text-papel grid gap-8 rounded-[28px] px-7 py-10 sm:px-12 sm:py-12"
+          className="bg-terra-texto text-porcelana grid gap-8 rounded-[28px] px-7 py-10 sm:px-12 sm:py-14"
         >
           {b.titulo ? (
             <h2 className="font-display text-papel m-0 max-w-[30ch] text-[clamp(1.6rem,3vw,2.2rem)] leading-tight font-medium">
@@ -307,14 +325,14 @@ function BlocoUnico({
             {b.itens.map((it, i) => (
               <div
                 key={i}
-                className="grid content-start gap-2 lg:[&:not(:first-child)]:border-l lg:[&:not(:first-child)]:border-white/15 lg:[&:not(:first-child)]:pl-10"
+                className="lg:[&:not(:first-child)]:border-porcelana/15 grid content-start gap-2 lg:[&:not(:first-child)]:border-l lg:[&:not(:first-child)]:pl-10"
               >
-                <dt className="order-2 text-[15px] leading-snug text-white/85">{it.rotulo}</dt>
+                <dt className="text-blush order-2 text-[15px] leading-snug">{it.rotulo}</dt>
                 <dd className="font-display text-champanhe order-1 m-0 text-[clamp(2.8rem,5.5vw,4.2rem)] leading-none font-semibold">
                   <NumeroVivo valor={it.valor} />
                 </dd>
                 {it.fonte ? (
-                  <dd className="order-3 m-0 text-[12px] text-white/60">Fonte: {it.fonte}</dd>
+                  <dd className="text-blush/80 order-3 m-0 text-[12px]">Fonte: {it.fonte}</dd>
                 ) : null}
               </div>
             ))}
