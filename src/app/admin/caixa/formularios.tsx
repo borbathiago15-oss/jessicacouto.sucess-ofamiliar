@@ -254,7 +254,7 @@ export function AcoesParcela({
             type="button"
             tamanho="pequeno"
             disabled={pendente}
-            aria-label={`Marcar como recebido: ${descricao}`}
+            aria-label={`Marcar recebido: ${descricao}`}
             onClick={() => setAberto(true)}
           >
             Marcar recebido
