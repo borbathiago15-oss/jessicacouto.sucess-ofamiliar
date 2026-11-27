@@ -1,15 +1,22 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Cartao, Chamada, Titulo } from "@/components/ui";
+import { Cartao, Chamada, Selo, Titulo } from "@/components/ui";
 import { meuAcesso } from "@/lib/auth/access";
 import { enforceAdminRoute } from "@/lib/auth/guard";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import type { StatusContrato } from "@/modules/contratos/schema";
+import {
+  ROTULO_SITUACAO_CLIENTE,
+  situacaoDoCliente,
+  type SituacaoCliente,
+} from "@/modules/contratos/situacao";
 import { NovaEmpresa } from "./nova-empresa";
 
 export const metadata = { title: "Clientes" };
 
 const VISOES = {
-  clientes: "Clientes",
+  clientes: "Clientes ativos",
+  concluidos: "Contratos concluídos",
   negociacao: "Em negociação",
   todas: "Todas",
 } as const;
@@ -43,29 +50,39 @@ export default async function EmpresasPage({
       ? supabase!.from("contracts").select("organization_id, service_name, status")
       : Promise.resolve({ data: [] }),
   ]);
-  // Cliente = empresa com contrato registrado. As demais estão em negociação (funil).
-  const porEmpresa = new Map<string, { ativos: string[]; total: number }>();
+  // A situação vem dos contratos: ativo, concluído, cancelado ou ainda em negociação.
+  const porEmpresa = new Map<
+    string,
+    { status: StatusContrato[]; ativos: string[]; feitos: string[] }
+  >();
   for (const c of contratos ?? []) {
-    const atual = porEmpresa.get(c.organization_id) ?? { ativos: [], total: 0 };
-    atual.total += 1;
+    const atual = porEmpresa.get(c.organization_id) ?? { status: [], ativos: [], feitos: [] };
+    atual.status.push(c.status as StatusContrato);
     if (c.status === "active") atual.ativos.push(c.service_name as string);
+    if (c.status === "completed") atual.feitos.push(c.service_name as string);
     porEmpresa.set(c.organization_id, atual);
   }
-  const lista = todas ?? [];
-  const contagem: Record<Visao, number> = {
-    clientes: lista.filter((e) => porEmpresa.has(e.id)).length,
-    negociacao: lista.filter((e) => !porEmpresa.has(e.id)).length,
-    todas: lista.length,
-  };
+  const lista = (todas ?? []).map((e) => ({
+    ...e,
+    situacao: situacaoDoCliente(porEmpresa.get(e.id)?.status ?? []),
+  }));
+  const naVisao = (v: Visao, sit: SituacaoCliente) =>
+    v === "todas"
+      ? true
+      : v === "clientes"
+        ? sit === "ativo"
+        : v === "concluidos"
+          ? sit === "concluido" || sit === "cancelado"
+          : sit === "negociacao";
+  const contagem = Object.fromEntries(
+    (Object.keys(VISOES) as Visao[]).map((v) => [
+      v,
+      lista.filter((e) => naVisao(v, e.situacao)).length,
+    ]),
+  ) as Record<Visao, number>;
   // Quem não vê contratos não consegue separar: mostra todas.
   const efetiva: Visao = podeVerContratos ? visao : "todas";
-  const empresas = lista.filter((e) =>
-    efetiva === "todas"
-      ? true
-      : efetiva === "clientes"
-        ? porEmpresa.has(e.id)
-        : !porEmpresa.has(e.id),
-  );
+  const empresas = lista.filter((e) => naVisao(efetiva, e.situacao));
   const chip = (ativo: boolean) =>
     `rounded-full border px-3 py-1 text-[13.5px] no-underline ${
       ativo
@@ -83,8 +100,8 @@ export default async function EmpresasPage({
         </Chamada>
         <Titulo>Clientes</Titulo>
         <p className="text-mudo max-w-[62ch]">
-          Clientes são as empresas com contrato registrado. Quem ainda está em negociação aparece no
-          funil e na aba “Em negociação”.
+          Cliente ativo é a empresa com contrato em andamento. Quando o contrato termina, ela passa
+          para “Contratos concluídos”; quem ainda não fechou fica em “Em negociação”.
         </p>
       </header>
 
@@ -106,33 +123,41 @@ export default async function EmpresasPage({
       {empresas.length === 0 ? (
         <p className="text-mudo" data-testid="empresas-vazio">
           {efetiva === "clientes"
-            ? "Nenhum cliente com contrato registrado ainda. Aprove uma proposta ou registre o contrato na ficha da empresa."
-            : "Nenhuma empresa aqui."}
+            ? "Nenhum cliente com contrato em andamento. Aprove uma proposta, leve a oportunidade a “Contrato fechado” no funil ou registre o contrato na ficha da empresa."
+            : efetiva === "concluidos"
+              ? "Nenhum contrato concluído ainda."
+              : "Nenhuma empresa aqui."}
         </p>
       ) : (
         <ul className="border-linho m-0 grid list-none border-t p-0">
-          {empresas.map((e) => (
-            <li key={e.id} className="border-linho grid border-b py-4">
-              <Link
-                href={`/admin/empresas/${e.id}`}
-                className="font-display text-cacau text-xl font-semibold no-underline hover:underline"
+          {empresas.map((e) => {
+            const dados = porEmpresa.get(e.id);
+            const [texto, tom] = ROTULO_SITUACAO_CLIENTE[e.situacao];
+            const detalhe = dados?.ativos.length
+              ? `Em andamento: ${dados.ativos.join(", ")}`
+              : dados?.feitos.length
+                ? `Concluído: ${dados.feitos.join(", ")}`
+                : null;
+            return (
+              <li
+                key={e.id}
+                className="border-linho flex flex-wrap items-center justify-between gap-3 border-b py-4"
               >
-                {e.trade_name}
-              </Link>
-              <span className="text-mudo text-[13px]">
-                {[
-                  e.segment,
-                  porEmpresa.get(e.id)?.ativos.length
-                    ? `Em andamento: ${porEmpresa.get(e.id)!.ativos.join(", ")}`
-                    : porEmpresa.has(e.id)
-                      ? "Sem contrato em andamento"
-                      : null,
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </span>
-            </li>
-          ))}
+                <span className="grid">
+                  <Link
+                    href={`/admin/empresas/${e.id}`}
+                    className="font-display text-cacau text-xl font-semibold no-underline hover:underline"
+                  >
+                    {e.trade_name}
+                  </Link>
+                  <span className="text-mudo text-[13px]">
+                    {[e.segment, detalhe].filter(Boolean).join(" · ")}
+                  </span>
+                </span>
+                {podeVerContratos ? <Selo tom={tom}>{texto}</Selo> : null}
+              </li>
+            );
+          })}
         </ul>
       )}
 

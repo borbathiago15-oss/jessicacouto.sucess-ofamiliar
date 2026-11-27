@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { Cartao, Chamada, Titulo } from "@/components/ui";
+import { Cartao, Chamada, Selo, Titulo } from "@/components/ui";
+import type { StatusContrato } from "@/modules/contratos/schema";
+import { ROTULO_SITUACAO_CLIENTE, situacaoDoCliente } from "@/modules/contratos/situacao";
 import { brl, calcular, pct, valoresSchema } from "@/modules/raiox/calculo";
 import { carregarEmpresa } from "./carregar";
 
@@ -35,10 +37,14 @@ export default async function EmpresaPage({ params }: { params: Promise<{ id: st
   const { data: contratos } = podeContratos
     ? await supabase
         .from("contracts")
-        .select("id, service_name, total_value, status, proposal_id")
+        .select("id, service_name, total_value, status, proposal_id, ends_on")
         .eq("organization_id", id)
         .order("created_at", { ascending: false })
     : { data: null };
+  const situacao =
+    ROTULO_SITUACAO_CLIENTE[
+      situacaoDoCliente((contratos ?? []).map((c) => c.status as StatusContrato))
+    ];
   const ultimo = periodos?.at(-1);
   const r = ultimo
     ? calcular(valoresSchema.safeParse(ultimo.values).data ?? {}, ultimo.months)
@@ -59,7 +65,10 @@ export default async function EmpresaPage({ params }: { params: Promise<{ id: st
       {podeContratos ? (
         <Cartao className="grid gap-3" superficie="borda">
           <div className="flex flex-wrap items-baseline justify-between gap-3">
-            <h2 className="font-display text-xl">Contratos e propostas</h2>
+            <h2 className="font-display flex flex-wrap items-center gap-3 text-xl">
+              Contratos e propostas
+              <Selo tom={situacao[1]}>{situacao[0]}</Selo>
+            </h2>
             <Link
               href={`/admin/empresas/${id}/contratos`}
               className="text-terra-texto font-semibold underline"
@@ -79,7 +88,7 @@ export default async function EmpresaPage({ params }: { params: Promise<{ id: st
                       {c.status === "active"
                         ? "em andamento"
                         : c.status === "completed"
-                          ? "concluído"
+                          ? `concluído${c.ends_on ? ` em ${c.ends_on.split("-").reverse().join("/")}` : ""}`
                           : "cancelado"}
                     </span>
                   </span>
