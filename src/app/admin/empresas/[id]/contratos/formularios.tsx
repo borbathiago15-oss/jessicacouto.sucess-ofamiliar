@@ -10,8 +10,8 @@ const rotulo = "grid gap-1 text-[13px] font-semibold";
 export function NovoContrato({ empresaId, servicos }: { empresaId: string; servicos: string[] }) {
   const [aviso, acao, pendente] = useActionState(registrarContrato.bind(null, empresaId), null);
   return (
-    <form action={acao} className="grid gap-3 md:grid-cols-4">
-      <label htmlFor="ct-servico" className={`${rotulo} md:col-span-2`}>
+    <form action={acao} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <label htmlFor="ct-servico" className={`${rotulo} sm:col-span-2 lg:col-span-3`}>
         Serviço contratado
         <input
           id="ct-servico"
@@ -32,7 +32,7 @@ export function NovoContrato({ empresaId, servicos }: { empresaId: string; servi
         Valor (R$)
         <input id="ct-valor" name="total_value" inputMode="decimal" className={campoClasses} />
       </label>
-      <div className="grid grid-cols-2 gap-2">
+      <>
         <label htmlFor="ct-inicio" className={rotulo}>
           Início
           <input id="ct-inicio" name="starts_on" type="date" className={campoClasses} />
@@ -41,12 +41,12 @@ export function NovoContrato({ empresaId, servicos }: { empresaId: string; servi
           Término
           <input id="ct-fim" name="ends_on" type="date" className={campoClasses} />
         </label>
-      </div>
-      <label htmlFor="ct-notas" className={`${rotulo} md:col-span-4`}>
+      </>
+      <label htmlFor="ct-notas" className={`${rotulo} sm:col-span-2 lg:col-span-4`}>
         Observações (opcional)
         <input id="ct-notas" name="notes" maxLength={2000} className={campoClasses} />
       </label>
-      <div className="flex flex-wrap items-center gap-3 md:col-span-4">
+      <div className="flex flex-wrap items-center gap-3 sm:col-span-2 lg:col-span-4">
         <Botao type="submit" disabled={pendente}>
           {pendente ? "Registrando..." : "Registrar contrato"}
         </Botao>
@@ -156,8 +156,8 @@ export function EditarContrato({
       <summary className="text-terra-texto cursor-pointer text-[14px] font-semibold">
         Ajustar serviço, valor e datas
       </summary>
-      <form action={acao} className="mt-3 grid gap-3 md:grid-cols-4">
-        <label htmlFor={`${p}-servico`} className={`${rotulo} md:col-span-2`}>
+      <form action={acao} className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <label htmlFor={`${p}-servico`} className={`${rotulo} sm:col-span-2 lg:col-span-3`}>
           Serviço contratado
           <input
             id={`${p}-servico`}
@@ -189,7 +189,7 @@ export function EditarContrato({
             }
           />
         </label>
-        <div className="grid grid-cols-2 gap-2">
+        <>
           <label htmlFor={`${p}-inicio`} className={rotulo}>
             Início
             <input
@@ -210,8 +210,8 @@ export function EditarContrato({
               defaultValue={contrato.ends_on ?? ""}
             />
           </label>
-        </div>
-        <label htmlFor={`${p}-notas`} className={`${rotulo} md:col-span-4`}>
+        </>
+        <label htmlFor={`${p}-notas`} className={`${rotulo} sm:col-span-2 lg:col-span-4`}>
           Observações (opcional)
           <input
             id={`${p}-notas`}
@@ -221,7 +221,7 @@ export function EditarContrato({
             defaultValue={contrato.notes ?? ""}
           />
         </label>
-        <div className="flex flex-wrap items-center gap-3 md:col-span-4">
+        <div className="flex flex-wrap items-center gap-3 sm:col-span-2 lg:col-span-4">
           <Botao type="submit" tamanho="pequeno" disabled={pendente}>
             Salvar
           </Botao>

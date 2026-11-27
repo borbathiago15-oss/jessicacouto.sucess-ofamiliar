@@ -124,3 +124,14 @@ describe("status e vencimento", () => {
     expect(filtroDaProposta("cancelled", "2026-11-01", "2026-12-01")).toBe("cancelled");
   });
 });
+
+describe("situação do cliente pelos contratos", () => {
+  it("ativo vence concluído; sem contrato é negociação", async () => {
+    const { situacaoDoCliente } = await import("@/modules/contratos/situacao");
+    expect(situacaoDoCliente([])).toBe("negociacao");
+    expect(situacaoDoCliente(["completed"])).toBe("concluido");
+    expect(situacaoDoCliente(["cancelled"])).toBe("cancelado");
+    expect(situacaoDoCliente(["cancelled", "completed"])).toBe("concluido");
+    expect(situacaoDoCliente(["completed", "active"])).toBe("ativo");
+  });
+});
