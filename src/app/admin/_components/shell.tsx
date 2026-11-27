@@ -18,7 +18,8 @@ export type IconeMenu =
   | "relatorios"
   | "seguranca"
   | "portal"
-  | "equipe";
+  | "equipe"
+  | "caixa";
 
 export type GrupoMenu = {
   titulo: string;
@@ -59,6 +60,12 @@ const TRACOS: Record<IconeMenu, ReactNode> = {
     <>
       <path d="M5 4.5h9l5 5v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-14a1 1 0 0 1 1-1z" />
       <path d="M14 4.5v5h5M12 12v5M9.5 14.5 12 17l2.5-2.5" />
+    </>
+  ),
+  caixa: (
+    <>
+      <rect x="3.5" y="6" width="17" height="12.5" rx="2" />
+      <path d="M3.5 10h17M7.5 14.5h3" />
     </>
   ),
   propostas: (
