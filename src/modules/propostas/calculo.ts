@@ -169,6 +169,7 @@ export const configuracaoSchema = z.object({
   validity_days: z.number().int().min(1).max(180),
   payment_terms: z.string().max(2000),
   closing_notes: z.string().max(4000),
+  contract_clauses: z.string().max(20000, "O modelo de contrato pode ter até 20.000 caracteres."),
 });
 
 export const etapaCatalogoSchema = z.object({

@@ -183,6 +183,7 @@ export async function salvarConfiguracao(_: Aviso, form: FormData): Promise<Avis
     validity_days: Number(form.get("validity_days")),
     payment_terms: String(form.get("payment_terms") ?? ""),
     closing_notes: String(form.get("closing_notes") ?? ""),
+    contract_clauses: String(form.get("contract_clauses") ?? ""),
   });
   if (!d.success) return { ok: false, mensagem: d.error.issues[0]!.message };
   const supabase = await cliente();

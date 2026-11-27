@@ -27,6 +27,7 @@ export function Configuracao({
     validity_days: number;
     payment_terms: string;
     closing_notes: string;
+    contract_clauses: string;
   };
 }) {
   const [aviso, acao, pendente] = useActionState(salvarConfiguracao, null);
@@ -82,6 +83,21 @@ export function Configuracao({
           className={campoClasses}
           defaultValue={inicial.closing_notes}
           maxLength={4000}
+        />
+      </label>
+      <label htmlFor="cf-contrato" className={rotulo}>
+        Modelo de contrato: condições gerais
+        <span className="text-mudo font-normal">
+          Uma cláusula por parágrafo (separe com uma linha em branco). Este texto entra em todos os
+          contratos gerados; sem ele, o contrato sai com um texto de exemplo.
+        </span>
+        <textarea
+          id="cf-contrato"
+          name="contract_clauses"
+          rows={10}
+          className={campoClasses}
+          defaultValue={inicial.contract_clauses}
+          maxLength={20000}
         />
       </label>
       <div>
