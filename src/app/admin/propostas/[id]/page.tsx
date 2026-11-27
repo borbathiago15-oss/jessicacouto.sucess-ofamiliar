@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Chamada, Selo, Titulo } from "@/components/ui";
-import { ROTULO_STATUS } from "@/modules/propostas/calculo";
+import { diaDe } from "@/modules/funil/schema";
+import { rotuloDaProposta } from "@/modules/propostas/calculo";
 import { carregarProposta } from "./carregar";
 import { EditorProposta, type EtapaCatalogo } from "./editor";
 
@@ -21,7 +22,7 @@ export default async function PropostaPage({ params }: { params: Promise<{ id: s
     .select("hourly_rate")
     .maybeSingle();
   const valorHora = p.status === "draft" ? Number(config?.hourly_rate ?? 0) : p.hourly_rate;
-  const [rotulo, tom] = ROTULO_STATUS[p.status];
+  const [rotulo, tom] = rotuloDaProposta(p.status, p.valid_until, diaDe(new Date()));
 
   return (
     <main className="mx-auto grid max-w-[1320px] gap-6 px-6 py-12">
@@ -42,7 +43,7 @@ export default async function PropostaPage({ params }: { params: Promise<{ id: s
           >
             {p.nomeFantasia}
           </Link>
-          {p.decision_reason ? ` · Motivo da recusa: ${p.decision_reason}` : ""}
+          {p.decision_reason ? ` · Motivo: ${p.decision_reason}` : ""}
         </p>
       </header>
       <EditorProposta

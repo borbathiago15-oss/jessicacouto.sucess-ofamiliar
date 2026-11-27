@@ -74,17 +74,62 @@ export function lerDecimal(txt: string): number | null {
 // ---------------------------------------------------------------------------
 // Validação
 // ---------------------------------------------------------------------------
-export const STATUS = ["draft", "sent", "accepted", "declined"] as const;
+export const STATUS = [
+  "draft",
+  "quote",
+  "sent",
+  "negotiating",
+  "accepted",
+  "declined",
+  "cancelled",
+] as const;
 export type StatusProposta = (typeof STATUS)[number];
-export const ROTULO_STATUS: Record<
-  StatusProposta,
-  [string, "neutro" | "atencao" | "ok" | "critico"]
-> = {
+type TomStatus = "neutro" | "atencao" | "ok" | "critico" | "marca";
+export const ROTULO_STATUS: Record<StatusProposta, [string, TomStatus]> = {
   draft: ["Rascunho", "neutro"],
-  sent: ["Enviada", "atencao"],
-  accepted: ["Aceita", "ok"],
-  declined: ["Recusada", "critico"],
+  quote: ["Só cotação", "marca"],
+  sent: ["Aguardando retorno", "atencao"],
+  negotiating: ["Em negociação", "atencao"],
+  accepted: ["Aprovada", "ok"],
+  declined: ["Reprovada", "critico"],
+  cancelled: ["Cancelada", "neutro"],
 };
+
+/** Em aberto: saiu do rascunho e ainda não tem resultado. */
+export const ABERTOS: readonly StatusProposta[] = ["quote", "sent", "negotiating"];
+export const ehAberta = (s: StatusProposta) => ABERTOS.includes(s);
+
+/** "Vencida" não é gravada: é a proposta em aberto com a validade passada. */
+export function vencida(status: StatusProposta, validaAte: string | null, hoje: string): boolean {
+  return ehAberta(status) && !!validaAte && validaAte < hoje;
+}
+
+/** Rótulo e tom para mostrar, já considerando o vencimento. */
+export function rotuloDaProposta(
+  status: StatusProposta,
+  validaAte: string | null,
+  hoje: string,
+): [string, TomStatus] {
+  return vencida(status, validaAte, hoje) ? ["Vencida", "critico"] : ROTULO_STATUS[status];
+}
+
+/** Filtros da lista (inclui "Vencida", que é calculada). */
+export const FILTROS_STATUS = [...STATUS, "expired"] as const;
+export type FiltroStatus = (typeof FILTROS_STATUS)[number];
+export const ROTULO_FILTRO: Record<FiltroStatus, string> = {
+  ...(Object.fromEntries(STATUS.map((s) => [s, ROTULO_STATUS[s][0]])) as Record<
+    StatusProposta,
+    string
+  >),
+  expired: "Vencida",
+};
+export function filtroDaProposta(
+  status: StatusProposta,
+  validaAte: string | null,
+  hoje: string,
+): FiltroStatus {
+  return vencida(status, validaAte, hoje) ? "expired" : status;
+}
 
 export const itemSchema = z.object({
   service_id: z.uuid().nullable(),

@@ -7,13 +7,21 @@ import { Botao, Cartao, campoClasses } from "@/components/ui";
 import {
   brl,
   calcularProposta,
+  ehAberta,
   horasTexto,
   lerDecimal,
   rascunhoSchema,
   type Rascunho,
   type StatusProposta,
 } from "@/modules/propostas/calculo";
-import { enviarLogo, excluirRascunho, mudarStatus, salvarRascunho, type Aviso } from "../actions";
+import {
+  enviarLogo,
+  excluirRascunho,
+  mudarStatus,
+  salvarRascunho,
+  type Aviso,
+  type NovoStatus,
+} from "../actions";
 
 export type EtapaCatalogo = {
   id: string;
@@ -107,7 +115,7 @@ export function EditorProposta({
       if (res?.ok) setAlterado(false);
     });
 
-  const status_ = (s: "sent" | "accepted" | "declined") =>
+  const status_ = (s: NovoStatus) =>
     iniciar(async () => {
       if (alterado) return setAviso({ ok: false, mensagem: "Salve o rascunho antes." });
       const res = await mudarStatus(id, s, motivo);
@@ -422,22 +430,64 @@ export function EditorProposta({
           </Link>
 
           {podeEditar && status === "draft" ? (
-            <Botao
-              type="button"
-              variante="secundario"
-              disabled={pendente}
-              onClick={() => status_("sent")}
-            >
-              Marcar como enviada
-            </Botao>
-          ) : null}
-          {podeEditar && status === "sent" ? (
-            <div className="grid gap-2">
-              <Botao type="button" disabled={pendente} onClick={() => status_("accepted")}>
-                Registrar aceite
+            <div className="flex flex-wrap gap-2">
+              <Botao
+                type="button"
+                variante="secundario"
+                disabled={pendente}
+                onClick={() => status_("sent")}
+              >
+                Marcar como enviada
               </Botao>
+              <Botao
+                type="button"
+                variante="secundario"
+                disabled={pendente}
+                onClick={() => status_("quote")}
+              >
+                Registrar como só cotação
+              </Botao>
+            </div>
+          ) : null}
+          {podeEditar && ehAberta(status) ? (
+            <div className="grid gap-3">
+              <div className="flex flex-wrap gap-2">
+                <Botao type="button" disabled={pendente} onClick={() => status_("accepted")}>
+                  Registrar aceite
+                </Botao>
+                {status !== "sent" ? (
+                  <Botao
+                    type="button"
+                    variante="secundario"
+                    disabled={pendente}
+                    onClick={() => status_("sent")}
+                  >
+                    Aguardando retorno
+                  </Botao>
+                ) : null}
+                {status !== "negotiating" ? (
+                  <Botao
+                    type="button"
+                    variante="secundario"
+                    disabled={pendente}
+                    onClick={() => status_("negotiating")}
+                  >
+                    Em negociação
+                  </Botao>
+                ) : null}
+                {status !== "quote" ? (
+                  <Botao
+                    type="button"
+                    variante="secundario"
+                    disabled={pendente}
+                    onClick={() => status_("quote")}
+                  >
+                    Só cotação
+                  </Botao>
+                ) : null}
+              </div>
               <label htmlFor="pr-motivo" className={rotulo}>
-                Motivo da recusa
+                Motivo (para reprovar ou cancelar)
                 <input
                   id="pr-motivo"
                   className={campoClasses}
@@ -446,14 +496,24 @@ export function EditorProposta({
                   onChange={(e) => setMotivo(e.target.value)}
                 />
               </label>
-              <Botao
-                type="button"
-                variante="secundario"
-                disabled={pendente}
-                onClick={() => status_("declined")}
-              >
-                Registrar recusa
-              </Botao>
+              <div className="flex flex-wrap gap-2">
+                <Botao
+                  type="button"
+                  variante="secundario"
+                  disabled={pendente}
+                  onClick={() => status_("declined")}
+                >
+                  Registrar recusa do cliente
+                </Botao>
+                <Botao
+                  type="button"
+                  variante="secundario"
+                  disabled={pendente}
+                  onClick={() => status_("cancelled")}
+                >
+                  Cancelar proposta
+                </Botao>
+              </div>
             </div>
           ) : null}
           {aviso ? (
