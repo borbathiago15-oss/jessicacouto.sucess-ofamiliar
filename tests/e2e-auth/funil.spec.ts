@@ -97,7 +97,7 @@ test("agenda: tarefa atrasada aparece e pode ser concluída", async () => {
 });
 
 test("histórico da empresa recebe os movimentos do funil", async () => {
-  await page.goto("/admin/empresas");
+  await page.goto("/admin/empresas?ver=todas");
   await page.getByRole("link", { name: empresa }).click();
   await page.getByRole("link", { name: "Abrir o histórico" }).click();
   const linha = page.getByTestId("historico-linha");

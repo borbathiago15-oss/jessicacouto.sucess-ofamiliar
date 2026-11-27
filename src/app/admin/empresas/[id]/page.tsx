@@ -31,6 +31,14 @@ export default async function EmpresaPage({ params }: { params: Promise<{ id: st
           .eq("status", "active")
       : Promise.resolve({ count: null }),
   ]);
+  const podeContratos = acesso.pode("proposals.read");
+  const { data: contratos } = podeContratos
+    ? await supabase
+        .from("contracts")
+        .select("id, service_name, total_value, status, proposal_id")
+        .eq("organization_id", id)
+        .order("created_at", { ascending: false })
+    : { data: null };
   const ultimo = periodos?.at(-1);
   const r = ultimo
     ? calcular(valoresSchema.safeParse(ultimo.values).data ?? {}, ultimo.months)
@@ -48,6 +56,59 @@ export default async function EmpresaPage({ params }: { params: Promise<{ id: st
         {empresa.segment ? <p className="text-mudo">{empresa.segment}</p> : null}
       </header>
 
+      {podeContratos ? (
+        <Cartao className="grid gap-3" superficie="borda">
+          <div className="flex flex-wrap items-baseline justify-between gap-3">
+            <h2 className="font-display text-xl">Contratos e propostas</h2>
+            <Link
+              href={`/admin/empresas/${id}/contratos`}
+              className="text-terra-texto font-semibold underline"
+            >
+              Abrir contratos e propostas
+            </Link>
+          </div>
+          {contratos?.length ? (
+            <ul className="m-0 grid list-none gap-2 p-0" data-testid="empresa-contratos">
+              {contratos.map((c) => (
+                <li key={c.id} className="flex flex-wrap items-center justify-between gap-3">
+                  <span className="text-[15px]">
+                    <b>{c.service_name}</b>
+                    {c.total_value !== null ? ` · ${brl(Number(c.total_value))}` : ""}
+                    <span className="text-mudo">
+                      {" · "}
+                      {c.status === "active"
+                        ? "em andamento"
+                        : c.status === "completed"
+                          ? "concluído"
+                          : "cancelado"}
+                    </span>
+                  </span>
+                  <span className="flex flex-wrap gap-x-4 text-[14px]">
+                    <Link
+                      href={`/admin/empresas/${id}/contratos/${c.id}/documento`}
+                      className="text-terra-texto underline"
+                    >
+                      Contrato
+                    </Link>
+                    {c.proposal_id ? (
+                      <Link
+                        href={`/admin/propostas/${c.proposal_id}/documento`}
+                        className="text-terra-texto underline"
+                      >
+                        Proposta
+                      </Link>
+                    ) : null}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-mudo m-0 text-[15px]">
+              Nenhum contrato registrado: esta empresa ainda está em negociação.
+            </p>
+          )}
+        </Cartao>
+      ) : null}
       <div className="grid gap-5 sm:grid-cols-2">
         {podeAnalises ? (
           <Cartao className="grid content-start gap-3">

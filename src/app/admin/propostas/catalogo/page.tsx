@@ -18,7 +18,7 @@ export default async function CatalogoPage() {
   const [configR, etapasR] = await Promise.all([
     supabase
       .from("proposal_settings")
-      .select("hourly_rate, validity_days, payment_terms, closing_notes")
+      .select("hourly_rate, validity_days, payment_terms, closing_notes, contract_clauses")
       .maybeSingle(),
     supabase
       .from("proposal_services")
@@ -50,6 +50,7 @@ export default async function CatalogoPage() {
             validity_days: c?.validity_days ?? 15,
             payment_terms: c?.payment_terms ?? "",
             closing_notes: c?.closing_notes ?? "",
+            contract_clauses: c?.contract_clauses ?? "",
           }}
         />
       </Cartao>

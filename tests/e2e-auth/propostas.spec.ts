@@ -154,3 +154,23 @@ test("envio congela, aceite fecha o funil", async () => {
       .filter({ hasText: oportunidade }),
   ).toBeVisible();
 });
+
+test("proposta aprovada vira contrato e a empresa entra em Clientes", async () => {
+  const page = rel.page;
+  // Em Clientes só aparece quem tem contrato registrado.
+  await page.goto("/admin/empresas");
+  await page.getByRole("link", { name: empresa }).click();
+  await expect(page.getByTestId("empresa-contratos")).toContainText("Plano de sucessão fictício");
+  await page.getByRole("link", { name: "Abrir contratos e propostas" }).click();
+  const lista = page.getByTestId("contratos-lista");
+  await expect(lista).toContainText("Plano de sucessão fictício");
+  await expect(lista).toContainText("Em andamento");
+  await semViolacoes(page);
+
+  await lista.getByRole("link", { name: "Abrir o contrato" }).click();
+  const doc = page.getByTestId("contrato-documento");
+  await expect(doc.getByRole("heading", { level: 1 })).toHaveText("Plano de sucessão fictício");
+  // Sem modelo cadastrado, o contrato avisa que as condições são de exemplo.
+  await expect(page.getByTestId("contrato-exemplo")).toBeVisible();
+  await semViolacoes(page);
+});
