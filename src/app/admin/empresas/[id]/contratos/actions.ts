@@ -104,3 +104,34 @@ export async function mudarStatusContrato(
   revalidatePath("/admin/empresas");
   return { ok: true, mensagem: "Situação do contrato atualizada." };
 }
+
+/**
+ * Conclui o atendimento: todos os contratos em andamento da empresa passam a
+ * concluídos (com a data de hoje, se não houver término). O histórico registra
+ * cada conclusão.
+ */
+export async function concluirAtendimento(empresaId: string): Promise<Aviso> {
+  if (!uuid.safeParse(empresaId).success) return { ok: false, mensagem: "Empresa inválida." };
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) return { ok: false, mensagem: "Supabase não configurado." };
+  const hoje = new Date().toLocaleDateString("en-CA", { timeZone: "America/Sao_Paulo" });
+  const semTermino = await supabase
+    .from("contracts")
+    .update({ ends_on: hoje })
+    .eq("organization_id", empresaId)
+    .eq("status", "active")
+    .is("ends_on", null)
+    .lte("starts_on", hoje);
+  if (semTermino.error) return erro(semTermino.error, "Não foi possível concluir.");
+  const { data, error } = await supabase
+    .from("contracts")
+    .update({ status: "completed" })
+    .eq("organization_id", empresaId)
+    .eq("status", "active")
+    .select("id");
+  if (error) return erro(error, "Não foi possível concluir.");
+  if (!data?.length) return { ok: false, mensagem: "Não há contrato em andamento para concluir." };
+  revalidatePath(`/admin/empresas/${empresaId}`, "layout");
+  revalidatePath("/admin/empresas");
+  return { ok: true, mensagem: "Atendimento concluído. O cliente foi para Contratos concluídos." };
+}
