@@ -216,9 +216,7 @@ test("caixa: plano de pagamento do contrato, recebimento e visões", async () =>
   await expect(linha).toHaveCount(2);
   await semViolacoes(page);
 
-  await page
-    .getByRole("button", { name: `Marcar recebido: Parcela 1 de 2 de ${empresa}` })
-    .click();
+  await page.getByRole("button", { name: `Marcar recebido: Parcela 1 de 2 de ${empresa}` }).click();
   await page.getByRole("button", { name: "Confirmar" }).click();
   await expect(linha).toHaveCount(1);
 

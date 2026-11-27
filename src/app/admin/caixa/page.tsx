@@ -132,19 +132,25 @@ export default async function CaixaPage({
         </p>
       </header>
 
-      <dl className="m-0 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" data-testid="caixa-resumo">
+      {/* Lista simples (não <dl>): cada cartão é um item com título, valor e nota. */}
+      <ul
+        className="m-0 grid list-none gap-3 p-0 sm:grid-cols-2 lg:grid-cols-4"
+        data-testid="caixa-resumo"
+      >
         {numeros.map(([titulo, valor, nota, cor]) => (
-          <Cartao key={titulo} className="grid gap-1">
-            <dt className="text-mudo text-[13px] font-semibold">{titulo}</dt>
-            <dd
-              className={`font-display m-0 text-[1.7rem] leading-tight font-semibold tabular-nums ${cor ?? "text-terra-texto"}`}
-            >
-              {brl(valor)}
-            </dd>
-            <dd className="text-mudo m-0 text-[13px]">{nota}</dd>
-          </Cartao>
+          <li key={titulo} className="grid">
+            <Cartao className="grid gap-1">
+              <span className="text-mudo text-[13px] font-semibold">{titulo}</span>
+              <b
+                className={`font-display text-[1.7rem] leading-tight font-semibold tabular-nums ${cor ?? "text-terra-texto"}`}
+              >
+                {brl(valor)}
+              </b>
+              <span className="text-mudo text-[13px]">{nota}</span>
+            </Cartao>
+          </li>
         ))}
-      </dl>
+      </ul>
 
       <nav aria-label="Ver" className="flex flex-wrap gap-2">
         {(Object.keys(VISOES) as Visao[]).map((v) => (
