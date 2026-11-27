@@ -3,13 +3,113 @@ import { Cartao, Chamada, Selo, Titulo } from "@/components/ui";
 import { umDe } from "@/lib/supabase/relacao";
 import { ROTULO_CONTRATO, type StatusContrato } from "@/modules/contratos/schema";
 import { diaDe } from "@/modules/funil/schema";
+import {
+  ROTULO_FORMA,
+  ROTULO_PARCELA,
+  situacaoDaParcela,
+  type Forma,
+} from "@/modules/caixa/schema";
 import { brl, rotuloDaProposta, type StatusProposta } from "@/modules/propostas/calculo";
+import { AcoesParcela, GerarPlano, NovaParcela } from "../../../caixa/formularios";
 import { carregarEmpresa } from "../carregar";
 import { EditarContrato, NovoContrato, SituacaoContrato } from "./formularios";
 
 export const metadata = { title: "Contratos e propostas" };
 
 const dataCurta = (d: string | null) => (d ? d.split("-").reverse().join("/") : null);
+
+type ParcelaLinha = {
+  id: string;
+  label: string;
+  due_on: string;
+  amount: number | string;
+  method: Forma;
+  paid_on: string | null;
+  paid_amount: number | string | null;
+};
+
+/** Plano de pagamento do contrato: parcelas, situação de cada uma e o que falta receber. */
+function Pagamentos({
+  empresaId,
+  empresaNome,
+  contratoId,
+  total,
+  forma,
+  parcelas,
+  hoje,
+  podeGerir,
+}: {
+  empresaId: string;
+  empresaNome: string;
+  contratoId: string;
+  total: number | null;
+  forma: Forma | null;
+  parcelas: ParcelaLinha[];
+  hoje: string;
+  podeGerir: boolean;
+}) {
+  const ordenadas = [...parcelas].sort((a, b) => a.due_on.localeCompare(b.due_on));
+  const recebido = ordenadas.reduce(
+    (s, p) => s + (p.paid_on ? Number(p.paid_amount ?? p.amount) : 0),
+    0,
+  );
+  const aberto = ordenadas.reduce((s, p) => s + (p.paid_on ? 0 : Number(p.amount)), 0);
+  return (
+    <div className="border-linho grid gap-3 border-t pt-3" data-testid="contrato-pagamentos">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h3 className="font-display m-0 text-[1.05rem] font-semibold">Pagamentos</h3>
+        <span className="text-mudo text-[13.5px]">
+          {ordenadas.length
+            ? `${forma ? `${ROTULO_FORMA[forma]} · ` : ""}recebido ${brl(recebido)} · a receber ${brl(aberto)}`
+            : "Plano de pagamento ainda não definido"}
+        </span>
+      </div>
+      {ordenadas.length ? (
+        <ul className="m-0 grid list-none gap-2 p-0">
+          {ordenadas.map((p) => {
+            const [texto, tom] = ROTULO_PARCELA[situacaoDaParcela(p, hoje)];
+            return (
+              <li
+                key={p.id}
+                className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-[14.5px]"
+              >
+                <span className="flex flex-wrap items-center gap-2">
+                  <span>
+                    <b>{p.label}</b> · {dataCurta(p.due_on)} ·{" "}
+                    <span className="tabular-nums">{brl(Number(p.paid_amount ?? p.amount))}</span> ·{" "}
+                    {ROTULO_FORMA[p.method]}
+                  </span>
+                  <Selo tom={tom}>{texto}</Selo>
+                </span>
+                {podeGerir ? (
+                  <AcoesParcela
+                    id={p.id}
+                    empresaId={empresaId}
+                    descricao={`${p.label} de ${empresaNome}`}
+                    recebida={!!p.paid_on}
+                    hoje={hoje}
+                  />
+                ) : null}
+              </li>
+            );
+          })}
+        </ul>
+      ) : null}
+      {podeGerir && ordenadas.length === 0 ? (
+        <GerarPlano
+          empresaId={empresaId}
+          contratoId={contratoId}
+          total={total}
+          forma={forma}
+          hoje={hoje}
+        />
+      ) : null}
+      {podeGerir && ordenadas.length ? (
+        <NovaParcela empresaId={empresaId} contratoId={contratoId} forma={forma} />
+      ) : null}
+    </div>
+  );
+}
 
 /** O que foi fechado com o cliente e as propostas dele. */
 export default async function ContratosPage({ params }: { params: Promise<{ id: string }> }) {
@@ -25,7 +125,7 @@ export default async function ContratosPage({ params }: { params: Promise<{ id: 
     supabase
       .from("contracts")
       .select(
-        "id, service_name, total_value, starts_on, ends_on, status, notes, proposal_id, proposals(number)",
+        "id, service_name, total_value, starts_on, ends_on, status, notes, proposal_id, payment_method, proposals(number), contract_payments(id, label, due_on, amount, method, paid_on, paid_amount)",
       )
       .eq("organization_id", id)
       .order("created_at", { ascending: false }),
@@ -116,6 +216,16 @@ export default async function ContratosPage({ params }: { params: Promise<{ id: 
                         />
                       ) : null}
                     </div>
+                    <Pagamentos
+                      empresaId={id}
+                      empresaNome={empresa.trade_name}
+                      contratoId={c.id}
+                      total={c.total_value === null ? null : Number(c.total_value)}
+                      forma={(c.payment_method as Forma | null) ?? null}
+                      parcelas={(c.contract_payments ?? []) as ParcelaLinha[]}
+                      hoje={hoje}
+                      podeGerir={podeGerir}
+                    />
                     {podeGerir ? (
                       <EditarContrato
                         empresaId={id}

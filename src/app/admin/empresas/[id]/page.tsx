@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BotaoLink, Cartao, Chamada, Selo, Titulo } from "@/components/ui";
 import { montarRoteiro, progresso, proximaEtapa } from "@/modules/atendimento/roteiro";
+import { resumoDoCaixa } from "@/modules/caixa/schema";
 import type { StatusContrato } from "@/modules/contratos/schema";
 import { ROTULO_SITUACAO_CLIENTE, situacaoDoCliente } from "@/modules/contratos/situacao";
 import { brl } from "@/modules/raiox/calculo";
@@ -56,7 +57,9 @@ export default async function EmpresaPage({ params }: { params: Promise<{ id: st
     pode.contratos
       ? supabase
           .from("contracts")
-          .select("id, service_name, total_value, status, proposal_id, ends_on")
+          .select(
+            "id, service_name, total_value, status, proposal_id, ends_on, contract_payments(due_on, amount, paid_on, paid_amount)",
+          )
           .eq("organization_id", id)
           .order("created_at", { ascending: false })
       : semAcesso,
@@ -97,6 +100,19 @@ export default async function EmpresaPage({ params }: { params: Promise<{ id: st
   const ativos = contratos.filter((c) => c.status === "active");
   const [textoSituacao, tomSituacao] =
     ROTULO_SITUACAO_CLIENTE[situacaoDoCliente(contratos.map((c) => c.status as StatusContrato))];
+  const hoje = new Date().toLocaleDateString("en-CA", { timeZone: fuso });
+  const caixa = resumoDoCaixa(
+    contratos.flatMap((c) =>
+      (c.contract_payments ?? []).map((p) => ({
+        due_on: p.due_on as string,
+        amount: Number(p.amount),
+        paid_on: p.paid_on as string | null,
+        paid_amount: p.paid_amount === null ? null : Number(p.paid_amount),
+      })),
+    ),
+    hoje,
+  );
+  const temParcelas = contratos.some((c) => (c.contract_payments ?? []).length > 0);
   const sessoes = sessoesR?.data ?? [];
   const acoes = (acoesR?.data ?? []).filter((a) => a.phase !== "discarded");
 
@@ -275,6 +291,22 @@ export default async function EmpresaPage({ params }: { params: Promise<{ id: st
               <h2 id="contratos" className="font-display m-0 text-xl">
                 Contratos e propostas
               </h2>
+              {contratos.length ? (
+                <p className="m-0 text-[14.5px]" data-testid="empresa-caixa">
+                  {temParcelas ? (
+                    <>
+                      A receber: <b className="tabular-nums">{brl(caixa.aReceber)}</b>
+                      {caixa.emAtraso ? (
+                        <span className="text-critico font-semibold">
+                          {" · "}em atraso: {brl(caixa.emAtraso)}
+                        </span>
+                      ) : null}
+                    </>
+                  ) : (
+                    <span className="text-atencao">Plano de pagamento ainda não definido.</span>
+                  )}
+                </p>
+              ) : null}
               {contratos.length ? (
                 <ul className="m-0 grid list-none gap-2 p-0" data-testid="empresa-contratos">
                   {contratos.map((c) => (

@@ -59,6 +59,11 @@ function menu(a: Acesso, alertas: number): GrupoMenu[] {
           rotulo: "Empresas",
           icone: "empresas" as const,
         },
+        a.pode("proposals.read") && {
+          href: "/admin/caixa",
+          rotulo: "Caixa",
+          icone: "caixa" as const,
+        },
         a.pode("questionnaires.read") && {
           href: "/admin/questionarios",
           rotulo: "Questionários",

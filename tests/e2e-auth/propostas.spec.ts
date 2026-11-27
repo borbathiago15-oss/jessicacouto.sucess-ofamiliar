@@ -193,3 +193,35 @@ test("central do cliente: próximo passo, roteiro e concluir atendimento", async
   await page.goto("/admin/empresas");
   await expect(page.getByRole("link", { name: empresa })).toHaveCount(0);
 });
+
+test("caixa: plano de pagamento do contrato, recebimento e visões", async () => {
+  const page = rel.page;
+  await page.goto("/admin/empresas?ver=concluidos");
+  await page.getByRole("link", { name: empresa }).click();
+  await page.getByRole("link", { name: "Abrir contratos e propostas" }).click();
+
+  const pagamentos = page.getByTestId("contrato-pagamentos");
+  await expect(pagamentos).toContainText("Plano de pagamento ainda não definido");
+  await pagamentos.getByLabel("Parcelas (mensais)").fill("2");
+  await pagamentos.getByLabel("Forma de pagamento").selectOption("boleto");
+  await pagamentos.getByRole("button", { name: "Gerar parcelas" }).click();
+  await expect(pagamentos).toContainText("Parcela 1 de 2");
+  await expect(pagamentos).toContainText("Parcela 2 de 2");
+  await expect(pagamentos).toContainText("Boleto");
+  await semViolacoes(page);
+
+  await page.goto("/admin/caixa");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Caixa");
+  const linha = page.getByTestId("caixa-lista").getByRole("listitem").filter({ hasText: empresa });
+  await expect(linha).toHaveCount(2);
+  await semViolacoes(page);
+
+  await page.getByRole("button", { name: `Marcar recebido: Parcela 1 de 2 de ${empresa}` }).click();
+  await page.getByRole("button", { name: "Confirmar" }).click();
+  await expect(linha).toHaveCount(1);
+
+  await page.goto("/admin/caixa?ver=recebidas");
+  await expect(
+    page.getByTestId("caixa-lista").getByRole("listitem").filter({ hasText: empresa }),
+  ).toContainText("Recebido em");
+});
