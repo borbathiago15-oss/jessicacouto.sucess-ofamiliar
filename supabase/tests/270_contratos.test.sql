@@ -67,6 +67,38 @@ select is((select count(*)::int from public.contracts where proposal_id is not n
 select lives_ok(format($$ delete from public.contracts where id = %L $$, (select id from r where k = 'c2')),
                 'contrato avulso pode ser excluído');
 
+-- Funil: chegar a "Contrato fechado" gera o contrato (uma vez só).
+insert into r values ('opp', gen_random_uuid()), ('p5', gen_random_uuid()), ('opp2', gen_random_uuid());
+insert into public.opportunities (id, organization_id, stage_id, title, estimated_value)
+values ((select id from r where k = 'opp'), (select id from r where k = 'orgA'),
+        (select id from public.pipeline_stages where position = 10), 'Acompanhamento fictício pelo funil', 750);
+select is((select count(*)::int from public.contracts where opportunity_id = (select id from r where k = 'opp')), 0,
+          'oportunidade aberta ainda não é contrato');
+update public.opportunities set stage_id = (select id from public.pipeline_stages where is_won)
+ where id = (select id from r where k = 'opp');
+select results_eq(format($$ select service_name, total_value from public.contracts where opportunity_id = %L $$,
+                         (select id from r where k = 'opp')),
+                  $$ values ('Acompanhamento fictício pelo funil'::text, 750.00::numeric) $$,
+                  'contrato fechado no funil gera o contrato com o título e o valor');
+update public.opportunities set next_action = 'Agendar início' where id = (select id from r where k = 'opp');
+select is((select count(*)::int from public.contracts where opportunity_id = (select id from r where k = 'opp')), 1,
+          'não duplica o contrato da oportunidade');
+
+-- Proposta aprovada com oportunidade: um contrato só, o da proposta.
+insert into public.opportunities (id, organization_id, stage_id, title)
+values ((select id from r where k = 'opp2'), (select id from r where k = 'orgA'),
+        (select id from public.pipeline_stages where position = 10), 'Oportunidade com proposta');
+insert into public.proposals (id, organization_id, opportunity_id, title)
+values ((select id from r where k = 'p5'), (select id from r where k = 'orgA'), (select id from r where k = 'opp2'), 'Proposta com funil');
+insert into public.proposal_items (proposal_id, name, hours, position)
+values ((select id from r where k = 'p5'), 'Etapa', 5, 1);
+select public.proposal_set_status((select id from r where k = 'p5'), 'sent');
+select public.proposal_set_status((select id from r where k = 'p5'), 'accepted');
+select results_eq(format($$ select count(*)::int, min(service_name) from public.contracts where opportunity_id = %L $$,
+                         (select id from r where k = 'opp2')),
+                  $$ values (1, 'Proposta com funil'::text) $$,
+                  'proposta aprovada com oportunidade gera um único contrato');
+
 -- Isolamento.
 select tests.authenticate_as((select id from u where k = 'relB'));
 select is((select count(*)::int from public.contracts), 0, 'outra carteira não vê contratos');

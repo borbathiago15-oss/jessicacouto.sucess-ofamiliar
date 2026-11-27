@@ -3,7 +3,7 @@
 import { useActionState, useState, useTransition } from "react";
 import { Botao, campoClasses } from "@/components/ui";
 import type { StatusContrato } from "@/modules/contratos/schema";
-import { mudarStatusContrato, registrarContrato, type Aviso } from "./actions";
+import { editarContrato, mudarStatusContrato, registrarContrato, type Aviso } from "./actions";
 
 const rotulo = "grid gap-1 text-[13px] font-semibold";
 
@@ -126,5 +126,115 @@ export function SituacaoContrato({
         </span>
       ) : null}
     </span>
+  );
+}
+
+/** Ajustar o serviço fechado, o valor e as datas de um contrato. */
+export function EditarContrato({
+  empresaId,
+  contrato,
+  servicos,
+}: {
+  empresaId: string;
+  contrato: {
+    id: string;
+    service_name: string;
+    total_value: number | null;
+    starts_on: string | null;
+    ends_on: string | null;
+    notes: string | null;
+  };
+  servicos: string[];
+}) {
+  const [aviso, acao, pendente] = useActionState(
+    editarContrato.bind(null, empresaId, contrato.id),
+    null,
+  );
+  const p = `ce-${contrato.id}`;
+  return (
+    <details className="border-linho border-t pt-3">
+      <summary className="text-terra-texto cursor-pointer text-[14px] font-semibold">
+        Ajustar serviço, valor e datas
+      </summary>
+      <form action={acao} className="mt-3 grid gap-3 md:grid-cols-4">
+        <label htmlFor={`${p}-servico`} className={`${rotulo} md:col-span-2`}>
+          Serviço contratado
+          <input
+            id={`${p}-servico`}
+            name="service_name"
+            required
+            maxLength={200}
+            list={`${p}-servicos`}
+            className={campoClasses}
+            defaultValue={contrato.service_name}
+            autoComplete="off"
+          />
+          <datalist id={`${p}-servicos`}>
+            {servicos.map((s) => (
+              <option key={s} value={s} />
+            ))}
+          </datalist>
+        </label>
+        <label htmlFor={`${p}-valor`} className={rotulo}>
+          Valor (R$)
+          <input
+            id={`${p}-valor`}
+            name="total_value"
+            inputMode="decimal"
+            className={campoClasses}
+            defaultValue={
+              contrato.total_value === null
+                ? ""
+                : contrato.total_value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })
+            }
+          />
+        </label>
+        <div className="grid grid-cols-2 gap-2">
+          <label htmlFor={`${p}-inicio`} className={rotulo}>
+            Início
+            <input
+              id={`${p}-inicio`}
+              name="starts_on"
+              type="date"
+              className={campoClasses}
+              defaultValue={contrato.starts_on ?? ""}
+            />
+          </label>
+          <label htmlFor={`${p}-fim`} className={rotulo}>
+            Término
+            <input
+              id={`${p}-fim`}
+              name="ends_on"
+              type="date"
+              className={campoClasses}
+              defaultValue={contrato.ends_on ?? ""}
+            />
+          </label>
+        </div>
+        <label htmlFor={`${p}-notas`} className={`${rotulo} md:col-span-4`}>
+          Observações (opcional)
+          <input
+            id={`${p}-notas`}
+            name="notes"
+            maxLength={2000}
+            className={campoClasses}
+            defaultValue={contrato.notes ?? ""}
+          />
+        </label>
+        <div className="flex flex-wrap items-center gap-3 md:col-span-4">
+          <Botao type="submit" tamanho="pequeno" disabled={pendente}>
+            Salvar
+          </Botao>
+          {aviso ? (
+            <p
+              role="status"
+              className={aviso.ok ? "text-ok m-0 text-sm" : "text-critico m-0 text-sm"}
+            >
+              {aviso.mensagem}
+            </p>
+          ) : null}
+        </div>
+      </form>
+    </details>
   );
 }

@@ -46,6 +46,39 @@ export async function registrarContrato(
   return { ok: true, mensagem: "Contrato registrado." };
 }
 
+/** Ajusta o que foi fechado: serviço, valor, datas e observações. */
+export async function editarContrato(
+  empresaId: string,
+  contratoId: string,
+  _: Aviso,
+  form: FormData,
+): Promise<Aviso> {
+  if (!uuid.safeParse(empresaId).success || !uuid.safeParse(contratoId).success)
+    return { ok: false, mensagem: "Inválido." };
+  const valorTexto = String(form.get("total_value") ?? "").trim();
+  const dados = novoContratoSchema.safeParse({
+    service_name: form.get("service_name"),
+    total_value: valorTexto ? (lerDecimal(valorTexto) ?? -1) : null,
+    starts_on: String(form.get("starts_on") ?? ""),
+    ends_on: String(form.get("ends_on") ?? ""),
+    notes: String(form.get("notes") ?? ""),
+  });
+  if (!dados.success) return { ok: false, mensagem: dados.error.issues[0]!.message };
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) return { ok: false, mensagem: "Supabase não configurado." };
+  const { data, error } = await supabase
+    .from("contracts")
+    .update(dados.data)
+    .eq("id", contratoId)
+    .eq("organization_id", empresaId)
+    .select("id");
+  if (error) return erro(error, "Não foi possível salvar.");
+  if (!data?.length) return { ok: false, mensagem: "Sem permissão para esta ação." };
+  revalidatePath(`/admin/empresas/${empresaId}`, "layout");
+  revalidatePath("/admin/empresas");
+  return { ok: true, mensagem: "Contrato atualizado." };
+}
+
 export async function mudarStatusContrato(
   empresaId: string,
   contratoId: string,

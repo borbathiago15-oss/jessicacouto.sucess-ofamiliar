@@ -5,7 +5,7 @@ import { ROTULO_CONTRATO, type StatusContrato } from "@/modules/contratos/schema
 import { diaDe } from "@/modules/funil/schema";
 import { brl, rotuloDaProposta, type StatusProposta } from "@/modules/propostas/calculo";
 import { carregarEmpresa } from "../carregar";
-import { NovoContrato, SituacaoContrato } from "./formularios";
+import { EditarContrato, NovoContrato, SituacaoContrato } from "./formularios";
 
 export const metadata = { title: "Contratos e propostas" };
 
@@ -37,6 +37,7 @@ export default async function ContratosPage({ params }: { params: Promise<{ id: 
     supabase.from("proposal_services").select("name").eq("is_active", true).order("position"),
   ]);
   const contratos = contratosR.data ?? [];
+  const servicos = (servicosR.data ?? []).map((s) => s.name as string);
   const propostas = propostasR.data ?? [];
   const hoje = diaDe(new Date());
 
@@ -50,8 +51,9 @@ export default async function ContratosPage({ params }: { params: Promise<{ id: 
         </Chamada>
         <Titulo>Contratos e propostas</Titulo>
         <p className="text-mudo m-0 max-w-[64ch]">
-          O que foi fechado com este cliente. Uma proposta aprovada vira contrato sozinha; também dá
-          para registrar um contrato sem proposta.
+          O que foi fechado com este cliente. O contrato nasce quando a proposta é aprovada ou
+          quando a oportunidade chega a “Contrato fechado” no funil; aqui você ajusta o serviço, o
+          valor e as datas.
         </p>
       </header>
 
@@ -114,6 +116,20 @@ export default async function ContratosPage({ params }: { params: Promise<{ id: 
                         />
                       ) : null}
                     </div>
+                    {podeGerir ? (
+                      <EditarContrato
+                        empresaId={id}
+                        servicos={servicos}
+                        contrato={{
+                          id: c.id,
+                          service_name: c.service_name,
+                          total_value: c.total_value === null ? null : Number(c.total_value),
+                          starts_on: c.starts_on,
+                          ends_on: c.ends_on,
+                          notes: c.notes,
+                        }}
+                      />
+                    ) : null}
                   </Cartao>
                 </li>
               );
@@ -125,10 +141,7 @@ export default async function ContratosPage({ params }: { params: Promise<{ id: 
       {podeGerir ? (
         <Cartao className="grid gap-4" superficie="borda">
           <h2 className="font-display m-0 text-xl">Registrar contrato sem proposta</h2>
-          <NovoContrato
-            empresaId={id}
-            servicos={(servicosR.data ?? []).map((s) => s.name as string)}
-          />
+          <NovoContrato empresaId={id} servicos={servicos} />
         </Cartao>
       ) : null}
 
