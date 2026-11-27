@@ -174,3 +174,22 @@ test("proposta aprovada vira contrato e a empresa entra em Clientes", async () =
   await expect(page.getByTestId("contrato-exemplo")).toBeVisible();
   await semViolacoes(page);
 });
+
+test("central do cliente: próximo passo, roteiro e concluir atendimento", async () => {
+  const page = rel.page;
+  await page.goto("/admin/empresas");
+  await page.getByRole("link", { name: empresa }).click();
+  await expect(page.getByTestId("empresa-roteiro")).toContainText("Contrato");
+  await expect(page.getByTestId("empresa-progresso")).toContainText("etapas feitas");
+  await semViolacoes(page);
+
+  page.once("dialog", (d) => d.accept());
+  await page.getByRole("button", { name: "Concluir atendimento" }).click();
+  // O botão sai da tela quando o atendimento é concluído; o título confirma.
+  await expect(page.getByRole("heading", { name: "Atendimento concluído" })).toBeVisible();
+
+  await page.goto("/admin/empresas?ver=concluidos");
+  await expect(page.getByRole("link", { name: empresa })).toBeVisible();
+  await page.goto("/admin/empresas");
+  await expect(page.getByRole("link", { name: empresa })).toHaveCount(0);
+});
